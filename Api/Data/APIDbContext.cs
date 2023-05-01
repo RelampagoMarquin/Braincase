@@ -7,7 +7,15 @@ namespace Api.Data{
         public APIDbContext(DbContextOptions<APIDbContext> options):base(options){
             
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Favorites>()
+                .HasKey(f => new { f.UserId, f.QuestionId });
+        }
 
         public DbSet<User> User { get; set; }
+        public DbSet<Comment> Comment { get; set; }
+        public DbSet<Favorites> Favorites { get; set; }
+        public DbSet<Question> Question { get; set; }
     }
 }
