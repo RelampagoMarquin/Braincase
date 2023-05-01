@@ -23,7 +23,5 @@ namespace Api.Models{
         
         // Relação n n
         public List<Favorites> Favorites { get; } = new();
-
-        public List<Question> Questions { get; } = new();
     }
 }

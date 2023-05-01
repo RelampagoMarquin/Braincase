@@ -24,7 +24,5 @@ namespace Api.Models
         // relação n n
         public List<Favorites> Favorites { get; } = new();
 
-        public List<User> User { get; } = new();
-
     }
 }
