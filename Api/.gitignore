@@ -1,0 +1,39 @@
+# Arquivos gerados automaticamente
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Arquivos gerados pelo Visual Studio
+*.suo
+*.user
+*.sln.docstates
+*.usertasks
+*.vspscc
+
+# Arquivos gerados pelo MSBuild
+*.cache
+*.ilk
+*.log
+*.obj
+*.ncb
+*.pdb
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tlog
+*.xsd
+
+# Arquivos de dependência do NuGet
+packages/
+*.nupkg
+*.paket.*
+
+# Arquivos de cache do ReSharper
+_ReSharper*/
+
+# Arquivos temporários
+[Tt]emp/
+[Oo]bj/
