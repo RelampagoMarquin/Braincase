@@ -13,7 +13,7 @@ import { RouterView } from 'vue-router'
 <!-- Parte de Estilo: Style (CSS), vale salientar que esse é o App.vue, e todas as páginas serão exibidas nesse arquivo por conta do RouterView, colocar o CSS aqui afeta todas as outras páginas, então o CSS geral (que será repetido em diversas páginas) é posto aqui (isso não significa que não tem como colocar css global em outras páginas, mas por organização e convenção é posto aqui) -->
 <style>
 .btn-primary {
-  background-color: #29c5b8 ;
-  color: #fff;
+  background-color: #29c5b8 !important;
+  color: #fff !important;
 }
 </style>
