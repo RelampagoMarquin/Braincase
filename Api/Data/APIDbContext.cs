@@ -17,5 +17,7 @@ namespace Api.Data{
         public DbSet<Comment> Comment { get; set; }
         public DbSet<Favorites> Favorites { get; set; }
         public DbSet<Question> Question { get; set; }
+        public DbSet<Answer> Answer { get; set; }
+        public DbSet<Test> Test { get; set; }
     }
 }

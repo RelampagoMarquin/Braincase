@@ -6,7 +6,7 @@ namespace Api.Models
 {
     public class Favorites
     {
-        public bool own { get; set; }
+        public bool Own { get; set; }
 
         /// n n
         public Guid UserId { get; set; }
@@ -14,7 +14,7 @@ namespace Api.Models
 
         public User User { get; set; } = null!;
 
-        public Question question { get; set; } = null!;
+        public Question Question { get; set; } = null!;
 
         
     }

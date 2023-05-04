@@ -13,16 +13,21 @@ namespace Api.Models
         public String Text { get; set; }
 
         [Required]
-        public byte type { get; set; } = 1; // o '=' define o valor como padrão
+        public byte Type { get; set; } = 1; // o '=' define o valor como padrï¿½o
 
         [Required]
-        public byte dificult { get; set; } = 2;
+        public byte Dificult { get; set; } = 2;
 
         [Required]
-        public bool isPrivate { get; set; } = true;
+        public bool IsPrivate { get; set; } = true;
 
-        // relação n n
+        // relaï¿½ï¿½o n n
         public List<Favorites> Favorites { get; } = new();
 
+        // relacao 1 para n
+        public ICollection<Answer> Answers { get; } = new List<Answer>();
+
+        // relacao n para n
+        public List<Test> Tests { get; } = new();
     }
 }
