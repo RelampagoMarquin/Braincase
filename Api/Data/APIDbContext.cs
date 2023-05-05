@@ -11,6 +11,9 @@ namespace Api.Data{
         {
             modelBuilder.Entity<Favorites>()
                 .HasKey(f => new { f.UserId, f.QuestionId });
+
+            modelBuilder.Entity<QuestionTags>()
+                .HasKey(f => new {f.QuestionId, f.TagId});
         }
 
         public DbSet<User> User { get; set; }
@@ -19,5 +22,9 @@ namespace Api.Data{
         public DbSet<Question> Question { get; set; }
         public DbSet<Answer> Answer { get; set; }
         public DbSet<Test> Test { get; set; }
+        public DbSet<Institution> Institution { get; set; }
+        public DbSet<Subject> Subject { set; get; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<QuestionTags> QuestionTags { get; set;}
     }
 }

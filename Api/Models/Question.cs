@@ -12,7 +12,7 @@ namespace Api.Models
         [Required]
         public String Text { get; set; }
 
-        [Required]
+       [Required]
         public byte Type { get; set; } = 1; // o '=' define o valor como padr�o
 
         [Required]
@@ -20,14 +20,16 @@ namespace Api.Models
 
         [Required]
         public bool IsPrivate { get; set; } = true;
-
         // rela��o n n
         public List<Favorites> Favorites { get; } = new();
+        public List<QuestionTags> QuestionTags { get; } = new();
+        public Institution? Institution {get; set;}
 
         // relacao 1 para n
         public ICollection<Answer> Answers { get; } = new List<Answer>();
 
         // relacao n para n
         public List<Test> Tests { get; } = new();
+
     }
 }
