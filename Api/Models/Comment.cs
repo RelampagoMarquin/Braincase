@@ -12,8 +12,8 @@ namespace Api.Models
         [Required]
         public string Text { get; set; }
 
-        // relação um para muitos
-        public User? User { get; set; }
+        // relaï¿½ï¿½o um para muitos
+        public User User { get; set; }
 
     }
 }
