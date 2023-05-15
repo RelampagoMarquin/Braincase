@@ -14,6 +14,10 @@ namespace Api.Data{
 
             modelBuilder.Entity<QuestionTags>()
                 .HasKey(f => new {f.QuestionId, f.TagId});
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
 
         public DbSet<User> User { get; set; }

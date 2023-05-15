@@ -41,3 +41,18 @@ Aqui já pode utilizar o terminal padrão
 
 Após executar entrar nesse link, https://localhost:7011/swagger/index.html, 
 caso não consiga verifique se seu navegador não esta bloqueando
+
+# Gerar Controlers
+
+vs code
+
+```bash
+dotnet tool install -g dotnet-aspnet-codegenerator # instala o gerador de codigo
+dotnet-aspnet-codegenerator controller -name nomedomodeloController -async -api -m nomemodelo -dc APIDbContext -outDir Controllers
+```
+
+# visual studio
+
+Dê 2 cliques na solução 'api.sln' após isso clique com o botão direito controllers adicionar>novo item com scaffold em seguida vai abrir
+uma janela, clique em API no menu lateral e em seguida selecione a opção 'Controlador API com ações, usando Entity Framework', Avance
+escolha o modelo e em seguida o context e nomei o controlador.

@@ -15,6 +15,6 @@ namespace Api.Models
         [Required]
         public String Nome { get; set; }
 
-        public ICollection<Tag> tags {get; } = new List<Tag>();
+        public ICollection<Tag> Tags {get; } = new List<Tag>();
     }
 }
