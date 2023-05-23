@@ -12,6 +12,7 @@ namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class UserController : ControllerBase
     {
         private readonly APIDbContext _context;
@@ -81,9 +82,30 @@ namespace Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Creates a User.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>A newly created User</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Useruser
+        ///     {
+        ///        "name": "nome",
+        ///        "email": "email@gamil.com",
+        ///        "password": "string"
+        ///        "confpassword": "string"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="201">Returns the newly created User</response>
+        /// <response code="400">If the user is null</response>
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<User>> PostUser(User user)
         {
           if (_context.User == null)

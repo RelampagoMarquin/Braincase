@@ -1,6 +1,7 @@
 using Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +23,12 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "BrainCase API",
-        Description = "An ASP.NET Core Web API for managing Routes of Braincase"
+        Description = "An ASP.NET Core Web API for managing Routes of Braincase",
     });
-}); ;
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 var app = builder.Build();
 
