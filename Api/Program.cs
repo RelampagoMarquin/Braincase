@@ -1,5 +1,6 @@
 using Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,15 @@ builder.Services.AddDbContext<APIDbContext>(options => options.UseMySql(
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "BrainCase API",
+        Description = "An ASP.NET Core Web API for managing Routes of Braincase"
+    });
+}); ;
 
 var app = builder.Build();
 

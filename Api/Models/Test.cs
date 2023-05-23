@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Api.Models
 {
-    public class Test
-    {
+    public class Test{
+
         [Key]
         public Guid Id { get; set; }
 
