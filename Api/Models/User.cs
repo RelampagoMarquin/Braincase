@@ -5,8 +5,6 @@ using System.Text.Json.Serialization;
 namespace Api.Models{
     public class User {
 
-        // JsonIgnore é para o objeto não aparecer na criação
-        [JsonIgnore]
         [Key]
         public Guid Id { get; set; }
 
