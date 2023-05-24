@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Services;
+using Api.Dto.User;
 
 namespace Api.Controllers
 {
@@ -16,6 +18,7 @@ namespace Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly APIDbContext _context;
+        // private readonly UserService _userService;
 
         public UserController(APIDbContext context)
         {
@@ -85,17 +88,16 @@ namespace Api.Controllers
         /// <summary>
         /// Creates a User.
         /// </summary>
-        /// <param name="user"></param>
         /// <returns>A newly created User</returns>
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Useruser
+        ///     POST /User
         ///     {
-        ///        "name": "nome",
-        ///        "email": "email@gamil.com",
-        ///        "password": "string"
-        ///        "confpassword": "string"
+        ///        "name": "string",
+        ///        "email": "string@dominio.com",
+        ///        "password": "string",
+        ///        "confirmedPassword": "string"
         ///     }
         ///
         /// </remarks>
@@ -106,16 +108,32 @@ namespace Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<UserResponseDTO>> PostUser(CreateUserDTO createUserDTO)
         {
           if (_context.User == null)
           {
               return Problem("Entity set 'APIDbContext.User'  is null.");
           }
+            // var createdUser = await _userService. CreateUser(createUserDTO);
+
+           //  return userService.createUser(createUserDTO);
+          
+            User user = new User
+            {
+                Name = createUserDTO.Name,
+                Email = createUserDTO.Email,
+                Password = createUserDTO.Password
+            };
+           
             _context.User.Add(user);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            UserResponseDTO reponseDTO = new UserResponseDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+            };
+            return CreatedAtAction("GetUser", new { id = user.Id }, reponseDTO);
         }
 
         // DELETE: api/User/5
