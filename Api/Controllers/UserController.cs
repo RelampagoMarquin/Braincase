@@ -27,13 +27,25 @@ namespace Api.Controllers
 
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetUser()
         {
           if (_context.User == null)
           {
               return NotFound();
           }
-            return await _context.User.ToListAsync();
+            var users =  await _context.User.ToListAsync();
+            var responseUsers = new List<UserResponseDTO>();
+            foreach (var user in users)
+            {
+              UserResponseDTO reponseDTO = new UserResponseDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+            };
+            responseUsers.Add(reponseDTO);  
+            }
+            return responseUsers;
         }
 
         // GET: api/User/5
@@ -108,7 +120,7 @@ namespace Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<UserResponseDTO>> PostUser(CreateUserDTO createUserDTO)
+        public async Task<ActionResult<UserResponseDTO>> PostUser(UserCreateDTO createUserDTO)
         {
           if (_context.User == null)
           {
