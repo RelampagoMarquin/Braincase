@@ -18,7 +18,7 @@ namespace Api.Models{
 
         [StringLength(14)]
         [Required]
-        public String Registration { get; set; }
+        public String? Registration { get; set; }
 
         [StringLength(120)]
         [Required]

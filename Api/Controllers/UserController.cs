@@ -9,6 +9,8 @@ using Api.Data;
 using Api.Models;
 using Api.Services;
 using Api.Dto.User;
+using Api.Repository.Interfaces;
+using Api.utils;
 
 namespace Api.Controllers
 {
@@ -17,23 +19,17 @@ namespace Api.Controllers
     [Produces("application/json")]
     public class UserController : ControllerBase
     {
-        private readonly APIDbContext _context;
-        // private readonly UserService _userService;
-
-        public UserController(APIDbContext context)
+        private readonly IUserRepository _userRepository;
+        public UserController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
         // GET: api/User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetUser()
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            var users =  await _context.User.ToListAsync();
+            var users = await _userRepository.GetAllUsers();
             var responseUsers = new List<UserResponseDTO>();
             foreach (var user in users)
             {
@@ -42,59 +38,66 @@ namespace Api.Controllers
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
+                Registration = user.Registration,
             };
             responseUsers.Add(reponseDTO);  
             }
             return responseUsers;
         }
 
-        // GET: api/User/5
+       // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult<UserResponseDTO>> GetUser(Guid id)
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            var user = await _context.User.FindAsync(id);
 
+            var user = await _userRepository.GetUserById(id);
+            
             if (user == null)
             {
                 return NotFound();
             }
-
-            return user;
+            var reponse = new UserResponseDTO
+            {
+                Registration = user.Registration,
+                Email = user.Email,
+                Id = user.Id,
+                Name = user.Name,
+            };
+            return reponse;
         }
-
+        
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        public async Task<IActionResult> PutUser(Guid id, UserUpdateDTO userUpdateDTO)
         {
-            if (id != user.Id)
+            var user = await _userRepository.GetUserById(id);
+            if(userUpdateDTO.Name != null)
             {
-                return BadRequest();
+                user.Name = userUpdateDTO.Name;
             }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
+            if (userUpdateDTO.Registration != null)
             {
-                await _context.SaveChangesAsync();
+                user.Registration = userUpdateDTO.Registration;
             }
-            catch (DbUpdateConcurrencyException)
+            if (userUpdateDTO.Password != null && userUpdateDTO.ConfirmedPassword != null )
             {
-                if (!UserExists(id))
+                if(userUpdateDTO.Password != userUpdateDTO.ConfirmedPassword)
                 {
-                    return NotFound();
+                    return BadRequest("Senhas diferentes");
                 }
-                else
-                {
-                    throw;
-                }
+                var haspass = PasswordHasher.HashPassword(userUpdateDTO.Password);
+                user.Password = haspass;
             }
+            if (userUpdateDTO.Email != null)
+            {
+                user.Email = userUpdateDTO.Email;
+            }
+            _userRepository.Update(user);
 
-            return NoContent();
+            return await _userRepository.SaveChangesAsync() 
+                ? Ok("User Atualizado com sucesso")
+                : BadRequest("Erro ao atualizar o User"); ;
         }
 
         /// <summary>
@@ -122,55 +125,35 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<UserResponseDTO>> PostUser(UserCreateDTO createUserDTO)
         {
-          if (_context.User == null)
-          {
-              return Problem("Entity set 'APIDbContext.User'  is null.");
-          }
-            // var createdUser = await _userService. CreateUser(createUserDTO);
-
-           //  return userService.createUser(createUserDTO);
-          
-            User user = new User
-            {
-                Name = createUserDTO.Name,
-                Email = createUserDTO.Email,
-                Password = createUserDTO.Password
-            };
-           
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            if (createUserDTO.Password != createUserDTO.ConfirmedPassword) {
+                return BadRequest("Senhas diferentes");
+            }
+            createUserDTO.Password = PasswordHasher.HashPassword(createUserDTO.Password);
+            var createdUser = await _userRepository.CreateUser(createUserDTO);
             UserResponseDTO reponseDTO = new UserResponseDTO
             {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
+                Id = createdUser.Id,
+                Name = createdUser.Name,
+                Email = createdUser.Email,
             };
-            return CreatedAtAction("GetUser", new { id = user.Id }, reponseDTO);
+            return CreatedAtAction("GetUser", new { id = createdUser.Id }, reponseDTO);
+          
         }
-
         // DELETE: api/User/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.User.FindAsync(id);
+            var user = await _userRepository.GetUserById(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound("User não encontrado");
             }
 
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            _userRepository.Delete(user);
+            return await _userRepository.SaveChangesAsync()
+                ? Ok("User deletado com sucesso")
+                : BadRequest("Erro ao deletar o User");
         }
 
-        private bool UserExists(Guid id)
-        {
-            return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

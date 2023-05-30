@@ -1,4 +1,7 @@
 using Api.Data;
+using Api.Repository;
+using Api.Repository.Interfaces;
+using Api.Repositorys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -15,6 +18,14 @@ builder.Services.AddDbContext<APIDbContext>(options => options.UseMySql(
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// Repositorys
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
