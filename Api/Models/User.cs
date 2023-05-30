@@ -16,6 +16,10 @@ namespace Api.Models{
         [Required]
         public String Email { get; set; }
 
+        [StringLength(14)]
+        [Required]
+        public String Registration { get; set; }
+
         [StringLength(120)]
         [Required]
         public String Password { get; set; }
