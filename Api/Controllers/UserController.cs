@@ -100,29 +100,10 @@ namespace Api.Controllers
                 : BadRequest("Erro ao atualizar o User"); ;
         }
 
-        /// <summary>
-        /// Creates a User.
-        /// </summary>
-        /// <returns>A newly created User</returns>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /User
-        ///     {
-        ///        "name": "string",
-        ///        "email": "string@dominio.com",
-        ///        "password": "string",
-        ///        "confirmedPassword": "string"
-        ///     }
-        ///
-        /// </remarks>
-        /// <response code="201">Returns the newly created User</response>
-        /// <response code="400">If the user is null</response>
+        
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<UserResponseDTO>> PostUser(UserCreateDTO createUserDTO)
         {
             if (createUserDTO.Password != createUserDTO.ConfirmedPassword) {
