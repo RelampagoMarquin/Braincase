@@ -72,6 +72,11 @@ namespace Api.Controllers
         public async Task<IActionResult> PutUser(Guid id, UserUpdateDTO userUpdateDTO)
         {
             var user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound("User não encontrado");
+            }
+
             if(userUpdateDTO.Name != null)
             {
                 user.Name = userUpdateDTO.Name;

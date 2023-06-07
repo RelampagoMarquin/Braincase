@@ -20,7 +20,7 @@ namespace Api.Repositorys
             return await _context.User.ToListAsync();
         }
 
-        async Task<User> IUserRepository.GetUserById(Guid id)
+        async Task<User?> IUserRepository.GetUserById(Guid id)
         {
             var user = await _context.User.FindAsync(id);
 
