@@ -7,118 +7,101 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Repository.Interfaces;
+using Api.Dto.Institution;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class InstitutionController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly IInstitutionRepository _institutionRepository;
 
-        public InstitutionController(APIDbContext context)
+        public InstitutionController(IInstitutionRepository institutionRepository)
         {
-            _context = context;
+            _institutionRepository = institutionRepository;
         }
 
         // GET: api/Institution
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Institution>>> GetInstitution()
+        public async Task<ActionResult<IEnumerable<InstitutionDTO>>> GetInstitution()
         {
-          if (_context.Institution == null)
-          {
-              return NotFound();
-          }
-            return await _context.Institution.ToListAsync();
+            var institutions = await _institutionRepository.GetAllInstitutions();
+            var resposeInstitutions = new List<InstitutionDTO>();
+            foreach (var institution in institutions)
+            {
+                InstitutionDTO responseDTO = new InstitutionDTO
+                {
+                    Name = institution.Name
+                };
+                resposeInstitutions.Add(responseDTO);
+            }
+            return resposeInstitutions;
         }
 
         // GET: api/Institution/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Institution>> GetInstitution(Guid id)
+        public async Task<ActionResult<InstitutionDTO>> GetInstitution(Guid id)
         {
-          if (_context.Institution == null)
-          {
-              return NotFound();
-          }
-            var institution = await _context.Institution.FindAsync(id);
-
+            var institution = await _institutionRepository.GetInstitutionById(id);
             if (institution == null)
             {
-                return NotFound();
+                return NotFound("Instituição não encontrada");
             }
-
-            return institution;
+            var reponse = new InstitutionDTO
+            {
+                Name = institution.Name
+            };
+            return reponse;
         }
 
         // PUT: api/Institution/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInstitution(Guid id, Institution institution)
+        public async Task<IActionResult> PutInstitution(Guid id, InstitutionDTO institutionDTO)
         {
-            if (id != institution.Id)
+            var institution = await _institutionRepository.GetInstitutionById(id);
+            if (institution == null)
             {
-                return BadRequest();
+                return NotFound("Instituição não encontrada");
             }
-
-            _context.Entry(institution).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!InstitutionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            institution.Name = institutionDTO.Name;
+            _institutionRepository.Update(institution);
+            
+            return await _institutionRepository.SaveChangesAsync()
+                ? Ok("Instituição Atualizado com sucesso")
+                : BadRequest("Erro ao atualizar a Instituição");
         }
 
         // POST: api/Institution
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Institution>> PostInstitution(Institution institution)
+        public async Task<ActionResult> PostInstitution(InstitutionDTO InstitutionDTO)
         {
-          if (_context.Institution == null)
-          {
-              return Problem("Entity set 'APIDbContext.Institution'  is null.");
-          }
-            _context.Institution.Add(institution);
-            await _context.SaveChangesAsync();
+            _institutionRepository.Add(InstitutionDTO);
 
-            return CreatedAtAction("GetInstitution", new { id = institution.Id }, institution);
+            return await _institutionRepository.SaveChangesAsync()
+                ? Ok("Instituição criada com sucesso")
+                : BadRequest("Erro ao criar a Instituição");
         }
 
         // DELETE: api/Institution/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInstitution(Guid id)
         {
-            if (_context.Institution == null)
-            {
-                return NotFound();
-            }
-            var institution = await _context.Institution.FindAsync(id);
+            var institution = await _institutionRepository.GetInstitutionById(id);
             if (institution == null)
             {
-                return NotFound();
+                return NotFound("Instituição não encontrada");
             }
 
-            _context.Institution.Remove(institution);
-            await _context.SaveChangesAsync();
+            _institutionRepository.Delete(institution);
 
-            return NoContent();
-        }
-
-        private bool InstitutionExists(Guid id)
-        {
-            return (_context.Institution?.Any(e => e.Id == id)).GetValueOrDefault();
+            return await _institutionRepository.SaveChangesAsync()
+                ? Ok("Instituição deletada com sucesso")
+                : BadRequest("Erro ao deletar a Instituição");
         }
     }
 }

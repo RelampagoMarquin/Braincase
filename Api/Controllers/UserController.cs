@@ -74,7 +74,7 @@ namespace Api.Controllers
             var user = await _userRepository.GetUserById(id);
             if (user == null)
             {
-                return NotFound("User não encontrado");
+                return NotFound("Usuário não encontrado");
             }
 
             if(userUpdateDTO.Name != null)
@@ -101,8 +101,8 @@ namespace Api.Controllers
             _userRepository.Update(user);
 
             return await _userRepository.SaveChangesAsync() 
-                ? Ok("User Atualizado com sucesso")
-                : BadRequest("Erro ao atualizar o User"); ;
+                ? Ok("Usuário Atualizado com sucesso")
+                : BadRequest("Erro ao atualizar o Usuário");
         }
 
         
@@ -132,13 +132,13 @@ namespace Api.Controllers
             var user = await _userRepository.GetUserById(id);
             if (user == null)
             {
-                return NotFound("User não encontrado");
+                return NotFound("Usuário não encontrado");
             }
 
             _userRepository.Delete(user);
             return await _userRepository.SaveChangesAsync()
-                ? Ok("User deletado com sucesso")
-                : BadRequest("Erro ao deletar o User");
+                ? Ok("Usuário deletado com sucesso")
+                : BadRequest("Erro ao deletar o Usuário");
         }
 
     }

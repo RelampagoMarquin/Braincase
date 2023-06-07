@@ -1,6 +1,6 @@
 namespace Api.Dto.Institution
 {
-    public class InstituitionCreateDTO
+    public class InstitutionDTO
     {
         public String Name { get; set; }
         
