@@ -14,9 +14,11 @@ namespace Api.Models
 
        [Required]
         public byte Type { get; set; } = 1; // o '=' define o valor como padr�o
+        // 1 para pergunta discursiva, 2 para objetiva e 3 vou f;
 
         [Required]
         public byte Dificult { get; set; } = 2;
+        // 1 para fácil, 2 para medio e 3 pra difícil 
 
         [Required]
         public bool IsPrivate { get; set; } = true;
@@ -27,6 +29,9 @@ namespace Api.Models
 
         // relacao 1 para n
         public ICollection<Answer> Answers { get; } = new List<Answer>();
+
+        // relacao 1 para n
+        public ICollection<Comment> Comment { get; } = new List<Comment>();
 
         // relacao n para n
         public List<Test> Tests { get; } = new();

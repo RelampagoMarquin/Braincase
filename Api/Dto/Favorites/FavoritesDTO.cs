@@ -1,10 +1,20 @@
 namespace Api.Dto.Favorites
 {
-    public class FavoritesCreateDTO
+    public class FavoritesDTO
     {
         public bool Own { get; set; }
+
         public Guid UserId { get; set; }
-        public Guid QuestionId { get; set; }  
+
+        public Guid? QuestionId { get; set; } 
     }
 
+    public class ResponseFavoritesDTO
+    {
+        public bool Own { get; set; }
+
+        public Guid UserId { get; set; }
+
+        public Guid QuestionId { get; set; } 
+    }
 }

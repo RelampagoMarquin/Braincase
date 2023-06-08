@@ -11,12 +11,11 @@ namespace Api.Models
         [Required]
         public String Text { get; set; }
 
-        public Boolean IsCorrect { get; set;}
+        public Boolean IsCorrect { get; set; } = false;
         
         [MaxLength(int.MaxValue)]
-        public String Justify { get; set; }
+        public String? Justify { get; set; }
 
         public Question Question { get; set; }
-
     }
 }

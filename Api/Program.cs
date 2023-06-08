@@ -22,6 +22,8 @@ builder.Services.AddControllers();
 // Repositorys
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 
 
 

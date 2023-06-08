@@ -16,7 +16,7 @@ namespace Api.Models
         [Required]
         public String Name { get; set; }
 
-        public Subject? Subject {get; set; }
+        public Subject Subject {get; set; }
         public List<Question> Question { get; } = new();
     }
 }

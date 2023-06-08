@@ -54,7 +54,7 @@ namespace Api.Controllers
             
             if (user == null)
             {
-                return NotFound();
+                return NotFound("Usuário não encontrado");
             }
             var response = new UserResponseDTO
             {
@@ -120,6 +120,7 @@ namespace Api.Controllers
                 Id = createdUser.Id,
                 Name = createdUser.Name,
                 Email = createdUser.Email,
+                Registration = createdUser.Registration
             };
             return CreatedAtAction("GetUser", new { id = createdUser.Id }, reponseDTO);
           

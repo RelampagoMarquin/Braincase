@@ -21,39 +21,43 @@ namespace Api.Controllers
 
         public SubjectController(ISubjectRepository subjectRepository)
         {
-           _subjectRepository = subjectRepository;
+            _subjectRepository = subjectRepository;
         }
 
         // GET: api/Subject
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SubjectDTO>>> GetSubject()
+        public async Task<ActionResult<IEnumerable<ResponseSubjectDTO>>> GetSubject()
         {
-         var subjects = await _subjectRepository.GetAllSubject();
-         var responseSubjects = new List<SubjectDTO>();
-         foreach (var subject in subjects) 
-         {
-            SubjectDTO responseDTO = new SubjectDTO
+            var subjects = await _subjectRepository.GetAllSubject();
+            var responseSubjects = new List<ResponseSubjectDTO>();
+            foreach (var subject in subjects) 
             {
-                Name = subject.Name,
-            };
+                ResponseSubjectDTO responseDTO = new ResponseSubjectDTO
+                {
+                    Id = subject.Id,
+                    Name = subject.Name
+                };
+            
             responseSubjects.Add(responseDTO);
-         }
-         return responseSubjects;
+            }
+            return responseSubjects;
         }
 
         // GET: api/Subject/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SubjectDTO>> GetSubject(Guid id)
+        public async Task<ActionResult<ResponseSubjectDTO>> GetSubject(Guid id)
         {
-          var subject =  await _subjectRepository.GetSubjectById(id);
-          if (subject == null) 
-          {
-            return NotFound();
-          }
-          var response = new SubjectDTO{
-            Name = subject.Name,
-          };
-          return response;
+            var subject =  await _subjectRepository.GetSubjectById(id);
+            if (subject == null) 
+            {
+                return NotFound();
+            }
+            var response = new ResponseSubjectDTO
+            {
+                Id = subject.Id,
+                Name = subject.Name,
+            };
+            return response;
         }
 
         // PUT: api/Subject/5
@@ -68,13 +72,13 @@ namespace Api.Controllers
                 return NotFound("Matéria não encontrado");
             }
             if (subjectDTO.Name != null)
-                {
-                    subject.Name = subjectDTO.Name;
-                }
+            {
+                subject.Name = subjectDTO.Name;
+            }
             _subjectRepository.Update(subject);
 
             return await _subjectRepository.SaveChangesAsync()
-                ? Ok("Matéria foi criada")
+                ? Ok("Matéria foi atualizada")
                 : BadRequest("Erro ao atualizar a matéria");
               
         }
@@ -82,9 +86,14 @@ namespace Api.Controllers
         // POST: api/Subject
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<SubjectDTO>> PostSubject(SubjectDTO subjectDTO)
+        public async Task<ActionResult> PostSubject(SubjectDTO SubjectDTO)
         {
-            _subjectRepository.Add(subjectDTO);
+            var subject = new Subject
+            {
+                Name = SubjectDTO.Name
+            };
+
+            _subjectRepository.Add(subject);
 
             return await _subjectRepository.SaveChangesAsync()
                 ? Ok("Matéria criada com sucesso")

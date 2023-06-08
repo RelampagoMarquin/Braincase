@@ -15,5 +15,6 @@ namespace Api.Models
         // rela��o um para muitos
         public User User { get; set; }
 
+        public Question Question { get; set; }
     }
 }
