@@ -67,7 +67,10 @@ namespace Api.Controllers
             {
                 return NotFound("Instituição não encontrada");
             }
-            institution.Name = institutionDTO.Name;
+            if(institutionDTO.Name != null)
+            {
+                institution.Name = institutionDTO.Name;
+            }
             _institutionRepository.Update(institution);
             
             return await _institutionRepository.SaveChangesAsync()

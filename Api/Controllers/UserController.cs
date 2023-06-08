@@ -56,14 +56,14 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
-            var reponse = new UserResponseDTO
+            var response = new UserResponseDTO
             {
                 Registration = user.Registration,
                 Email = user.Email,
                 Id = user.Id,
                 Name = user.Name,
             };
-            return reponse;
+            return response;
         }
         
         // PUT: api/User/5
@@ -104,7 +104,6 @@ namespace Api.Controllers
                 ? Ok("Usuário Atualizado com sucesso")
                 : BadRequest("Erro ao atualizar o Usuário");
         }
-
         
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

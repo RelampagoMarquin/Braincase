@@ -7,118 +7,105 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
-
+using Api.Repository.Interfaces;
+using Api.Dto.Subject;
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class SubjectController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        
+        private readonly ISubjectRepository _subjectRepository;
 
-        public SubjectController(APIDbContext context)
+        public SubjectController(ISubjectRepository subjectRepository)
         {
-            _context = context;
+           _subjectRepository = subjectRepository;
         }
 
         // GET: api/Subject
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subject>>> GetSubject()
+        public async Task<ActionResult<IEnumerable<SubjectDTO>>> GetSubject()
         {
-          if (_context.Subject == null)
-          {
-              return NotFound();
-          }
-            return await _context.Subject.ToListAsync();
+         var subjects = await _subjectRepository.GetAllSubject();
+         var responseSubjects = new List<SubjectDTO>();
+         foreach (var subject in subjects) 
+         {
+            SubjectDTO responseDTO = new SubjectDTO
+            {
+                Name = subject.Name,
+            };
+            responseSubjects.Add(responseDTO);
+         }
+         return responseSubjects;
         }
 
         // GET: api/Subject/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subject>> GetSubject(Guid id)
+        public async Task<ActionResult<SubjectDTO>> GetSubject(Guid id)
         {
-          if (_context.Subject == null)
+          var subject =  await _subjectRepository.GetSubjectById(id);
+          if (subject == null) 
           {
-              return NotFound();
+            return NotFound();
           }
-            var subject = await _context.Subject.FindAsync(id);
-
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
-            return subject;
+          var response = new SubjectDTO{
+            Name = subject.Name,
+          };
+          return response;
         }
 
         // PUT: api/Subject/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubject(Guid id, Subject subject)
+        public async Task<IActionResult> PutSubject(Guid id, SubjectDTO subjectDTO)
         {
-            if (id != subject.Id)
+            var subject = await _subjectRepository.GetSubjectById(id);
+            
+            if (subject == null)
             {
-                return BadRequest();
+                return NotFound("Matéria não encontrado");
             }
-
-            _context.Entry(subject).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SubjectExists(id))
+            if (subjectDTO.Name != null)
                 {
-                    return NotFound();
+                    subject.Name = subjectDTO.Name;
                 }
-                else
-                {
-                    throw;
-                }
-            }
+            _subjectRepository.Update(subject);
 
-            return NoContent();
+            return await _subjectRepository.SaveChangesAsync()
+                ? Ok("Matéria foi criada")
+                : BadRequest("Erro ao atualizar a matéria");
+              
         }
 
         // POST: api/Subject
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Subject>> PostSubject(Subject subject)
+        public async Task<ActionResult<SubjectDTO>> PostSubject(SubjectDTO subjectDTO)
         {
-          if (_context.Subject == null)
-          {
-              return Problem("Entity set 'APIDbContext.Subject'  is null.");
-          }
-            _context.Subject.Add(subject);
-            await _context.SaveChangesAsync();
+            _subjectRepository.Add(subjectDTO);
 
-            return CreatedAtAction("GetSubject", new { id = subject.Id }, subject);
+            return await _subjectRepository.SaveChangesAsync()
+                ? Ok("Matéria criada com sucesso")
+                : BadRequest("Erro ao criar a matéria");
+
         }
 
         // DELETE: api/Subject/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubject(Guid id)
         {
-            if (_context.Subject == null)
+            var subject = await _subjectRepository.GetSubjectById(id);
+            if(subject == null) 
             {
-                return NotFound();
+                return NotFound("Não foi possível encontrar a matéria.");
             }
-            var subject = await _context.Subject.FindAsync(id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
-            _context.Subject.Remove(subject);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            _subjectRepository.Delete(subject);
+            return await _subjectRepository.SaveChangesAsync()
+            ? Ok("Matéria deletada com sucesso")
+            : BadRequest("Erro ao deletar matéria");
         }
 
-        private bool SubjectExists(Guid id)
-        {
-            return (_context.Subject?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }
