@@ -20,12 +20,12 @@ namespace Api.Repository
 
         public async Task<IEnumerable<Tag>> GetAllTags()
         {
-            return await _context.Tag.ToListAsync();
+            return await _context.Tag.Include(x => x.Subject).ToListAsync();
         }
 
         public async Task<Tag?> GetTagById(Guid id)
         {
-            var tag = await _context.Tag.FindAsync(id);
+            var tag = await _context.Tag.Include(x => x.Subject).FirstOrDefaultAsync(x => x.Id == id);
 
             if (tag is null)
             {

@@ -36,7 +36,8 @@ namespace Api.Controllers
                 {
                     Id = tag.Id,
                     Name = tag.Name,
-                    SubjectId = tag.Subject.Id
+                    SubjectId = tag.SubjectId,
+                    SubjectName = tag.Subject.Name
                 };
                 responseTags.Add(responseDTO);
             }
@@ -56,7 +57,8 @@ namespace Api.Controllers
             {
                     Id = tag.Id,
                     Name = tag.Name,
-                    SubjectId = tag.Subject.Id
+                    SubjectId = tag.SubjectId,
+                    SubjectName = tag.Subject.Name
             };
             return response;
         }
@@ -77,7 +79,7 @@ namespace Api.Controllers
             }
             if(updateTagDTO.SubjectId != null)
             {
-                tag.Subject.Id = (Guid)updateTagDTO.SubjectId;
+                tag.SubjectId = (Guid)updateTagDTO.SubjectId;
             }
 
             _tagRepository.Update(tag);
@@ -101,8 +103,8 @@ namespace Api.Controllers
             _tagRepository.Add(tag);
 
             return await _tagRepository.SaveChangesAsync()
-                ? Ok("Instituição criada com sucesso")
-                : BadRequest("Erro ao criar a Instituição");
+                ? Ok("Tag criada com sucesso")
+                : BadRequest("Erro ao criar a Tag");
 
         }
 
@@ -110,8 +112,17 @@ namespace Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTag(Guid id)
         {
-            return NoContent();
-        }
+            var tag = await _tagRepository.GetTagById(id);
+            if (tag == null)
+            {
+                return NotFound("Tag não encontrada");
+            }
 
+            _tagRepository.Delete(tag);
+
+            return await _tagRepository.SaveChangesAsync()
+                ? Ok("Tag deletada com sucesso")
+                : BadRequest("Erro ao deletar a Tag");
+        }
     }
 }

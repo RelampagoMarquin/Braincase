@@ -21,5 +21,7 @@ namespace Api.Dto.Tag
         public String Name { get; set; }
 
         public Guid SubjectId { get; set; }
+
+        public String SubjectName { get; set; }
     }
 }

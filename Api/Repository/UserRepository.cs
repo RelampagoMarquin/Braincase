@@ -22,7 +22,7 @@ namespace Api.Repositorys
 
         async Task<User?> IUserRepository.GetUserById(Guid id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.FirstOrDefaultAsync(x => x.Id == id);
 
             if (user is null)
             {
