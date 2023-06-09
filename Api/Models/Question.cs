@@ -24,8 +24,12 @@ namespace Api.Models
         public bool IsPrivate { get; set; } = true;
         // rela��o n n
         public List<Favorites> Favorites { get; } = new();
+
         public List<Tag> Tags { get; } = new();
-        public Institution? Institution {get; set;}
+
+        public Guid? InstitutionId { get; set; }
+
+        public Institution? Institution { get; set; }
 
         // relacao 1 para n
         public ICollection<Answer> Answers { get; } = new List<Answer>();

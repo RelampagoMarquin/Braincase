@@ -26,13 +26,13 @@ namespace Api.Controllers
 
         // GET: api/Institution
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InstitutionResponseDTO>>> GetInstitution()
+        public async Task<ActionResult<IEnumerable<ResponseInstitutionDTO>>> GetInstitution()
         {
             var institutions = await _institutionRepository.GetAllInstitutions();
-            var resposeInstitutions = new List<InstitutionResponseDTO>();
+            var resposeInstitutions = new List<ResponseInstitutionDTO>();
             foreach (var institution in institutions)
             {
-                InstitutionResponseDTO responseDTO = new InstitutionResponseDTO
+                ResponseInstitutionDTO responseDTO = new ResponseInstitutionDTO
                 {
                     Id = institution.Id,
                     Name = institution.Name
@@ -44,14 +44,14 @@ namespace Api.Controllers
 
         // GET: api/Institution/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<InstitutionResponseDTO>> GetInstitution(Guid id)
+        public async Task<ActionResult<ResponseInstitutionDTO>> GetInstitution(Guid id)
         {
             var institution = await _institutionRepository.GetInstitutionById(id);
             if (institution == null)
             {
                 return NotFound("Instituição não encontrada");
             }
-            var reponse = new InstitutionResponseDTO
+            var reponse = new ResponseInstitutionDTO
             {
                     Id = institution.Id,
                     Name = institution.Name

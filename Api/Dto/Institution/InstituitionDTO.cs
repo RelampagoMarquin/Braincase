@@ -4,7 +4,7 @@ namespace Api.Dto.Institution
     {
         public String Name { get; set; }  
     }
-    public class InstitutionResponseDTO
+    public class ResponseInstitutionDTO
     {
         public Guid Id { get; set; }
         public String Name { get; set; }  

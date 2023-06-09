@@ -7,118 +7,111 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Repository.Interfaces;
+using Api.Dto.Tag;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class TagController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly ITagRepository _tagRepository;
 
-        public TagController(APIDbContext context)
+        public TagController(ITagRepository tagRepository)
         {
-            _context = context;
+            _tagRepository = tagRepository;
         }
 
         // GET: api/Tag
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tag>>> GetTag()
+        public async Task<ActionResult<IEnumerable<ResponseTagDTO>>> GetTag()
         {
-          if (_context.Tag == null)
-          {
-              return NotFound();
-          }
-            return await _context.Tag.ToListAsync();
+            var tags = await _tagRepository.GetAllTags();
+            var responseTags = new List<ResponseTagDTO>();
+            foreach (var tag in tags)
+            {
+                ResponseTagDTO responseDTO = new ResponseTagDTO
+                {
+                    Id = tag.Id,
+                    Name = tag.Name,
+                    SubjectId = tag.Subject.Id
+                };
+                responseTags.Add(responseDTO);
+            }
+            return responseTags;
         }
 
         // GET: api/Tag/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tag>> GetTag(Guid id)
+        public async Task<ActionResult<ResponseTagDTO>> GetTag(Guid id)
         {
-          if (_context.Tag == null)
-          {
-              return NotFound();
-          }
-            var tag = await _context.Tag.FindAsync(id);
-
+            var tag = await _tagRepository.GetTagById(id);
             if (tag == null)
             {
-                return NotFound();
+                return NotFound("Tag não encontrada");
             }
-
-            return tag;
+            var response = new ResponseTagDTO
+            {
+                    Id = tag.Id,
+                    Name = tag.Name,
+                    SubjectId = tag.Subject.Id
+            };
+            return response;
         }
 
         // PUT: api/Tag/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTag(Guid id, Tag tag)
+        public async Task<IActionResult> PutTag(Guid id, UpdateTagDTO updateTagDTO)
         {
-            if (id != tag.Id)
+            var tag = await _tagRepository.GetTagById(id);
+            if (tag == null)
             {
-                return BadRequest();
+                return NotFound("Tag não encontrada");
+            }
+            if(updateTagDTO.Name != null)
+            {
+                tag.Name = updateTagDTO.Name;
+            }
+            if(updateTagDTO.SubjectId != null)
+            {
+                tag.Subject.Id = (Guid)updateTagDTO.SubjectId;
             }
 
-            _context.Entry(tag).State = EntityState.Modified;
+            _tagRepository.Update(tag);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TagExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _tagRepository.SaveChangesAsync()
+                ? Ok("Tag Atualizado com sucesso")
+                : BadRequest("Erro ao atualizar a Tag");
         }
 
         // POST: api/Tag
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Tag>> PostTag(Tag tag)
+        public async Task<ActionResult> PostTag(CreateTagDTO createTagDTO)
         {
-          if (_context.Tag == null)
-          {
-              return Problem("Entity set 'APIDbContext.Tag'  is null.");
-          }
-            _context.Tag.Add(tag);
-            await _context.SaveChangesAsync();
+            var tag = new Tag
+            {
+                Name = createTagDTO.Name,
+                SubjectId = createTagDTO.SubjectId,
+            };
 
-            return CreatedAtAction("GetTag", new { id = tag.Id }, tag);
+            _tagRepository.Add(tag);
+
+            return await _tagRepository.SaveChangesAsync()
+                ? Ok("Instituição criada com sucesso")
+                : BadRequest("Erro ao criar a Instituição");
+
         }
 
         // DELETE: api/Tag/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTag(Guid id)
         {
-            if (_context.Tag == null)
-            {
-                return NotFound();
-            }
-            var tag = await _context.Tag.FindAsync(id);
-            if (tag == null)
-            {
-                return NotFound();
-            }
-
-            _context.Tag.Remove(tag);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool TagExists(Guid id)
-        {
-            return (_context.Tag?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

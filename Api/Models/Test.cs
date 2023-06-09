@@ -27,6 +27,8 @@ namespace Api.Models
 
         public List<Question> Questions { get; } = new();
 
+        public Guid UserId { get; set; }
+
         public User User { get; set; }
     }
 }

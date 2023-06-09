@@ -16,6 +16,8 @@ namespace Api.Models
         [MaxLength(int.MaxValue)]
         public String? Justify { get; set; }
 
+        public Guid QuestionId { get; set; }
+
         public Question Question { get; set; }
     }
 }
