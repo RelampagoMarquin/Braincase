@@ -9,6 +9,8 @@ using Api.Data;
 using Api.Models;
 using Api.Repository.Interfaces;
 using Api.Dto.Subject;
+using AutoMapper;
+
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
@@ -18,10 +20,12 @@ namespace Api.Controllers
     {
         
         private readonly ISubjectRepository _subjectRepository;
+        private readonly IMapper _mapper;
 
-        public SubjectController(ISubjectRepository subjectRepository)
+        public SubjectController(ISubjectRepository subjectRepository, IMapper mapper)
         {
             _subjectRepository = subjectRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Subject
@@ -32,13 +36,8 @@ namespace Api.Controllers
             var responseSubjects = new List<ResponseSubjectDTO>();
             foreach (var subject in subjects) 
             {
-                ResponseSubjectDTO responseDTO = new ResponseSubjectDTO
-                {
-                    Id = subject.Id,
-                    Name = subject.Name
-                };
-            
-            responseSubjects.Add(responseDTO);
+                var response = _mapper.Map<ResponseSubjectDTO>(subject);
+                responseSubjects.Add(response);  
             }
             return responseSubjects;
         }
@@ -52,11 +51,9 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
-            var response = new ResponseSubjectDTO
-            {
-                Id = subject.Id,
-                Name = subject.Name,
-            };
+
+            var response = _mapper.Map<ResponseSubjectDTO>(subject);
+
             return response;
         }
 
@@ -65,17 +62,15 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSubject(Guid id, SubjectDTO subjectDTO)
         {
-            var subject = await _subjectRepository.GetSubjectById(id);
-            
-            if (subject == null)
+            var subjectBanco = await _subjectRepository.GetSubjectById(id);
+            if (subjectBanco == null)
             {
-                return NotFound("Matéria não encontrado");
+                return NotFound("Instituição não encontrada");
             }
-            if (subjectDTO.Name != null)
-            {
-                subject.Name = subjectDTO.Name;
-            }
-            _subjectRepository.Update(subject);
+
+            var tagUpdate = _mapper.Map(subjectDTO, subjectBanco);
+
+            _subjectRepository.Update(tagUpdate);
 
             return await _subjectRepository.SaveChangesAsync()
                 ? Ok("Matéria foi atualizada")
@@ -88,10 +83,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostSubject(SubjectDTO SubjectDTO)
         {
-            var subject = new Subject
-            {
-                Name = SubjectDTO.Name
-            };
+            var subject = _mapper.Map<Subject>(SubjectDTO);
 
             _subjectRepository.Add(subject);
 

@@ -9,6 +9,7 @@ using Api.Data;
 using Api.Models;
 using Api.Repository.Interfaces;
 using Api.Dto.Institution;
+﻿using AutoMapper;
 
 namespace Api.Controllers
 {
@@ -18,10 +19,12 @@ namespace Api.Controllers
     public class InstitutionController : ControllerBase
     {
         private readonly IInstitutionRepository _institutionRepository;
+        private readonly IMapper _mapper;
 
-        public InstitutionController(IInstitutionRepository institutionRepository)
+        public InstitutionController(IInstitutionRepository institutionRepository, IMapper mapper)
         {
             _institutionRepository = institutionRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Institution
@@ -32,12 +35,8 @@ namespace Api.Controllers
             var resposeInstitutions = new List<ResponseInstitutionDTO>();
             foreach (var institution in institutions)
             {
-                ResponseInstitutionDTO responseDTO = new ResponseInstitutionDTO
-                {
-                    Id = institution.Id,
-                    Name = institution.Name
-                };
-                resposeInstitutions.Add(responseDTO);
+                var response = _mapper.Map<ResponseInstitutionDTO>(institution);
+                resposeInstitutions.Add(response);
             }
             return resposeInstitutions;
         }
@@ -51,12 +50,8 @@ namespace Api.Controllers
             {
                 return NotFound("Instituição não encontrada");
             }
-            var reponse = new ResponseInstitutionDTO
-            {
-                    Id = institution.Id,
-                    Name = institution.Name
-            };
-            return reponse;
+            var response = _mapper.Map<ResponseInstitutionDTO>(institution);
+            return response;
         }
 
         // PUT: api/Institution/5
@@ -64,17 +59,14 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInstitution(Guid id, InstitutionDTO institutionDTO)
         {
-            var institution = await _institutionRepository.GetInstitutionById(id);
-            if (institution == null)
+            var institutionBanco = await _institutionRepository.GetInstitutionById(id);
+            if (institutionBanco == null)
             {
                 return NotFound("Instituição não encontrada");
             }
-            if(institutionDTO.Name != null)
-            {
-                institution.Name = institutionDTO.Name;
-            }
+            var institutionUpdate = _mapper.Map(institutionDTO, institutionBanco);
             
-            _institutionRepository.Update(institution);
+            _institutionRepository.Update(institutionUpdate);
             
             return await _institutionRepository.SaveChangesAsync()
                 ? Ok("Instituição Atualizado com sucesso")
@@ -86,10 +78,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostInstitution(InstitutionDTO InstitutionDTO)
         {
-            var institution = new Institution
-            {
-                Name = InstitutionDTO.Name
-            };
+            var institution = _mapper.Map<Institution>(InstitutionDTO);
 
             _institutionRepository.Add(institution);
 

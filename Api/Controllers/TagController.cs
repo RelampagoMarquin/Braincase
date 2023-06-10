@@ -9,6 +9,7 @@ using Api.Data;
 using Api.Models;
 using Api.Repository.Interfaces;
 using Api.Dto.Tag;
+﻿using AutoMapper;
 
 namespace Api.Controllers
 {
@@ -18,10 +19,12 @@ namespace Api.Controllers
     public class TagController : ControllerBase
     {
         private readonly ITagRepository _tagRepository;
+        private readonly IMapper _mapper;
 
-        public TagController(ITagRepository tagRepository)
+        public TagController(ITagRepository tagRepository, IMapper mapper)
         {
             _tagRepository = tagRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Tag
@@ -32,14 +35,8 @@ namespace Api.Controllers
             var responseTags = new List<ResponseTagDTO>();
             foreach (var tag in tags)
             {
-                ResponseTagDTO responseDTO = new ResponseTagDTO
-                {
-                    Id = tag.Id,
-                    Name = tag.Name,
-                    SubjectId = tag.SubjectId,
-                    SubjectName = tag.Subject.Name
-                };
-                responseTags.Add(responseDTO);
+                var response = _mapper.Map<ResponseTagDTO>(tag);
+                responseTags.Add(response);   
             }
             return responseTags;
         }
@@ -53,13 +50,7 @@ namespace Api.Controllers
             {
                 return NotFound("Tag não encontrada");
             }
-            var response = new ResponseTagDTO
-            {
-                    Id = tag.Id,
-                    Name = tag.Name,
-                    SubjectId = tag.SubjectId,
-                    SubjectName = tag.Subject.Name
-            };
+            var response = _mapper.Map<ResponseTagDTO>(tag);
             return response;
         }
 
@@ -68,21 +59,15 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTag(Guid id, UpdateTagDTO updateTagDTO)
         {
-            var tag = await _tagRepository.GetTagById(id);
-            if (tag == null)
+            var tagBanco = await _tagRepository.GetTagById(id);
+            if (tagBanco == null)
             {
                 return NotFound("Tag não encontrada");
             }
-            if(updateTagDTO.Name != null)
-            {
-                tag.Name = updateTagDTO.Name;
-            }
-            if(updateTagDTO.SubjectId != null)
-            {
-                tag.SubjectId = (Guid)updateTagDTO.SubjectId;
-            }
 
-            _tagRepository.Update(tag);
+            var tagUpdate = _mapper.Map(updateTagDTO, tagBanco);
+
+            _tagRepository.Update(tagUpdate);
 
             return await _tagRepository.SaveChangesAsync()
                 ? Ok("Tag Atualizado com sucesso")
@@ -94,11 +79,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostTag(CreateTagDTO createTagDTO)
         {
-            var tag = new Tag
-            {
-                Name = createTagDTO.Name,
-                SubjectId = createTagDTO.SubjectId,
-            };
+            var tag = _mapper.Map<Tag>(createTagDTO);
 
             _tagRepository.Add(tag);
 
