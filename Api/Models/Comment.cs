@@ -13,7 +13,7 @@ namespace Api.Models
         public string Text { get; set; }
 
         // rela��o um para muitos
-        public Guid UserId { get; set; }
+        public String UserId { get; set; }
 
         public User User { get; set; }
 

@@ -3,7 +3,6 @@ using Api.Models;
 using Api.Repository;
 using Api.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Api.Dto.User;
 
 namespace Api.Repositorys
@@ -20,7 +19,7 @@ namespace Api.Repositorys
             return await _context.User.ToListAsync();
         }
 
-        async Task<User?> IUserRepository.GetUserById(Guid id)
+        async Task<User?> IUserRepository.GetUserById(String id)
         {
             var user = await _context.User.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -37,7 +36,6 @@ namespace Api.Repositorys
             {
                 Name = UserCreateDTO.Name,
                 Email = UserCreateDTO.Email,
-                Password = UserCreateDTO.Password,
                 Registration = UserCreateDTO.Registration,
             };
 

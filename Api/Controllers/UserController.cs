@@ -35,7 +35,7 @@ namespace Api.Controllers
             {
               UserResponseDTO reponseDTO = new UserResponseDTO
             {
-                Id = user.Id,
+                Id = user.Id.ToString(),
                 Name = user.Name,
                 Email = user.Email,
                 Registration = user.Registration,
@@ -47,7 +47,7 @@ namespace Api.Controllers
 
        // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponseDTO>> GetUser(Guid id)
+        public async Task<ActionResult<UserResponseDTO>> GetUser(String id)
         {
 
             var user = await _userRepository.GetUserById(id);
@@ -69,7 +69,7 @@ namespace Api.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UserUpdateDTO userUpdateDTO)
+        public async Task<IActionResult> PutUser(String id, UserUpdateDTO userUpdateDTO)
         {
             var user = await _userRepository.GetUserById(id);
             if (user == null)
@@ -91,8 +91,6 @@ namespace Api.Controllers
                 {
                     return BadRequest("Senhas diferentes");
                 }
-                var haspass = PasswordHasher.HashPassword(userUpdateDTO.Password);
-                user.Password = haspass;
             }
             if (userUpdateDTO.Email != null)
             {
@@ -127,7 +125,7 @@ namespace Api.Controllers
         }
         // DELETE: api/User/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUser(String id)
         {
             var user = await _userRepository.GetUserById(id);
             if (user == null)

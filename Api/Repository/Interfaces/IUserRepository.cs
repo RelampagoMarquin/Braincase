@@ -7,7 +7,7 @@ namespace Api.Repository.Interfaces
     {
         Task<IEnumerable<User>> GetAllUsers();
 
-        Task<User?> GetUserById(Guid id);
+        Task<User?> GetUserById(String id);
 
         Task<User> CreateUser(UserCreateDTO UserCreateDTO);
     }

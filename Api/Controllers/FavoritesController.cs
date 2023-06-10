@@ -53,7 +53,7 @@ namespace Api.Controllers
         // PUT: api/Favorites/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFavorites(Guid id, Favorites favorites)
+        public async Task<IActionResult> PutFavorites(String id, Favorites favorites)
         {
             if (id != favorites.UserId)
             {
@@ -130,7 +130,7 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        private bool FavoritesExists(Guid id)
+        private bool FavoritesExists(String id)
         {
             return (_context.Favorites?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
