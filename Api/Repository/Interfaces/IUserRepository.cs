@@ -9,6 +9,6 @@ namespace Api.Repository.Interfaces
 
         Task<User?> GetUserById(Guid id);
 
-        Task<User> CreateUser(UserCreateDTO UserCreateDTO);
+        Task<User> CreateUser(CreateUserDTO createUserDTO);
     }
 }

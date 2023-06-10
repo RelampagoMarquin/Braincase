@@ -1,6 +1,6 @@
 ﻿namespace Api.Dto.User
 {
-    public class UserCreateDTO
+    public class CreateUserDTO
     {
         public string Name { get; set; }
 
@@ -13,7 +13,7 @@
         public string ConfirmedPassword { get; set; }
     }
 
-    public class UserUpdateDTO
+    public class UpdateUserDTO
     {
         public string? Name { get; set; }
 
@@ -26,7 +26,7 @@
         public string? ConfirmedPassword { get; set; }
     }
 
-    public class UserResponseDTO
+    public class ResposeUserDTO
     {
         public Guid Id { get; set; }
 

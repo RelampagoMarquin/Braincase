@@ -11,6 +11,7 @@ using Api.Services;
 using Api.Dto.User;
 using Api.Repository.Interfaces;
 using Api.utils;
+using AutoMapper;
 
 namespace Api.Controllers
 {
@@ -20,34 +21,30 @@ namespace Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        public UserController(IUserRepository userRepository)
+        private readonly IMapper _mapper;
+        public UserController(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetUser()
+        public async Task<ActionResult<IEnumerable<ResposeUserDTO>>> GetUser()
         {
             var users = await _userRepository.GetAllUsers();
-            var responseUsers = new List<UserResponseDTO>();
+            var responseUsers = new List<ResposeUserDTO>();
             foreach (var user in users)
             {
-              UserResponseDTO reponseDTO = new UserResponseDTO
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Registration = user.Registration,
-            };
-            responseUsers.Add(reponseDTO);  
+                var response = _mapper.Map<ResposeUserDTO>(user);
+                responseUsers.Add(response);
             }
             return responseUsers;
         }
 
        // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponseDTO>> GetUser(Guid id)
+        public async Task<ActionResult<ResposeUserDTO>> GetUser(Guid id)
         {
 
             var user = await _userRepository.GetUserById(id);
@@ -56,49 +53,23 @@ namespace Api.Controllers
             {
                 return NotFound("Usuário não encontrado");
             }
-            var response = new UserResponseDTO
-            {
-                Registration = user.Registration,
-                Email = user.Email,
-                Id = user.Id,
-                Name = user.Name,
-            };
+            var response = _mapper.Map<ResposeUserDTO>(user);
             return response;
         }
         
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UserUpdateDTO userUpdateDTO)
+        public async Task<IActionResult> PutUser(Guid id, UpdateUserDTO userUpdateDTO)
         {
-            var user = await _userRepository.GetUserById(id);
-            if (user == null)
+            var userBanco = await _userRepository.GetUserById(id);
+            if (userBanco == null)
             {
                 return NotFound("Usuário não encontrado");
             }
 
-            if(userUpdateDTO.Name != null)
-            {
-                user.Name = userUpdateDTO.Name;
-            }
-            if (userUpdateDTO.Registration != null)
-            {
-                user.Registration = userUpdateDTO.Registration;
-            }
-            if (userUpdateDTO.Password != null && userUpdateDTO.ConfirmedPassword != null )
-            {
-                if(userUpdateDTO.Password != userUpdateDTO.ConfirmedPassword)
-                {
-                    return BadRequest("Senhas diferentes");
-                }
-                var haspass = PasswordHasher.HashPassword(userUpdateDTO.Password);
-                user.Password = haspass;
-            }
-            if (userUpdateDTO.Email != null)
-            {
-                user.Email = userUpdateDTO.Email;
-            }
-            _userRepository.Update(user);
+            var tagUpdate = _mapper.Map(userUpdateDTO, userBanco);
+            _userRepository.Update(tagUpdate);
 
             return await _userRepository.SaveChangesAsync() 
                 ? Ok("Usuário Atualizado com sucesso")
@@ -108,20 +79,14 @@ namespace Api.Controllers
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserResponseDTO>> PostUser(UserCreateDTO createUserDTO)
+        public async Task<ActionResult<ResposeUserDTO>> PostUser(CreateUserDTO createUserDTO)
         {
             if (createUserDTO.Password != createUserDTO.ConfirmedPassword) {
                 return BadRequest("Senhas diferentes");
             }
             createUserDTO.Password = PasswordHasher.HashPassword(createUserDTO.Password);
             var createdUser = await _userRepository.CreateUser(createUserDTO);
-            UserResponseDTO reponseDTO = new UserResponseDTO
-            {
-                Id = createdUser.Id,
-                Name = createdUser.Name,
-                Email = createdUser.Email,
-                Registration = createdUser.Registration
-            };
+            var reponseDTO = _mapper.Map<ResposeUserDTO>(createdUser);
             return CreatedAtAction("GetUser", new { id = createdUser.Id }, reponseDTO);
           
         }

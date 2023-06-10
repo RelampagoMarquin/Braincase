@@ -5,15 +5,18 @@ using Api.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Api.Dto.User;
+using AutoMapper;
 
 namespace Api.Repositorys
 {
     public class UserRepository : BaseRepository, IUserRepository
     {
         private readonly APIDbContext _context;
-        public UserRepository(APIDbContext context) : base(context)
+        private readonly IMapper _mapper;
+        public UserRepository(APIDbContext context, IMapper mapper) : base(context)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<User>> GetAllUsers()
         {
@@ -31,15 +34,9 @@ namespace Api.Repositorys
             return user;
         }
 
-        async Task<User> IUserRepository.CreateUser(UserCreateDTO UserCreateDTO)
+        async Task<User> IUserRepository.CreateUser(CreateUserDTO createUserDTO)
         {
-            var user = new User
-            {
-                Name = UserCreateDTO.Name,
-                Email = UserCreateDTO.Email,
-                Password = UserCreateDTO.Password,
-                Registration = UserCreateDTO.Registration,
-            };
+            var user = _mapper.Map<User>(createUserDTO);
 
             _context.User.Add(user);
             await _context.SaveChangesAsync();
