@@ -34,7 +34,7 @@ namespace Api.Controllers
 
         // GET: api/Question/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Question>> GetQuestion(Guid id)
+        public async Task<ActionResult<Question>> GetQuestionById(Guid id)
         {
           if (_context.Question == null)
           {

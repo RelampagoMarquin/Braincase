@@ -34,7 +34,7 @@ namespace Api.Controllers
 
         // GET: api/Comment/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(Guid id)
+        public async Task<ActionResult<Comment>> GetCommentById(Guid id)
         {
           if (_context.Comment == null)
           {

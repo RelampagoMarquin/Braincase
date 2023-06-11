@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Api.Dto.Institution;
 using Api.Dto.Subject;
 using Api.Dto.Tag;
+using Api.Dto.Test;
 using Api.Dto.User;
 using Api.Models;
 using AutoMapper;
@@ -59,6 +60,24 @@ namespace Api.Helpers
                     });
                 });
             CreateMap<CreateUserDTO, User>();
+
+            // mapper de test
+            CreateMap<Test, ResponseTestDTO>();
+            CreateMap<UpdateTestDTO, Test>()
+                .ForAllMembers(opts =>
+                {
+                    opts.Condition((src, dest, srcMember, destMember) =>
+                    {
+                        if (srcMember == null)
+                            return false;
+
+                        if (srcMember is Guid guidValue)
+                            return guidValue != Guid.Empty;
+
+                        return true;
+                    });
+                });
+            CreateMap<CreateTestDTO, Test>();
         }
     }
 }

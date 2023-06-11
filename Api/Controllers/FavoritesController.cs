@@ -34,7 +34,7 @@ namespace Api.Controllers
 
         // GET: api/Favorites/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Favorites>> GetFavorites(Guid id)
+        public async Task<ActionResult<Favorites>> GetFavoritesById(Guid id)
         {
           if (_context.Favorites == null)
           {

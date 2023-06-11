@@ -43,7 +43,7 @@ namespace Api.Controllers
 
         // GET: api/Institution/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseInstitutionDTO>> GetInstitution(Guid id)
+        public async Task<ActionResult<ResponseInstitutionDTO>> GetInstitutionById(Guid id)
         {
             var institution = await _institutionRepository.GetInstitutionById(id);
             if (institution == null)

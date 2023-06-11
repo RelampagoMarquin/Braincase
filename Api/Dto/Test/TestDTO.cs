@@ -6,11 +6,9 @@ namespace Api.Dto.Test
 
         public String ClassName { get; set; }
 
-        public DateTime CreateAt { get; set; }
-
-        public DateTime LastUse { get; set; }
-
         public String? LogoUrl { get; set; }
+
+        public Guid UserId { get; set; }
     }
 
     public class UpdateTestDTO
@@ -38,7 +36,12 @@ namespace Api.Dto.Test
 
         public String? LogoUrl { get; set; }
 
-        public Guid User { get; set; }
+        public Guid UserId { get; set; }
     }
 
+    public class responseQuestionTest
+    {
+        // DTO não implementado ainda
+        // este DTO deverá informar os dados dos testes, suas questões e das alternativas de suas questões
+    }
 }

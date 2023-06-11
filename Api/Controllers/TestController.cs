@@ -7,118 +7,115 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using AutoMapper;
+using Api.Repository.Interfaces;
+using Api.Dto.Test;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class TestController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly ITestRepository _testRepository;
+        private readonly IMapper _mapper;
 
-        public TestController(APIDbContext context)
+        public TestController(ITestRepository testRepository, IMapper mapper)
         {
-            _context = context;
+            _testRepository = testRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Test
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Test>>> GetTest()
+        public async Task<ActionResult<IEnumerable<ResponseTestDTO>>> GetTest()
         {
-          if (_context.Test == null)
-          {
-              return NotFound();
-          }
-            return await _context.Test.ToListAsync();
+            var tests = await _testRepository.GetAllTests();
+            var responseTests = new List<ResponseTestDTO>();
+            foreach (var test in tests)
+            {
+                var response = _mapper.Map<ResponseTestDTO>(test);
+                responseTests.Add(response);
+            }
+            return responseTests;
         }
 
         // GET: api/Test/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Test>> GetTest(Guid id)
+        public async Task<ActionResult<ResponseTestDTO>> GetTestById(Guid id)
         {
-          if (_context.Test == null)
-          {
-              return NotFound();
-          }
-            var test = await _context.Test.FindAsync(id);
-
+            var test = await _testRepository.GetTestById(id);
             if (test == null)
             {
-                return NotFound();
+                return NotFound("Prova não encontrada");
             }
-
-            return test;
+            var response = _mapper.Map<ResponseTestDTO>(test);
+            return response;
         }
+
+        [HttpGet("user{id}")]
+        public async Task<ActionResult<IEnumerable<ResponseTestDTO>>> GetAllTestsByUser(Guid id)
+        {
+            var tests = await _testRepository.GetAllTestsByUser(id);
+            var responseTests = new List<ResponseTestDTO>();
+            foreach (var test in tests)
+            {
+                var response = _mapper.Map<ResponseTestDTO>(test);
+                responseTests.Add(response);
+            }
+            return responseTests;
+        }
+
 
         // PUT: api/Test/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTest(Guid id, Test test)
+        public async Task<IActionResult> PutTest(Guid id, UpdateTestDTO updateTestDTO)
         {
-            if (id != test.Id)
+            var testBanco = await _testRepository.GetTestById(id);
+            if (testBanco == null)
             {
-                return BadRequest();
+                return NotFound("Prova não encontrada");
             }
-
-            _context.Entry(test).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var institutionUpdate = _mapper.Map(updateTestDTO, testBanco);
+            
+            _testRepository.Update(institutionUpdate);
+            
+            return await _testRepository.SaveChangesAsync()
+                ? Ok("Prova Atualizada com sucesso")
+                : BadRequest("Erro ao atualizar a Prova");
         }
 
         // POST: api/Test
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Test>> PostTest(Test test)
+        public async Task<ActionResult<Test>> PostTest(CreateTestDTO createTestDTO)
         {
-          if (_context.Test == null)
-          {
-              return Problem("Entity set 'APIDbContext.Test'  is null.");
-          }
-            _context.Test.Add(test);
-            await _context.SaveChangesAsync();
+            var test = _mapper.Map<Test>(createTestDTO);
 
-            return CreatedAtAction("GetTest", new { id = test.Id }, test);
+            _testRepository.Add(test);
+
+            return await _testRepository.SaveChangesAsync()
+                ? Ok("Prova criada com sucesso")
+                : BadRequest("Erro ao criar a Prova");
         }
 
         // DELETE: api/Test/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTest(Guid id)
         {
-            if (_context.Test == null)
-            {
-                return NotFound();
-            }
-            var test = await _context.Test.FindAsync(id);
+            var test = await _testRepository.GetTestById(id);
             if (test == null)
             {
-                return NotFound();
+                return NotFound("Prova não encontrada");
             }
 
-            _context.Test.Remove(test);
-            await _context.SaveChangesAsync();
+            _testRepository.Delete(test);
 
-            return NoContent();
-        }
-
-        private bool TestExists(Guid id)
-        {
-            return (_context.Test?.Any(e => e.Id == id)).GetValueOrDefault();
+            return await _testRepository.SaveChangesAsync()
+                ? Ok("Prova deletada com sucesso")
+                : BadRequest("Erro ao deletar a Prova");
         }
     }
 }
