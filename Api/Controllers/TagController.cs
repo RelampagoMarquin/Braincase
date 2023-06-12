@@ -9,7 +9,7 @@ using Api.Data;
 using Api.Models;
 using Api.Repository.Interfaces;
 using Api.Dto.Tag;
-﻿using AutoMapper;
+using AutoMapper;
 
 namespace Api.Controllers
 {

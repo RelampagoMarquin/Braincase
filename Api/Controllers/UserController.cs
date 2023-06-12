@@ -68,8 +68,8 @@ namespace Api.Controllers
                 return NotFound("Usuário não encontrado");
             }
 
-            var tagUpdate = _mapper.Map(userUpdateDTO, userBanco);
-            _userRepository.Update(tagUpdate);
+            var userUpdate = _mapper.Map(userUpdateDTO, userBanco);
+            _userRepository.Update(userUpdate);
 
             return await _userRepository.SaveChangesAsync() 
                 ? Ok("Usuário Atualizado com sucesso")

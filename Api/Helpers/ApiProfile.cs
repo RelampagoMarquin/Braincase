@@ -7,6 +7,7 @@ using Api.Dto.Subject;
 using Api.Dto.Tag;
 using Api.Dto.Test;
 using Api.Dto.User;
+using Api.Dto.Question;
 using Api.Models;
 using AutoMapper;
 
@@ -78,6 +79,23 @@ namespace Api.Helpers
                     });
                 });
             CreateMap<CreateTestDTO, Test>();
+            CreateMap<Question, ResponseQuestionDTO>();
+            CreateMap<UpdateQuestionDTO, Question>()
+            .ForAllMembers(opts =>
+            {
+                opts.Condition((src,dest,srcMember, destMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+
+                    if(srcMember is Guid guidValue)
+                        return guidValue != Guid.Empty;
+                    
+                    return true;
+                });
+            });
+            CreateMap<CreateQuestionDTO, Question>();
+            
         }
     }
 }

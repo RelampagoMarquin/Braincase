@@ -7,118 +7,100 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Dto.Question;
+using AutoMapper;
+using Api.Repository.Interfaces;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class QuestionController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly IQuestionRepository _questionRepository;
+        private readonly IMapper _mapper;
 
-        public QuestionController(APIDbContext context)
+        public QuestionController(IQuestionRepository questionRepository, IMapper mapper)
         {
-            _context = context;
+            _questionRepository = questionRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Question
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestion()
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetQuestion()
         {
-          if (_context.Question == null)
-          {
-              return NotFound();
-          }
-            return await _context.Question.ToListAsync();
+            var questions = await _questionRepository.GetAllQuestions();
+            var responseQuestions = new List<ResponseQuestionDTO>();
+            foreach (var question in questions)
+            {
+                var response = _mapper.Map<ResponseQuestionDTO>(question);
+                responseQuestions.Add(response);
+            }
+            return responseQuestions;
         }
 
         // GET: api/Question/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Question>> GetQuestionById(Guid id)
+        public async Task<ActionResult<ResponseQuestionDTO>> GetQuestion(Guid id)
         {
-          if (_context.Question == null)
+          var question = await _questionRepository.GetQuestionById(id);
+          if(question == null)
           {
-              return NotFound();
+            return NotFound("Questão não encontrada");
           }
-            var question = await _context.Question.FindAsync(id);
-
-            if (question == null)
-            {
-                return NotFound();
-            }
-
-            return question;
+            var response = _mapper.Map<ResponseQuestionDTO>(question);
+            return response;
         }
 
         // PUT: api/Question/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuestion(Guid id, Question question)
+        public async Task<IActionResult> PutQuestion(Guid id, UpdateQuestionDTO updateQuestionDTO)
         {
-            if (id != question.Id)
+            var questionBanco = await _questionRepository.GetQuestionById(id);
+            if(questionBanco == null)
             {
-                return BadRequest();
+                return NotFound("Questão não encontrada");
             }
+            var questionUpdate = _mapper.Map(updateQuestionDTO, questionBanco);
+            _questionRepository.Update(questionUpdate);
 
-            _context.Entry(question).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!QuestionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _questionRepository.SaveChangesAsync()
+            ? Ok("Questão atualizada com sucesso")
+            : BadRequest("Não foi possível atualizar a questão");
         }
 
         // POST: api/Question
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(Question question)
+        public async Task<ActionResult> PostQuestion(CreateQuestionDTO createQuestionDTO)
         {
-          if (_context.Question == null)
-          {
-              return Problem("Entity set 'APIDbContext.Question'  is null.");
-          }
-            _context.Question.Add(question);
-            await _context.SaveChangesAsync();
+            var question = _mapper.Map<Question>(createQuestionDTO);
 
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+            _questionRepository.Add(question);
+
+            return await _questionRepository.SaveChangesAsync()
+            ? Ok("Questão criada com Sucesso")
+            : BadRequest("Erro ao criar a Questão");
         }
 
         // DELETE: api/Question/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuestion(Guid id)
         {
-            if (_context.Question == null)
+            var question = await _questionRepository.GetQuestionById(id);
+            if(question == null)
             {
-                return NotFound();
+                return NotFound("Questão não encontrada");
             }
-            var question = await _context.Question.FindAsync(id);
-            if (question == null)
-            {
-                return NotFound();
-            }
+            _questionRepository.Delete(question);
 
-            _context.Question.Remove(question);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return await _questionRepository.SaveChangesAsync()
+            ? Ok("Questão deletada com sucesso")
+            : BadRequest("Erro ao deletar a questão");
         }
 
-        private bool QuestionExists(Guid id)
-        {
-            return (_context.Question?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

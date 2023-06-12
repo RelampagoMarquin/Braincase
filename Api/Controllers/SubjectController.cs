@@ -68,9 +68,9 @@ namespace Api.Controllers
                 return NotFound("Instituição não encontrada");
             }
 
-            var tagUpdate = _mapper.Map(subjectDTO, subjectBanco);
+            var subjectUpdate = _mapper.Map(subjectDTO, subjectBanco);
 
-            _subjectRepository.Update(tagUpdate);
+            _subjectRepository.Update(subjectUpdate);
 
             return await _subjectRepository.SaveChangesAsync()
                 ? Ok("Matéria foi atualizada")
