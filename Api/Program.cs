@@ -15,8 +15,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var key = Encoding.ASCII.GetBytes(Settings.Secret);
-
 //AddIdentity
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<APIDbContext>()

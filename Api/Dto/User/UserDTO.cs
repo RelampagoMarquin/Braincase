@@ -25,6 +25,8 @@
         public string? Registration { get; set; }
 
         public string? ConfirmedPassword { get; set; }
+
+        public string? oldPassword { get; set; }
     }
 
     public class UserResponseDTO

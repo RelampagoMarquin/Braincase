@@ -62,9 +62,7 @@ namespace Api.Controllers
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = errors.ToString() });
-                //return StatusCode( StatusCodes.Status500InternalServerError,
-                  //      new Response { Success = false, Message = result.Errors.ToString() });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Erro ao criar Usuario" });
             }
                 
 
