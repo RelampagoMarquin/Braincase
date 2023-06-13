@@ -9,9 +9,11 @@ using Api.Data;
 using Api.Models;
 using Api.Repository.Interfaces;
 using Api.Dto.Institution;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
@@ -26,14 +28,15 @@ namespace Api.Controllers
 
         // GET: api/Institution
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InstitutionDTO>>> GetInstitution()
+        public async Task<ActionResult<IEnumerable<ResponseInstitutionDTO>>> GetInstitution()
         {
             var institutions = await _institutionRepository.GetAllInstitutions();
-            var resposeInstitutions = new List<InstitutionDTO>();
+            var resposeInstitutions = new List<ResponseInstitutionDTO>();
             foreach (var institution in institutions)
             {
-                InstitutionDTO responseDTO = new InstitutionDTO
+                ResponseInstitutionDTO responseDTO = new ResponseInstitutionDTO
                 {
+                    Id = institution.Id,
                     Name = institution.Name
                 };
                 resposeInstitutions.Add(responseDTO);
@@ -43,16 +46,17 @@ namespace Api.Controllers
 
         // GET: api/Institution/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<InstitutionDTO>> GetInstitution(Guid id)
+        public async Task<ActionResult<ResponseInstitutionDTO>> GetInstitution(Guid id)
         {
             var institution = await _institutionRepository.GetInstitutionById(id);
             if (institution == null)
             {
                 return NotFound("Instituição não encontrada");
             }
-            var reponse = new InstitutionDTO
+            var reponse = new ResponseInstitutionDTO
             {
-                Name = institution.Name
+                    Id = institution.Id,
+                    Name = institution.Name
             };
             return reponse;
         }
@@ -67,7 +71,11 @@ namespace Api.Controllers
             {
                 return NotFound("Instituição não encontrada");
             }
-            institution.Name = institutionDTO.Name;
+            if(institutionDTO.Name != null)
+            {
+                institution.Name = institutionDTO.Name;
+            }
+            
             _institutionRepository.Update(institution);
             
             return await _institutionRepository.SaveChangesAsync()
@@ -80,7 +88,12 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostInstitution(InstitutionDTO InstitutionDTO)
         {
-            _institutionRepository.Add(InstitutionDTO);
+            var institution = new Institution
+            {
+                Name = InstitutionDTO.Name
+            };
+
+            _institutionRepository.Add(institution);
 
             return await _institutionRepository.SaveChangesAsync()
                 ? Ok("Instituição criada com sucesso")

@@ -1,7 +1,14 @@
 namespace Api.Dto.Subject
 {
-    public class SubjectCreateDTO
+    public class SubjectDTO
     {
-        public String Nome { get; set; }
+        public String Name { get; set; }
+    }
+
+    public class ResponseSubjectDTO
+    {
+        public Guid Id { get; set; }
+
+        public String Name { get; set; }
     }
 }

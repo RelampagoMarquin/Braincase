@@ -17,14 +17,18 @@ namespace Api.Models
         public String ClassName { get; set; }
 
         [Required]
-        public DateTime CreateAt { get; set; }
+        public DateTime CreateAt { get; set; } = DateTime.Now;
 
         [Required]
         public DateTime LastUse { get; set; }
 
         [StringLength(120)]
-        public String LogoUrl { get; set; }
+        public String? LogoUrl { get; set; }
 
         public List<Question> Questions { get; } = new();
+
+        public String UserId { get; set; }
+
+        public User User { get; set; }
     }
 }

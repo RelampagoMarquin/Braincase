@@ -3,26 +3,29 @@ using Api.Models;
 using Api.Repository;
 using Api.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Api.Dto.User;
+using Microsoft.AspNetCore.Identity;
 
 namespace Api.Repositorys
 {
     public class UserRepository : BaseRepository, IUserRepository
     {
         private readonly APIDbContext _context;
-        public UserRepository(APIDbContext context) : base(context)
+        private readonly UserManager<User> _userManager;
+        
+        public UserRepository(APIDbContext context, UserManager<User> userManager) : base(context)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<IEnumerable<User>> GetAllUsers()
         {
             return await _context.User.ToListAsync();
         }
 
-        async Task<User?> IUserRepository.GetUserById(Guid id)
+        async Task<User?> IUserRepository.GetUserById(String id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.FirstOrDefaultAsync(x => x.Id == id);
 
             if (user is null)
             {
@@ -37,7 +40,6 @@ namespace Api.Repositorys
             {
                 Name = UserCreateDTO.Name,
                 Email = UserCreateDTO.Email,
-                Password = UserCreateDTO.Password,
                 Registration = UserCreateDTO.Registration,
             };
 
@@ -46,5 +48,25 @@ namespace Api.Repositorys
 
             return user;
         }
+
+        async Task<IdentityResult> IUserRepository.UpdateUser(User user)
+        {
+            var result = await _userManager.UpdateAsync(user);
+            return result;
+        }
+
+        async Task<IdentityResult> IUserRepository.ChangePassword(User user, String oldPassword, String password)
+        {
+            var result = await _userManager.ChangePasswordAsync(user, oldPassword, password);
+            return result;
+        }
+
+        async Task<IdentityResult> IUserRepository.DeleteUser(User user)
+        {
+            
+            var result = await _userManager.DeleteAsync(user);
+            return result;
+        }
+
     }
 }

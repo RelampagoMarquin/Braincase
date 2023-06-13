@@ -24,7 +24,7 @@ namespace Api.Repository
 
         async Task<Institution?> IInstitutionRepository.GetInstitutionById(Guid id)
         {
-            var institution = await _context.Institution.FindAsync(id);
+            var institution = await _context.Institution.FirstOrDefaultAsync(x => x.Id == id);
 
             if (institution is null)
             {

@@ -2,6 +2,7 @@
 {
     public class UserCreateDTO
     {
+
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -24,11 +25,13 @@
         public string? Registration { get; set; }
 
         public string? ConfirmedPassword { get; set; }
+
+        public string? oldPassword { get; set; }
     }
 
     public class UserResponseDTO
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
