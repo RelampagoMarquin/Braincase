@@ -8,7 +8,5 @@ namespace Api.Repository.Interfaces
         Task<IEnumerable<Question>> GetAllQuestions();
 
         Task<Question?> GetQuestionById(Guid id);
-
-        Task<Question> CreateQuestion(CreateQuestionDTO createQuestionDTO);
     }
 }

@@ -17,6 +17,14 @@ namespace Api.Helpers
     {
         public ApiProfile()
         {
+            CreateMap<int?, int>().ConvertUsing((src, dest) => src ?? dest);
+            CreateMap<byte?, byte>().ConvertUsing((src, dest) => src ?? dest);
+            CreateMap<Guid?, Guid>().ConvertUsing((src, dest) => src ?? dest);
+            CreateMap<bool?, bool>().ConvertUsing((src, dest) => src ?? dest);
+            CreateMap<Boolean?, Boolean>().ConvertUsing((src, dest) => src ?? dest);
+            // talvez essa conversão não funcione, tem que testar
+            CreateMap<DateTime?, DateTime>().ConvertUsing((src, dest) => src ?? dest);
+
             // mapper das instituições
             CreateMap<Institution, ResponseInstitutionDTO>();
             CreateMap<InstitutionDTO, Institution>();
@@ -27,14 +35,11 @@ namespace Api.Helpers
             CreateMap<UpdateTagDTO, Tag>()
                 .ForAllMembers(opts =>
                 {
-                    opts.Condition((src, dest, srcMember, destMember) =>
+                    opts.Condition((src, dest, srcMember) =>
                     {
                         if (srcMember == null)
                             return false;
-
-                        if (srcMember is Guid guidValue)
-                            return guidValue != Guid.Empty;
-
+                        
                         return true;
                     });
                 });
@@ -49,13 +54,10 @@ namespace Api.Helpers
             CreateMap<UpdateUserDTO, User>()
                 .ForAllMembers(opts =>
                 {
-                    opts.Condition((src, dest, srcMember, destMember) =>
+                    opts.Condition((src, dest, srcMember) =>
                     {
                         if (srcMember == null)
                             return false;
-
-                        if (srcMember is Guid guidValue)
-                            return guidValue != Guid.Empty;
 
                         return true;
                     });
@@ -67,35 +69,30 @@ namespace Api.Helpers
             CreateMap<UpdateTestDTO, Test>()
                 .ForAllMembers(opts =>
                 {
-                    opts.Condition((src, dest, srcMember, destMember) =>
+                    opts.Condition((src, dest, srcMember) =>
                     {
                         if (srcMember == null)
                             return false;
-
-                        if (srcMember is Guid guidValue)
-                            return guidValue != Guid.Empty;
 
                         return true;
                     });
                 });
             CreateMap<CreateTestDTO, Test>();
+
+            // mapper de user
             CreateMap<Question, ResponseQuestionDTO>();
             CreateMap<UpdateQuestionDTO, Question>()
-            .ForAllMembers(opts =>
-            {
-                opts.Condition((src,dest,srcMember, destMember) =>
+                .ForAllMembers(opts =>
                 {
-                    if (srcMember == null)
-                        return false;
+                    opts.Condition((src, dest, srcMember) =>
+                    {
+                        if (srcMember == null)
+                            return false;
 
-                    if(srcMember is Guid guidValue)
-                        return guidValue != Guid.Empty;
-                    
-                    return true;
+                        return true;
+                    });
                 });
-            });
             CreateMap<CreateQuestionDTO, Question>();
-            
         }
     }
 }

@@ -10,20 +10,20 @@ namespace Api.Dto.Question
 
         public bool IsPrivate { get; set; }
 
-        public Guid? Institution { get; set; }
+        public Guid? InstitutionId { get; set; }
     }
 
     public class UpdateQuestionDTO
     {
-        public String? Text { get; set; }
+        public String? Text { get; set; } = null;
 
-        public byte? Type { get; set; }
+        public byte? Type { get; set; } = null;
 
-        public byte? Dificult { get; set; }
+        public byte? Dificult { get; set; } = null;
 
-        public bool? IsPrivate { get; set; }
+        public bool? IsPrivate { get; set; } = null;
 
-        public Guid? Institution { get; set; }
+        public Guid? InstitutionId { get; set; } = null;
     }
     public class ResponseQuestionDTO
     {
@@ -37,6 +37,6 @@ namespace Api.Dto.Question
 
         public bool IsPrivate { get; set; }
 
-        public Guid? Institution { get; set; }
+        public Guid? InstitutionId { get; set; }
     }
 }

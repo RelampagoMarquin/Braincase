@@ -36,15 +36,5 @@ namespace Api.Repository
             return question;
         }
 
-        async Task<Question> IQuestionRepository.CreateQuestion(CreateQuestionDTO createQuestionDTO)
-        {
-            var question = _mapper.Map<Question>(createQuestionDTO);
-
-            _context.Question.Add(question);
-            await _context.SaveChangesAsync();
-            
-            return question;
-        }
-
     }
 }
