@@ -1,9 +1,5 @@
 namespace Api.Dto.Comment
 {
-    public class CommentDTO
-    {
-        public string Text { get; set; }
-    }
 
     public class ResponseCommentDTO
     {

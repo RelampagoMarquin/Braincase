@@ -12,6 +12,7 @@ using Api.Dto.User;
 using Api.Repository.Interfaces;
 using Api.utils;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
@@ -29,6 +30,7 @@ namespace Api.Controllers
         }
 
         // GET: api/User
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResposeUserDTO>>> GetUser()
         {
@@ -42,9 +44,10 @@ namespace Api.Controllers
             return responseUsers;
         }
 
-       // GET: api/User/5
+        // GET: api/User/5
+        [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResposeUserDTO>> GetUser(Guid id)
+        public async Task<ActionResult<ResposeUserDTO>> GetUser(String id)
         {
 
             var user = await _userRepository.GetUserById(id);
@@ -56,43 +59,55 @@ namespace Api.Controllers
             var response = _mapper.Map<ResposeUserDTO>(user);
             return response;
         }
-        
+
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserById(Guid id, UpdateUserDTO userUpdateDTO)
+        public async Task<IActionResult> PutUserById(String id, UpdateUserDTO userUpdateDTO)
         {
-            var userBanco = await _userRepository.GetUserById(id);
-            if (userBanco == null)
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
             {
                 return NotFound("Usuário não encontrado");
             }
-
-            var userUpdate = _mapper.Map(userUpdateDTO, userBanco);
-            _userRepository.Update(userUpdate);
-
-            return await _userRepository.SaveChangesAsync() 
-                ? Ok("Usuário Atualizado com sucesso")
-                : BadRequest("Erro ao atualizar o Usuário");
-        }
-        
-        // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ResposeUserDTO>> PostUser(CreateUserDTO createUserDTO)
-        {
-            if (createUserDTO.Password != createUserDTO.ConfirmedPassword) {
-                return BadRequest("Senhas diferentes");
+            // var userUpdate = _mapper.Map(userUpdateDTO, userBanco);
+            // _userRepository.Update(userUpdate);
+            if(userUpdateDTO.Name != null && userUpdateDTO.Name != user.Name)
+            {
+                user.Name = userUpdateDTO.Name;
             }
-            createUserDTO.Password = PasswordHasher.HashPassword(createUserDTO.Password);
-            var createdUser = await _userRepository.CreateUser(createUserDTO);
-            var reponseDTO = _mapper.Map<ResposeUserDTO>(createdUser);
-            return CreatedAtAction("GetUser", new { id = createdUser.Id }, reponseDTO);
-          
+            if (userUpdateDTO.Registration != null && userUpdateDTO.Registration != user.Registration)
+            {
+                user.Registration = userUpdateDTO.Registration;
+            }
+            if (userUpdateDTO.Email != null && userUpdateDTO.Email != user.Email)
+            {
+                user.Email = userUpdateDTO.Email;
+            }
+            if (userUpdateDTO.Password != null && userUpdateDTO.ConfirmedPassword != null )
+            {
+                if(userUpdateDTO.Password != userUpdateDTO.ConfirmedPassword)
+                {
+                    return BadRequest("Senhas diferentes");
+                }
+                await _userRepository.ChangePassword(user, userUpdateDTO.oldPassword, userUpdateDTO.Password);
+            }
+
+            var result = await _userRepository.UpdateUser(user);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new Response { Success = false, Message = "Erro ao alterar usuario" });
+            }
+            return Ok(new Response { Message = "Usuário Atualizado com sucesso!" });
         }
+
+
         // DELETE: api/User/5
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUser(String id)
         {
             var user = await _userRepository.GetUserById(id);
             if (user == null)
@@ -100,10 +115,13 @@ namespace Api.Controllers
                 return NotFound("Usuário não encontrado");
             }
 
-            _userRepository.Delete(user);
-            return await _userRepository.SaveChangesAsync()
-                ? Ok("Usuário deletado com sucesso")
-                : BadRequest("Erro ao deletar o Usuário");
+            var result = await _userRepository.DeleteUser(user);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response { Success = false, Message = "Erro ao deletar usuario" });
+            }
+            return Ok(new Response { Message = "Usuário Deletado com sucesso!" });
         }
 
     }

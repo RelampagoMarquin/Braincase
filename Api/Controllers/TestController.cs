@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Api.Repository.Interfaces;
 using Api.Dto.Test;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
