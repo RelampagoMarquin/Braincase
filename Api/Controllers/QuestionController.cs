@@ -67,6 +67,11 @@ namespace Api.Controllers
                 return NotFound("Questão não encontrada");
             }
             var questionUpdate = _mapper.Map(updateQuestionDTO, questionBanco);
+
+            // o institutionId não pode ser omitido na request!!!
+            if(updateQuestionDTO.InstitutionId is not Guid)
+                questionUpdate.InstitutionId = null;
+            
             _questionRepository.Update(questionUpdate);
 
             return await _questionRepository.SaveChangesAsync()

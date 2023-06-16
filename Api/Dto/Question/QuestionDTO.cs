@@ -38,5 +38,7 @@ namespace Api.Dto.Question
         public bool IsPrivate { get; set; }
 
         public Guid? InstitutionId { get; set; }
+
+        public String? InstitutionName { get; set; }
     }
 }

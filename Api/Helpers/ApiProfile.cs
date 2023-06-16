@@ -83,7 +83,10 @@ namespace Api.Helpers
             CreateMap<CreateTestDTO, Test>();
 
             // mapper de user
-            CreateMap<Question, ResponseQuestionDTO>();
+
+            // mapper de question
+            CreateMap<Question, ResponseQuestionDTO>()
+                .ForMember(dest => dest.InstitutionName, opt => opt.MapFrom(src => src.Institution.Name));
             CreateMap<UpdateQuestionDTO, Question>()
                 .ForAllMembers(opts =>
                 {
@@ -97,11 +100,13 @@ namespace Api.Helpers
                 });
             CreateMap<CreateQuestionDTO, Question>();
 
+            // mapper de comment
             CreateMap<Comment, ResponseCommentDTO>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name));
             CreateMap<CommentDTO, Comment>();
             CreateMap<CreateCommentDTO, Comment>();
 
+            // mapper de answer
             CreateMap<Answer, ResponseAnswerDTO>();
             CreateMap<UpdateAnswerDTO, Answer>()
                 .ForAllMembers(opts =>
@@ -116,6 +121,7 @@ namespace Api.Helpers
                 });
             CreateMap<CreateAnswerDTO, Answer>();
 
+            // mapper de favorites
             CreateMap<Favorites, ResponseFavoritesDTO>();
             CreateMap<FavoritesDTO, Favorites>();
             

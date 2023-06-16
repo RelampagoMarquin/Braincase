@@ -45,7 +45,7 @@ namespace Api.Controllers
 
         // GET: api/Tag/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseTagDTO>> GetTag(Guid id)
+        public async Task<ActionResult<ResponseTagDTO>> GetTagById(Guid id)
         {
             var tag = await _tagRepository.GetTagById(id);
             if (tag == null)

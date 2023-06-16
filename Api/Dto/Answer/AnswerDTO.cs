@@ -30,6 +30,7 @@ namespace Api.Dto.Answer
         public Boolean IsCorrect { get; set;}
         
         public String? Justify { get; set; }
+        
         public Guid QuestionId { get; set; }
     }
 }

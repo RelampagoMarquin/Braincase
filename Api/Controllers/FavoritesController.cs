@@ -56,26 +56,6 @@ namespace Api.Controllers
             return response;
         }
 
-        // PUT: api/Favorites/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult> PutFavorites(Guid id, FavoritesDTO favoritesDTO)
-        // {
-        //     var favoriteBanco = await _favoriteRepository.GetFavoritesById(id);
-        //     if(favoriteBanco == null)
-        //     {
-        //         return NotFound("Favorito não encontrado");
-        //     }
-
-        //     var favoriteUpdate = _mapper.Map(favoritesDTO, favoriteBanco);
-            
-        //     _favoriteRepository.Update(favoriteUpdate);
-
-        //     return await _favoriteRepository.SaveChangesAsync()
-        //         ? Ok("Favorito Atualizado com sucesso")
-        //         : BadRequest("Erro ao atualizar o Favoritado");
-        // }
-
         // POST: api/Favorites
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

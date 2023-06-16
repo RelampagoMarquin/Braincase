@@ -46,7 +46,7 @@ namespace Api.Controllers
         // GET: api/User/5
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResposeUserDTO>> GetUser(String id)
+        public async Task<ActionResult<ResposeUserDTO>> GetUserById(String id)
         {
 
             var user = await _userRepository.GetUserById(id);

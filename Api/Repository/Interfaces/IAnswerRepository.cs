@@ -10,6 +10,6 @@ namespace Api.Repository.Interfaces
     {
         Task<IEnumerable<Answer>> GetAllAnswers();
 
-        Task<Answer> GetAnswerById(Guid id);
+        Task<Answer?> GetAnswerById(Guid id);
     }
 }

@@ -19,12 +19,12 @@ namespace Api.Repository
         
         public async Task<IEnumerable<Answer>> GetAllAnswers()
         {
-            return await _context.Answer.Include(x => x.Question).ToListAsync();
+            return await _context.Answer.ToListAsync();
         }
 
-        public async Task<Answer> GetAnswerById(Guid id)
+        public async Task<Answer?> GetAnswerById(Guid id)
         {
-            var answer = await _context.Answer.Include(x => x.Question).FirstOrDefaultAsync(x => x.Id == id);
+            var answer = await _context.Answer.FirstOrDefaultAsync(x => x.Id == id);
             
             if (answer is null)
             {

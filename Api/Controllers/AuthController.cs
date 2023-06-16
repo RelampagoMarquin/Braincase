@@ -60,9 +60,8 @@ namespace Api.Controllers
         public async Task<IActionResult> LoginAsync([FromBody] Login login)
         {
             var user = await _userRepository.GetUserByEmail(login.Email);
-            var passwordValid = await _userRepository.CheckPasswordAsync(user, login.Password);
 
-            if (user is not null && passwordValid)
+            if (user is not null && await _userRepository.CheckPasswordAsync(user, login.Password))
             {
 
                 var authClaims = new List<Claim>
@@ -71,7 +70,7 @@ namespace Api.Controllers
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-                return Ok(new Response { Data = GetToken(authClaims) });
+                return Ok(new Response { Data = GetToken(authClaims), Message = "Usuário logado com sucesso" });
             }
 
             return Unauthorized();
