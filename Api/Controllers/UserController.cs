@@ -60,7 +60,7 @@ namespace Api.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UpdateUserDTO userUpdateDTO)
+        public async Task<IActionResult> PutUserById(Guid id, UpdateUserDTO userUpdateDTO)
         {
             var userBanco = await _userRepository.GetUserById(id);
             if (userBanco == null)

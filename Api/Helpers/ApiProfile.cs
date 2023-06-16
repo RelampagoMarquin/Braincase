@@ -8,6 +8,9 @@ using Api.Dto.Tag;
 using Api.Dto.Test;
 using Api.Dto.User;
 using Api.Dto.Question;
+using Api.Dto.Comment;
+using Api.Dto.Answer;
+using Api.Dto.Favorites;
 using Api.Models;
 using AutoMapper;
 
@@ -93,6 +96,30 @@ namespace Api.Helpers
                     });
                 });
             CreateMap<CreateQuestionDTO, Question>();
+
+            CreateMap<Comment, ResponseCommentDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name));
+            CreateMap<CommentDTO, Comment>();
+            CreateMap<CreateCommentDTO, Comment>();
+
+            CreateMap<Answer, ResponseAnswerDTO>();
+            CreateMap<UpdateAnswerDTO, Answer>()
+                .ForAllMembers(opts =>
+                {
+                    opts.Condition((src, dest, srcMember) =>
+                    {
+                        if (srcMember == null)
+                            return false;
+
+                        return true;
+                    });
+                });
+            CreateMap<CreateAnswerDTO, Answer>();
+
+            CreateMap<Favorites, ResponseFavoritesDTO>();
+            CreateMap<FavoritesDTO, Favorites>();
+            
+            
         }
     }
 }

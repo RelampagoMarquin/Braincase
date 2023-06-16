@@ -7,118 +7,103 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Repository.Interfaces;
+using Api.Dto.Comment;
+using AutoMapper;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class CommentController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IMapper _mapper;
 
-        public CommentController(APIDbContext context)
+        public CommentController(ICommentRepository commentRepository, IMapper mapper)
         {
-            _context = context;
+            _commentRepository = commentRepository;
+            _mapper = mapper;
+
         }
 
         // GET: api/Comment
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComment()
+        public async Task<ActionResult<IEnumerable<ResponseCommentDTO>>> GetComment()
         {
-          if (_context.Comment == null)
+          var comments = await _commentRepository.GetAllComments();
+          var responseComments = new List<ResponseCommentDTO>();
+          foreach (var comment in comments)
           {
-              return NotFound();
-          }
-            return await _context.Comment.ToListAsync();
+            var response = _mapper.Map<ResponseCommentDTO>(comment);
+            responseComments.Add(response);
+          } 
+          return responseComments;
         }
 
         // GET: api/Comment/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetCommentById(Guid id)
+        public async Task<ActionResult<ResponseCommentDTO>> GetCommentById(Guid id)
         {
-          if (_context.Comment == null)
+          var comment = await _commentRepository.GetCommentById(id);
+          if(comment == null)
           {
-              return NotFound();
+            return NotFound("Comentário não encontrado");
           }
-            var comment = await _context.Comment.FindAsync(id);
-
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return comment;
+          var response = _mapper.Map<ResponseCommentDTO>(comment);
+          return response;
         }
 
         // PUT: api/Comment/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(Guid id, Comment comment)
+        public async Task<IActionResult> PutComment(Guid id, CommentDTO commentDTO)
         {
-            if (id != comment.Id)
+            var commentBanco = await _commentRepository.GetCommentById(id);
+            if(commentBanco == null) 
             {
-                return BadRequest();
+                return NotFound("Comentário não encontrado");
             }
+            
+            var commentUpdate = _mapper.Map(commentDTO, commentBanco);
 
-            _context.Entry(comment).State = EntityState.Modified;
+            _commentRepository.Update(commentUpdate);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _commentRepository.SaveChangesAsync()
+            ? Ok("Comentário atualizado com sucesso")
+            : BadRequest("Erro ao atualizar o comentário");
         }
 
         // POST: api/Comment
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<ActionResult> PostComment(CreateCommentDTO createCommentDTO)
         {
-          if (_context.Comment == null)
-          {
-              return Problem("Entity set 'APIDbContext.Comment'  is null.");
-          }
-            _context.Comment.Add(comment);
-            await _context.SaveChangesAsync();
+            var comment = _mapper.Map<Comment>(createCommentDTO);
 
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
+            _commentRepository.Add(comment);
+
+            return await _commentRepository.SaveChangesAsync()
+                ? Ok("Comentário criado com sucesso")
+                : BadRequest("Erro ao criar a Comentário");
         }
 
         // DELETE: api/Comment/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
-            if (_context.Comment == null)
-            {
-                return NotFound();
-            }
-            var comment = await _context.Comment.FindAsync(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            _context.Comment.Remove(comment);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CommentExists(Guid id)
+        var comment = await _commentRepository.GetCommentById(id);
+        if (comment == null)
         {
-            return (_context.Comment?.Any(e => e.Id == id)).GetValueOrDefault();
+            return NotFound("Comentário não encontrada");
         }
+        _commentRepository.Delete(comment);
+
+        return await _commentRepository.SaveChangesAsync()
+        ? Ok("Comentário deletada com sucesso")
+        : BadRequest("Erro ao deletar a Comentário");
+        }
+
     }
 }

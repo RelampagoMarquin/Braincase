@@ -7,132 +7,103 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Repository.Interfaces;
+using Api.Dto.Favorites;
+using AutoMapper;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class FavoritesController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly IFavoriteRepository _favoriteRepository;
+        private readonly IMapper _mapper;
 
-        public FavoritesController(APIDbContext context)
+        public FavoritesController(IFavoriteRepository favoriteRepository, IMapper mapper)
         {
-            _context = context;
+            _favoriteRepository = favoriteRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Favorites
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Favorites>>> GetFavorites()
+        public async Task<ActionResult<IEnumerable<ResponseFavoritesDTO>>> GetFavorites()
         {
-          if (_context.Favorites == null)
-          {
-              return NotFound();
-          }
-            return await _context.Favorites.ToListAsync();
+            var favorites = await _favoriteRepository.GetAllFavorites();
+            var responseFavorites = new List<ResponseFavoritesDTO>();
+            foreach (var favorite in favorites)
+            {
+                var response = _mapper.Map<ResponseFavoritesDTO>(favorite);
+                responseFavorites.Add(response);
+            }
+            return responseFavorites;
         }
 
         // GET: api/Favorites/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Favorites>> GetFavoritesById(Guid id)
+        [HttpGet("{UserId},{QuestionId}")]
+        public async Task<ActionResult<ResponseFavoritesDTO>> GetFavoritesById(Guid UserId, Guid QuestionId)
         {
-          if (_context.Favorites == null)
-          {
-              return NotFound();
-          }
-            var favorites = await _context.Favorites.FindAsync(id);
-
-            if (favorites == null)
+            var favorite = await _favoriteRepository.GetFavoritesById(UserId, QuestionId);
+            if(favorite == null)
             {
-                return NotFound();
+                return NotFound("Favorito não encontrada");
             }
-
-            return favorites;
+            var response = _mapper.Map<ResponseFavoritesDTO>(favorite);
+            return response;
         }
 
         // PUT: api/Favorites/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFavorites(Guid id, Favorites favorites)
-        {
-            if (id != favorites.UserId)
-            {
-                return BadRequest();
-            }
+        // [HttpPut("{id}")]
+        // public async Task<IActionResult> PutFavorites(Guid id, FavoritesDTO favoritesDTO)
+        // {
+        //     var favoriteBanco = await _favoriteRepository.GetFavoritesById(id);
+        //     if(favoriteBanco == null)
+        //     {
+        //         return NotFound("Favorito não encontrado");
+        //     }
 
-            _context.Entry(favorites).State = EntityState.Modified;
+        //     var favoriteUpdate = _mapper.Map(favoritesDTO, favoriteBanco);
+            
+        //     _favoriteRepository.Update(favoriteUpdate);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FavoritesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+        //     return await _favoriteRepository.SaveChangesAsync()
+        //         ? Ok("Favorito Atualizado com sucesso")
+        //         : BadRequest("Erro ao atualizar o Favoritado");
+        // }
 
         // POST: api/Favorites
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Favorites>> PostFavorites(Favorites favorites)
+        public async Task<ActionResult> PostFavorites(FavoritesDTO favoritesDTO)
         {
-          if (_context.Favorites == null)
-          {
-              return Problem("Entity set 'APIDbContext.Favorites'  is null.");
-          }
-            _context.Favorites.Add(favorites);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (FavoritesExists(favorites.UserId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var favorite = _mapper.Map<Favorites>(favoritesDTO);
 
-            return CreatedAtAction("GetFavorites", new { id = favorites.UserId }, favorites);
+            _favoriteRepository.Add(favorite);
+
+            return await _favoriteRepository.SaveChangesAsync()
+                ? Ok("Favorito adicionado com sucesso")
+                : BadRequest("Erro ao adicionar aos Favoritos");
         }
 
         // DELETE: api/Favorites/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFavorites(Guid id)
+        [HttpDelete("{UserId},{QuestionId}")]
+        public async Task<IActionResult> DeleteFavorites(Guid UserId, Guid QuestionId)
         {
-            if (_context.Favorites == null)
+            var farovite = await _favoriteRepository.GetFavoritesById(UserId, QuestionId);
+            if(farovite == null)
             {
-                return NotFound();
-            }
-            var favorites = await _context.Favorites.FindAsync(id);
-            if (favorites == null)
-            {
-                return NotFound();
+                return NotFound("Favorito não encontrado");
             }
 
-            _context.Favorites.Remove(favorites);
-            await _context.SaveChangesAsync();
+            _favoriteRepository.Delete(farovite);
 
-            return NoContent();
+            return await _favoriteRepository.SaveChangesAsync()
+                ? Ok("Favorito deletado com sucesso")
+                : BadRequest("Erro ao deletar o Favorito");
         }
 
-        private bool FavoritesExists(Guid id)
-        {
-            return (_context.Favorites?.Any(e => e.UserId == id)).GetValueOrDefault();
-        }
     }
 }

@@ -7,6 +7,8 @@ namespace Api.Dto.Answer
         public Boolean IsCorrect { get; set; }
         
         public String? Justify { get; set; }
+
+        public Guid QuestionId { get; set; } 
     }
 
     public class UpdateAnswerDTO
@@ -16,6 +18,7 @@ namespace Api.Dto.Answer
         public Boolean? IsCorrect { get; set;}
         
         public String? Justify { get; set; }
+        
     }
 
     public class ResponseAnswerDTO
@@ -27,5 +30,6 @@ namespace Api.Dto.Answer
         public Boolean IsCorrect { get; set;}
         
         public String? Justify { get; set; }
+        public Guid QuestionId { get; set; }
     }
 }

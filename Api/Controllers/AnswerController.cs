@@ -7,118 +7,103 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Repository.Interfaces;
+using Api.Dto.Answer;
+using AutoMapper;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class AnswerController : ControllerBase
     {
-        private readonly APIDbContext _context;
+        private readonly IAnswerRepository _answerRepository;
+        private readonly IMapper _mapper;
 
-        public AnswerController(APIDbContext context)
+        public AnswerController(IAnswerRepository answerRepository, IMapper mapper)
         {
-            _context = context;
+            _answerRepository = answerRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Answer
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Answer>>> GetAnswer()
+        public async Task<ActionResult<IEnumerable<ResponseAnswerDTO>>> GetAnswer()
         {
-          if (_context.Answer == null)
+          var answers = await _answerRepository.GetAllAnswers();
+          var responseAnswer = new List<ResponseAnswerDTO>();
+          foreach(var answer in answers)
           {
-              return NotFound();
+            var response = _mapper.Map<ResponseAnswerDTO>(answer);
+            responseAnswer.Add(response);
           }
-            return await _context.Answer.ToListAsync();
+          return responseAnswer;
         }
 
         // GET: api/Answer/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Answer>> GetAnswerById(Guid id)
+        public async Task<ActionResult<ResponseAnswerDTO>> GetAnswerById(Guid id)
         {
-          if (_context.Answer == null)
+          var answer = await _answerRepository.GetAnswerById(id);
+          if(answer == null)
           {
-              return NotFound();
+            return NotFound("Resposta não encontrada");
           }
-            var answer = await _context.Answer.FindAsync(id);
-
-            if (answer == null)
-            {
-                return NotFound();
-            }
-
-            return answer;
+          var response = _mapper.Map<ResponseAnswerDTO>(answer);
+          return response;
         }
 
         // PUT: api/Answer/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnswer(Guid id, Answer answer)
+        public async Task<IActionResult> PutAnswer(Guid id, UpdateAnswerDTO updateAnswerDTO)
         {
-            if (id != answer.Id)
-            {
-                return BadRequest();
-            }
+           var answerBanco = await _answerRepository.GetAnswerById(id);
+           if(answerBanco == null)
+           {
+            return NotFound("Resposta não encontrada");
+           }
 
-            _context.Entry(answer).State = EntityState.Modified;
+           var answerUpdate = _mapper.Map(updateAnswerDTO, answerBanco);
+           _answerRepository.Update(answerUpdate);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnswerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+           return await _answerRepository.SaveChangesAsync()
+                ? Ok("Resposta Atualizado com sucesso")
+                : BadRequest("Erro ao atualizar a Resposta");
         }
 
         // POST: api/Answer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Answer>> PostAnswer(Answer answer)
+        public async Task<ActionResult> PostAnswer(CreateAnswerDTO createAnswerDTO)
         {
-          if (_context.Answer == null)
-          {
-              return Problem("Entity set 'APIDbContext.Answer'  is null.");
-          }
-            _context.Answer.Add(answer);
-            await _context.SaveChangesAsync();
+            var answer = _mapper.Map<Answer>(createAnswerDTO);
 
-            return CreatedAtAction("GetAnswer", new { id = answer.Id }, answer);
+            _answerRepository.Add(answer);
+
+            return await _answerRepository.SaveChangesAsync()
+                ? Ok("Resposta criada com sucesso")
+                : BadRequest("Erro ao criar a Resposta");
         }
 
         // DELETE: api/Answer/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnswer(Guid id)
         {
-            if (_context.Answer == null)
+            var answer = await _answerRepository.GetAnswerById(id);
+            if(answer == null)
             {
-                return NotFound();
-            }
-            var answer = await _context.Answer.FindAsync(id);
-            if (answer == null)
-            {
-                return NotFound();
+                return NotFound("Resposta não encontrada");
             }
 
-            _context.Answer.Remove(answer);
-            await _context.SaveChangesAsync();
+            _answerRepository.Delete(answer);
 
-            return NoContent();
+            return await _answerRepository.SaveChangesAsync()
+                ? Ok("Resposta deletada com sucesso")
+                : BadRequest("Erro ao deletar a Resposta");
         }
 
-        private bool AnswerExists(Guid id)
-        {
-            return (_context.Answer?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        
     }
 }

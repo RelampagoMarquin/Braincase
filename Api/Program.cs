@@ -28,7 +28,9 @@ builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ITestRepository, TestRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
-
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 // Configuração do contêiner de injeção de dependência
 builder.Services.AddAutoMapper(typeof(Program));
 

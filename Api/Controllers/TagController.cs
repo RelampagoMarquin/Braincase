@@ -57,7 +57,7 @@ namespace Api.Controllers
         // PUT: api/Tag/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTag(Guid id, UpdateTagDTO updateTagDTO)
+        public async Task<IActionResult> PutTagById(Guid id, UpdateTagDTO updateTagDTO)
         {
             var tagBanco = await _tagRepository.GetTagById(id);
             if (tagBanco == null)

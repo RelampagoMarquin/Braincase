@@ -43,7 +43,7 @@ namespace Api.Controllers
 
         // GET: api/Question/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseQuestionDTO>> GetQuestion(Guid id)
+        public async Task<ActionResult<ResponseQuestionDTO>> GetQuestionById(Guid id)
         {
           var question = await _questionRepository.GetQuestionById(id);
           if(question == null)

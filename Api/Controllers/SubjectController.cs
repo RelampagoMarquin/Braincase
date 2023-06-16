@@ -44,7 +44,7 @@ namespace Api.Controllers
 
         // GET: api/Subject/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseSubjectDTO>> GetSubject(Guid id)
+        public async Task<ActionResult<ResponseSubjectDTO>> GetSubjectById(Guid id)
         {
             var subject =  await _subjectRepository.GetSubjectById(id);
             if (subject == null) 
