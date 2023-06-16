@@ -1,5 +1,8 @@
 ﻿using Api.Dto.User;
 using Api.Models;
+using Api.Repository.Interfaces;
+using Api.Repositorys;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,25 +17,25 @@ namespace Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
         public AuthController(
             IConfiguration configuration,
-            UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager)
+            IUserRepository userRepository, 
+            IMapper mapper)
         {
             _configuration = configuration;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _userRepository = userRepository;
+            _mapper = mapper;
 
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> CreateUserAsync([FromBody] UserCreateDTO model)
+        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserDTO createUserDTO)
         {
-            var userExists = await _userManager.FindByEmailAsync(model.Email);
+            var userExists = await _userRepository.GetUserByEmail(createUserDTO.Email);
 
             if (userExists is not null)
                 return StatusCode(
@@ -40,24 +43,7 @@ namespace Api.Controllers
                     new Response { Success = false, Message = "Usuário já existe!" }
                 );
 
-                // Remova espaços em branco do início e do final do nome
-                var name = model.Name.Trim();
-
-                // Remova caracteres especiais do nome
-                var validCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_+@");
-                var sanitizedName = new string(name.Where(c => validCharacters.Contains(c)).ToArray());
-
-            User user = new()
-            {
-                UserName = sanitizedName,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                Email = model.Email,
-                Name = model.Name,
-                Registration = model.Registration,
-                
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userRepository.AddUser(createUserDTO);
 
             if (!result.Succeeded)
             {
@@ -71,11 +57,12 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] Login model)
+        public async Task<IActionResult> LoginAsync([FromBody] Login login)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userRepository.GetUserByEmail(login.Email);
+            var passwordValid = await _userRepository.CheckPasswordAsync(user, login.Password);
 
-            if (user is not null && await _userManager.CheckPasswordAsync(user, model.Password))
+            if (user is not null && passwordValid)
             {
 
                 var authClaims = new List<Claim>
@@ -83,11 +70,6 @@ namespace Api.Controllers
                 new (ClaimTypes.Name, user.UserName),
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-
-                var userRoles = await _userManager.GetRolesAsync(user);
-
-                foreach (var userRole in userRoles)
-                    authClaims.Add(new(ClaimTypes.Role, userRole));
 
                 return Ok(new Response { Data = GetToken(authClaims) });
             }
@@ -113,14 +95,6 @@ namespace Api.Controllers
                 ValidTo = token.ValidTo
             };
 
-        }
-
-        private async Task AddToRoleAsync(User user, string role)
-        {
-            if (!await _roleManager.RoleExistsAsync(role))
-                await _roleManager.CreateAsync(new(role));
-
-            await _userManager.AddToRoleAsync(user, role);
         }
 
 

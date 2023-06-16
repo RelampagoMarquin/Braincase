@@ -8,6 +8,6 @@ namespace Api.Repository.Interfaces
 
         Task<Test?> GetTestById(Guid id);
 
-        Task<IEnumerable<Test>> GetAllTestsByUser(Guid id);
+        Task<IEnumerable<Test>> GetAllTestsByUser(String id);
     }
 }

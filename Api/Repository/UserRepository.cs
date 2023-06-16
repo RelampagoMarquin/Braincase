@@ -37,22 +37,6 @@ namespace Api.Repositorys
             return user;
         }
 
-        async Task<User> IUserRepository.CreateUser(CreateUserDTO createUserDTO)
-        {
-            // var user = _mapper.Map<User>(createUserDTO);
-            var user = new User
-            {
-                Name = UserCreateDTO.Name,
-                Email = UserCreateDTO.Email,
-                Registration = UserCreateDTO.Registration,
-            };
-
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
-
-            return user;
-        }
-
         async Task<IdentityResult> IUserRepository.UpdateUser(User user)
         {
             var result = await _userManager.UpdateAsync(user);
@@ -65,6 +49,7 @@ namespace Api.Repositorys
             return result;
         }
 
+
         async Task<IdentityResult> IUserRepository.DeleteUser(User user)
         {
             
@@ -72,5 +57,39 @@ namespace Api.Repositorys
             return result;
         }
 
+        async public Task<User?> GetUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        async public Task<IdentityResult> AddUser(CreateUserDTO createUserDTO)
+        {
+            // craiação do username
+            // Remova espaços em branco do início e do final do nome
+            var name = createUserDTO.Name.Trim();
+
+            // Remova caracteres especiais do nome
+            var validCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_+@");
+            var sanitizedName = new string(name.Where(c => validCharacters.Contains(c)).ToArray());
+
+            User user = new()
+            {
+                UserName = sanitizedName,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Email = createUserDTO.Email,
+                Name = createUserDTO.Name,
+                Registration = createUserDTO.Registration,
+
+            };
+
+            var result = await _userManager.CreateAsync(user, createUserDTO.Password);
+
+            return result;
+        }
+
+        async public Task<bool> CheckPasswordAsync(User user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
+        }
     }
 }

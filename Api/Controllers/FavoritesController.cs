@@ -45,7 +45,7 @@ namespace Api.Controllers
 
         // GET: api/Favorites/5
         [HttpGet("{UserId},{QuestionId}")]
-        public async Task<ActionResult<ResponseFavoritesDTO>> GetFavoritesById(Guid UserId, Guid QuestionId)
+        public async Task<ActionResult<ResponseFavoritesDTO>> GetFavoritesById(String UserId, Guid QuestionId)
         {
             var favorite = await _favoriteRepository.GetFavoritesById(UserId, QuestionId);
             if(favorite == null)
@@ -92,7 +92,7 @@ namespace Api.Controllers
 
         // DELETE: api/Favorites/5
         [HttpDelete("{UserId},{QuestionId}")]
-        public async Task<IActionResult> DeleteFavorites(Guid UserId, Guid QuestionId)
+        public async Task<IActionResult> DeleteFavorites(String UserId, Guid QuestionId)
         {
             var farovite = await _favoriteRepository.GetFavoritesById(UserId, QuestionId);
             if(farovite == null)

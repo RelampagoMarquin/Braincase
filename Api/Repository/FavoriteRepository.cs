@@ -24,7 +24,7 @@ namespace Api.Repository
             return await _context.Favorites.ToListAsync();
         }
 
-        public async Task<Favorites?> GetFavoritesById(Guid UserId, Guid QuestionId)
+        public async Task<Favorites?> GetFavoritesById(String UserId, Guid QuestionId)
         {
             var favorite = await _context.Favorites.FirstOrDefaultAsync(x => x.UserId == UserId && x.QuestionId == QuestionId );
             if(favorite is null)

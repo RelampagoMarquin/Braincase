@@ -1,6 +1,10 @@
 namespace Api.Dto.Comment
 {
+    public class CommentDTO
+    {
+        public string Text { get; set; }
 
+    }
     public class ResponseCommentDTO
     {
         public Guid Id { get; set; }
@@ -12,13 +16,12 @@ namespace Api.Dto.Comment
 
         public Guid QuestionId { get; set; }
     }
-     public class CreateCommentDTO
+     public class CreateCommentDTO : CommentDTO
     {
-        public string Text { get; set; }
 
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
-        public Guid QuestionId { get; set; }
+        public Guid? QuestionId { get; set; }
     }
 
 }

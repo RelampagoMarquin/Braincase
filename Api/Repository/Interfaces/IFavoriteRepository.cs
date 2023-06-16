@@ -10,6 +10,6 @@ namespace Api.Repository.Interfaces
     {
         Task<IEnumerable<Favorites>> GetAllFavorites();
 
-        Task<Favorites?> GetFavoritesById(Guid UserId, Guid QuestionId);
+        Task<Favorites?> GetFavoritesById(String UserId, Guid QuestionId);
     }
 }

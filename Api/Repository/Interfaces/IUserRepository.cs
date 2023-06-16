@@ -10,12 +10,17 @@ namespace Api.Repository.Interfaces
 
         Task<User?> GetUserById(String id);
 
-        Task<User> CreateUser(CreateUserDTO createUserDTO);
+        Task<User?> GetUserByEmail(String email);
+
+        Task<IdentityResult> AddUser(CreateUserDTO createUserDTO);
 
         Task<IdentityResult> UpdateUser(User user);
 
         Task<IdentityResult> DeleteUser(User user);
 
         Task<IdentityResult> ChangePassword(User user, String oldPassword, String password);
+
+        Task<bool> CheckPasswordAsync(User user, String password);
+
     }
 }

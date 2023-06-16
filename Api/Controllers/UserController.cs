@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
-using Api.Services;
 using Api.Dto.User;
 using Api.Repository.Interfaces;
 using Api.utils;
@@ -91,7 +90,12 @@ namespace Api.Controllers
                 {
                     return BadRequest("Senhas diferentes");
                 }
-                await _userRepository.ChangePassword(user, userUpdateDTO.oldPassword, userUpdateDTO.Password);
+                var resultpass = await _userRepository.ChangePassword(user, userUpdateDTO.oldPassword, userUpdateDTO.Password);
+                if (!resultpass.Succeeded)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new Response { Success = false, Message = "Erro ao alterar senha" });
+                }
             }
 
             var result = await _userRepository.UpdateUser(user);

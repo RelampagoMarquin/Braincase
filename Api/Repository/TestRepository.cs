@@ -34,7 +34,7 @@ namespace Api.Repository
             return test;
         }
 
-        public async Task<IEnumerable<Test>> GetAllTestsByUser(Guid userId)
+        public async Task<IEnumerable<Test>> GetAllTestsByUser(String userId)
         {
             return await _context.Test.Where(x => x.UserId == userId).ToListAsync();
         }
