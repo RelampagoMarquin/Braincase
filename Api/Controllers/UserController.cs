@@ -84,12 +84,12 @@ namespace Api.Controllers
             {
                 user.Email = userUpdateDTO.Email;
             }
+            if(userUpdateDTO.Password != userUpdateDTO.ConfirmedPassword)
+            {
+                return BadRequest("Senhas diferentes");
+            }
             if (userUpdateDTO.Password != null && userUpdateDTO.ConfirmedPassword != null )
             {
-                if(userUpdateDTO.Password != userUpdateDTO.ConfirmedPassword)
-                {
-                    return BadRequest("Senhas diferentes");
-                }
                 var resultpass = await _userRepository.ChangePassword(user, userUpdateDTO.oldPassword, userUpdateDTO.Password);
                 if (!resultpass.Succeeded)
                 {

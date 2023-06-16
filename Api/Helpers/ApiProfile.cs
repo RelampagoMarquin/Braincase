@@ -82,7 +82,7 @@ namespace Api.Helpers
                 });
             CreateMap<CreateTestDTO, Test>();
 
-            // mapper de user
+            // mapper de question
             CreateMap<Question, ResponseQuestionDTO>()
                 .ForMember(dest => dest.InstitutionName, opt =>
                 {
