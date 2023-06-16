@@ -83,10 +83,11 @@ namespace Api.Helpers
             CreateMap<CreateTestDTO, Test>();
 
             // mapper de user
-
-            // mapper de question
             CreateMap<Question, ResponseQuestionDTO>()
-                .ForMember(dest => dest.InstitutionName, opt => opt.MapFrom(src => src.Institution.Name));
+                .ForMember(dest => dest.InstitutionName, opt =>
+                {
+                    opt.MapFrom(src => src.Institution != null ? src.Institution.Name : null);
+                });
             CreateMap<UpdateQuestionDTO, Question>()
                 .ForAllMembers(opts =>
                 {
