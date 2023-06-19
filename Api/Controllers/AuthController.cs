@@ -70,7 +70,7 @@ namespace Api.Controllers
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-                return Ok(new Response { Data = GetToken(authClaims), Message = "Usuário logado com sucesso" });
+                return Ok(new Response { Data = GetToken(authClaims), User=user.Id, Message = "Usuário logado com sucesso" });
             }
 
             return Unauthorized();
