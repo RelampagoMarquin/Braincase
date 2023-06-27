@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Api.Models
 {
-    public class Tag
-    {
+    public class Tag{
+
         [Key]
         public Guid Id { get; set; }
 
@@ -15,7 +16,9 @@ namespace Api.Models
         [Required]
         public String Name { get; set; }
 
-        public Subject? Subject {get; set; }
-        public List<QuestionTags> QuestionTags { get; } = new();
+        public Guid SubjectId { get; set; }
+
+        public Subject Subject { get; set; }
+        public List<Question> Question { get; } = new();
     }
 }

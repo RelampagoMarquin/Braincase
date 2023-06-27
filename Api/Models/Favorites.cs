@@ -9,7 +9,7 @@ namespace Api.Models
         public bool Own { get; set; }
 
         /// n n
-        public Guid UserId { get; set; }
+        public String UserId { get; set; }
         public Guid QuestionId { get; set; }
 
         public User User { get; set; } = null!;
