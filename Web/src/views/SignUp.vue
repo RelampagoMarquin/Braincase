@@ -1,22 +1,27 @@
 
 <script setup lang="ts">
-
+import { useUserStore } from '@/stores/userStore';
 import { ref } from 'vue'
+import type { UserCreate } from '@/utils/types'
 
+const userStore = useUserStore()
 const email = ref('')
 const name = ref('')
 const registration = ref('')
 const password = ref('')
-const checkPassword = ref('')
+const confirmedPassword = ref('')
 
-// function signup() {
-  
-//   const data = {
-//     nome: name.value,
-//     email: email.value,
-//     senha: password.value,
-//   };
-// }
+async function signup(){
+  const user:UserCreate = {
+    name: name.value,
+    email: email.value,
+    registration: registration.value,
+    password: password.value,
+    confirmedPassword: confirmedPassword.value
+  }
+  await userStore.createUser(user)
+} 
+
 </script>
 
 <template> 
@@ -72,7 +77,7 @@ const checkPassword = ref('')
             ></v-text-field>
 
             <v-text-field
-              v-model="checkPassword"
+              v-model="confirmedPassword"
               type="password"
               clearable
               required
