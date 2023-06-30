@@ -26,4 +26,14 @@ body {
   background-color: #F7A156 !important;
   color: #fff !important;
 }
+
+.primary-bg {
+  background-color: #F7A156 !important;
+  color: #fff !important;
+}
+
+.secondary-bg {
+  background-color: #535353 !important;
+  color: #fff !important;
+}
 </style>

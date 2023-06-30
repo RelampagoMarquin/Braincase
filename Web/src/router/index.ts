@@ -2,6 +2,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
+import Home from '../views/HomePage.vue'
+import Start from '../views/StartPage.vue'
 
 //cria a instância dorouter com as rotas
 const router = createRouter({
@@ -19,6 +21,16 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignUp
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: Home
+    },
+    {
+      path: '/start',
+      name: 'start',
+      component: Start
     }
   ]
 })
