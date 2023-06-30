@@ -26,4 +26,9 @@ body {
   background-color: #F7A156 !important;
   color: #fff !important;
 }
+
+.primary-bg {
+  background-color: #F7A156 !important;
+  color: #fff !important;
+}
 </style>
