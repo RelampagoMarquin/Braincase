@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('user', JSON.stringify(response.data.user))
         userid.value = response.data.user;
         if (response) {
-            router.go(-1)
+            // router.go(-1)
         }
         return {token: token.value, userId: userid.value}
     }

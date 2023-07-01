@@ -5,7 +5,7 @@ export interface User {
     password: string;
     registration: string | null;
   }
-  
+
 export interface UserCreate {
     name: string;
     email: string;
@@ -13,3 +13,11 @@ export interface UserCreate {
     confirmedPassword: string;
     registration: string | null;
   }
+
+export interface Institution {
+  id?: string;  
+  name: string;
+}
+export interface InstitutionCreate {
+    name: string;
+}

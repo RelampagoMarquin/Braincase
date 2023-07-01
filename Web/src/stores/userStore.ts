@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios } from '@/utils/axios'
+import { apiAxios, apiAxiosAuth } from '@/utils/axios'
 import type { User, UserCreate } from '@/utils/types'
 
 export const useUserStore = defineStore('user', () => {
@@ -8,6 +8,10 @@ export const useUserStore = defineStore('user', () => {
     const token = localStorage.getItem("token")
     const users = ref<User[]>([])
     const user = ref<User>()
+    let axiosAuth = apiAxios
+    if(token){
+        axiosAuth = apiAxiosAuth(token)
+    }
 
     async function createUser(user: UserCreate) {
         const response = await apiAxios.post('/Auth/register', {
@@ -25,7 +29,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     async function getUserById(id: string) {
-        const response = await apiAxios.get(`/User/${id}`, {
+        const response = await axiosAuth.get(`/User/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
