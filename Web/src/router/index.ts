@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
+import registerQuestion from '../views/registerQuestion.vue'
 
 //cria a instância dorouter com as rotas
 const router = createRouter({
@@ -19,7 +20,13 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignUp
-    }
+    },
+    {
+      path: '/registerQuestion',
+      name: 'resgisterQuestion',
+      component: registerQuestion
+    },
+    
   ]
 })
 
