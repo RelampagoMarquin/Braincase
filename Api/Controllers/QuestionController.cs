@@ -56,6 +56,46 @@ namespace Api.Controllers
             return response;
         }
 
+        [HttpGet("public")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetAllPublic()
+        {
+            var questions = await _questionRepository.GetAllPublic();
+            var responseQuestions = new List<ResponseQuestionDTO>();
+            foreach (var question in questions)
+            {
+                var response = _mapper.Map<ResponseQuestionDTO>(question);
+                responseQuestions.Add(response);
+            }
+            return responseQuestions;
+        }
+
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetByUserQuestion(string id)
+        {
+            var questions = await _questionRepository.GetByUserQuestion(id);
+            var responseQuestions = new List<ResponseQuestionDTO>();
+            foreach (var question in questions)
+            {
+                var response = _mapper.Map<ResponseQuestionDTO>(question);
+                responseQuestions.Add(response);
+            }
+            return responseQuestions;
+        }
+
+        // este get pega todas as questões publicas e soma com as privadas do usuário
+        [HttpGet("user/all/{id}")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetAllUserQuestion(string id)
+        {
+            var questions = await _questionRepository.GetAllUserQuestion(id);
+            var responseQuestions = new List<ResponseQuestionDTO>();
+            foreach (var question in questions)
+            {
+                var response = _mapper.Map<ResponseQuestionDTO>(question);
+                responseQuestions.Add(response);
+            }
+            return responseQuestions;
+        }
+
         // PUT: api/Question/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -108,6 +148,5 @@ namespace Api.Controllers
             ? Ok("Questão deletada com sucesso")
             : BadRequest("Erro ao deletar a questão");
         }
-
     }
 }
