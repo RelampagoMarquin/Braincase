@@ -1,42 +1,42 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiAxios, apiAxiosAuth } from '@/utils/axios'
-import type { Institution } from '@/utils/types'
+import type { Tag } from '@/utils/types'
 
-export const useInstitutionStore = defineStore('institution', () => {
+export const useTagStore = defineStore('tag', () =>{
     const token = localStorage.getItem("token")
-    const institutions = ref<Institution[]>([])
-    const institution = ref<Institution>()
+    const tags = ref<Tag[]>([])
+    const tag = ref<Tag>()
     let axiosAuth = apiAxios
     if (token) {
         axiosAuth = apiAxiosAuth(token)
     }
 
-    async function createInstitution(institution: Institution) {
-        const response = await axiosAuth.post('/Institution', {
-            name: institution.name,
+    async function createTag(tag: Tag) {
+        const response = await axiosAuth.post('/Tag', {
+            name: tag.name,
         },
             {
             }).then(function () {
-                alert('Criada com sucesso!')
+                alert('criada com sucesso')
             }).catch(function (error) {
                 console.log(error.message);
             });
         return response
     }
 
-    async function getAllInstitution() {
-        institutions.value = await axiosAuth.get('/Institution', {
+    async function getAllTag() {
+        tags.value = await axiosAuth.get('/Tag', {
         });
-        return institutions.value
+        return tags.value
     }
 
-    async function getInstitutionById(id: string) {
-        const response = await axiosAuth.get(`/Institution/${id}`, {
+    async function getTagById(id: string) {
+        const response = await axiosAuth.get(`/Tag/${id}`, {
         }).catch(function (error) {
             if (error.response) {
                 if (error.response.message == 409) {
-                    alert('Instituição não encontrada')
+                    alert('Tag não encontrada')
                 } else {
                     alert('Erro ao cadastrar' + error.response.data + error.response.headers)
                 }
@@ -48,15 +48,15 @@ export const useInstitutionStore = defineStore('institution', () => {
 
         });
         return response
-    }
+    }    
 
-    async function updateInstitution(id: string) {
-        const response = await axiosAuth.put(`/Institution/${id}`, {
+    async function updateTag(id: string) {
+        const response = await axiosAuth.put(`/Tag/${id}`, {
         }).catch(function (error) {
             if (error.response) {
                 // Request made and server responded
                 if (error.response.message == 409) {
-                    alert('Instituição já cadastrado')
+                    alert('Tag já cadastrada')
                 } else {
                     alert('Erro ao atualizar' + error.response.data + error.response.headers)
                 }
@@ -70,8 +70,8 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
     }
 
-    async function deleteInstitution(id: string) {
-        const response = await axiosAuth.delete(`/Institution/${id}`, {
+    async function deleteTag(id: string) {
+        const response = await axiosAuth.delete(`/Tag/${id}`, {
         }).catch(function (error) {
             if (error.request) {
                 console.log(error.request);
@@ -80,15 +80,14 @@ export const useInstitutionStore = defineStore('institution', () => {
             }
         });
         return response
-
     }
     return {
-        institutions,
-        institution,
-        createInstitution,
-        getAllInstitution,
-        getInstitutionById,
-        updateInstitution,
-        deleteInstitution,
+        tag,
+        tags,
+        createTag,
+        getAllTag,
+        getTagById,
+        updateTag,
+        deleteTag,
     }
 })

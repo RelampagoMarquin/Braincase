@@ -1,20 +1,21 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiAxios, apiAxiosAuth } from '@/utils/axios'
-import type { Institution } from '@/utils/types'
-
-export const useInstitutionStore = defineStore('institution', () => {
+import type { Answer, CreateAnswer } from '@/utils/types'
+export const useAnswerStore = defineStore('answer', () => {
     const token = localStorage.getItem("token")
-    const institutions = ref<Institution[]>([])
-    const institution = ref<Institution>()
+    const answers = ref<Answer[]>([])
+    const answer = ref<Answer>()
     let axiosAuth = apiAxios
     if (token) {
         axiosAuth = apiAxiosAuth(token)
     }
 
-    async function createInstitution(institution: Institution) {
-        const response = await axiosAuth.post('/Institution', {
-            name: institution.name,
+    async function createAnswer(Answer: CreateAnswer) {
+        const response = await axiosAuth.post('/Answer', {
+            text: Answer.text,
+            Iscorrect: Answer.IsCorrect,
+            Justify: Answer.Justify,
         },
             {
             }).then(function () {
@@ -25,18 +26,18 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
     }
 
-    async function getAllInstitution() {
-        institutions.value = await axiosAuth.get('/Institution', {
+    async function getAllAnswer() {
+        answers.value = await axiosAuth.get('/Answer', {
         });
-        return institutions.value
+        return answers.value
     }
 
-    async function getInstitutionById(id: string) {
-        const response = await axiosAuth.get(`/Institution/${id}`, {
+    async function getAnswerById(id: string) {
+        const response = await axiosAuth.get(`/Answer/${id}`, {
         }).catch(function (error) {
             if (error.response) {
                 if (error.response.message == 409) {
-                    alert('Instituição não encontrada')
+                    alert('Resposta já cadastrada')
                 } else {
                     alert('Erro ao cadastrar' + error.response.data + error.response.headers)
                 }
@@ -50,13 +51,12 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
     }
 
-    async function updateInstitution(id: string) {
-        const response = await axiosAuth.put(`/Institution/${id}`, {
+    async function updateAnswer(id: string) {
+        const response = await axiosAuth.put(`/Answer/${id}`, {
         }).catch(function (error) {
             if (error.response) {
-                // Request made and server responded
                 if (error.response.message == 409) {
-                    alert('Instituição já cadastrado')
+                    alert('Resposta já cadastrado')
                 } else {
                     alert('Erro ao atualizar' + error.response.data + error.response.headers)
                 }
@@ -70,8 +70,8 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
     }
 
-    async function deleteInstitution(id: string) {
-        const response = await axiosAuth.delete(`/Institution/${id}`, {
+    async function deleteAnswer(id: string) {
+        const response = await axiosAuth.delete(`/Answer/${id}`, {
         }).catch(function (error) {
             if (error.request) {
                 console.log(error.request);
@@ -80,15 +80,15 @@ export const useInstitutionStore = defineStore('institution', () => {
             }
         });
         return response
-
     }
+
     return {
-        institutions,
-        institution,
-        createInstitution,
-        getAllInstitution,
-        getInstitutionById,
-        updateInstitution,
-        deleteInstitution,
+        answer,
+        answers,
+        createAnswer,
+        getAllAnswer,
+        getAnswerById,
+        updateAnswer,
+        deleteAnswer,
     }
 })

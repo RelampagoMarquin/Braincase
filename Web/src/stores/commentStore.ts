@@ -1,42 +1,42 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiAxios, apiAxiosAuth } from '@/utils/axios'
-import type { Institution } from '@/utils/types'
+import type { Comment } from '@/utils/types'
 
-export const useInstitutionStore = defineStore('institution', () => {
+export const useCommentStore = defineStore('comment', () => {
     const token = localStorage.getItem("token")
-    const institutions = ref<Institution[]>([])
-    const institution = ref<Institution>()
+    const comments = ref<Comment[]>([])
+    const comment = ref<Comment>()
     let axiosAuth = apiAxios
     if (token) {
         axiosAuth = apiAxiosAuth(token)
     }
 
-    async function createInstitution(institution: Institution) {
-        const response = await axiosAuth.post('/Institution', {
-            name: institution.name,
+    async function createComment(comment: Comment) {
+        const response = await axiosAuth.post('/Comment', {
+            text: comment.text,
         },
             {
             }).then(function () {
-                alert('Criada com sucesso!')
+                alert('Criado com sucesso!')
             }).catch(function (error) {
                 console.log(error.message);
             });
         return response
-    }
+    }    
 
-    async function getAllInstitution() {
-        institutions.value = await axiosAuth.get('/Institution', {
+    async function getAllComment() {
+        comments.value = await axiosAuth.get('/Comment', {
         });
-        return institutions.value
+        return comments.value
     }
 
-    async function getInstitutionById(id: string) {
-        const response = await axiosAuth.get(`/Institution/${id}`, {
+    async function getCommentById(id: string) {
+        const response = await axiosAuth.get(`/Comment/${id}`, {
         }).catch(function (error) {
             if (error.response) {
                 if (error.response.message == 409) {
-                    alert('Instituição não encontrada')
+                    alert('Comentário não encontrada')
                 } else {
                     alert('Erro ao cadastrar' + error.response.data + error.response.headers)
                 }
@@ -50,13 +50,13 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
     }
 
-    async function updateInstitution(id: string) {
-        const response = await axiosAuth.put(`/Institution/${id}`, {
+    async function updateComment(id: string) {
+        const response = await axiosAuth.put(`/Comment/${id}`, {
         }).catch(function (error) {
             if (error.response) {
                 // Request made and server responded
                 if (error.response.message == 409) {
-                    alert('Instituição já cadastrado')
+                    alert('Comentário já cadastrado')
                 } else {
                     alert('Erro ao atualizar' + error.response.data + error.response.headers)
                 }
@@ -70,8 +70,8 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
     }
 
-    async function deleteInstitution(id: string) {
-        const response = await axiosAuth.delete(`/Institution/${id}`, {
+    async function deleteComment(id: string) {
+        const response = await axiosAuth.delete(`/Comment/${id}`, {
         }).catch(function (error) {
             if (error.request) {
                 console.log(error.request);
@@ -82,13 +82,14 @@ export const useInstitutionStore = defineStore('institution', () => {
         return response
 
     }
+
     return {
-        institutions,
-        institution,
-        createInstitution,
-        getAllInstitution,
-        getInstitutionById,
-        updateInstitution,
-        deleteInstitution,
+        comment,
+        comments,
+        createComment,
+        getAllComment,
+        getCommentById,
+        updateComment,
+        deleteComment,
     }
 })
