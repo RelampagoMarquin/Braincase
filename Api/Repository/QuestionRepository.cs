@@ -21,7 +21,7 @@ namespace Api.Repository
             _mapper = mapper;
         }
 
-        async Task<IEnumerable<Question>>IQuestionRepository.GetAllQuestions()
+        async Task<IEnumerable<Question>> IQuestionRepository.GetAllQuestions()
         {
             return await _context.Question.Include(x => x.Institution).ToListAsync();
         }
@@ -36,5 +36,23 @@ namespace Api.Repository
             return question;
         }
 
+        async Task<IEnumerable<Question>> IQuestionRepository.GetAllPublic()
+        {
+            return await _context.Question.Where(x => x.IsPrivate == false).Include(x => x.Institution)
+                .ToListAsync();
+        }
+
+        async Task<IEnumerable<Question>> IQuestionRepository.GetByUserQuestion(string id)
+        {
+            return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
+                .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true)).ToListAsync();
+        }
+
+        // este get pega todas as questões publicas e soma com as privadas do usuário
+        async Task<IEnumerable<Question>> IQuestionRepository.GetAllUserQuestion(string id)
+        {
+            return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
+                .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true) || x.IsPrivate == false).ToListAsync();
+        }
     }
 }
