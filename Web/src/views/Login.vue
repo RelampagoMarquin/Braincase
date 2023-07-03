@@ -26,7 +26,7 @@ const password = ref("");
             <h2 class="text-primary-custom mb-5 text-center title">Login</h2>
             <v-form>
               <v-text-field
-                v-model="mail"
+                v-model="email"
                 clearable
                 color="#F7A156"
                 label="E-mail"
