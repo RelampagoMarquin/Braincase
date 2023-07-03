@@ -56,7 +56,7 @@ namespace Api.Controllers
             return response;
         }
 
-        [HttpGet("user{id}")]
+        [HttpGet("user/{id}")]
         public async Task<ActionResult<IEnumerable<ResponseTestDTO>>> GetAllTestsByUser(String id)
         {
             var tests = await _testRepository.GetAllTestsByUser(id);

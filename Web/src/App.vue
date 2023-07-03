@@ -2,12 +2,22 @@
 <!-- Parte Lógica: Script -->
 <script setup lang="ts">
 //Importando o RouterView do vue-router, ele permite exibir o componente/template da rota atual, ou seja, assim que abrir a aplicação, a rota atual é o "/", logo o arquivo correspondente ao / vai aparecer no local onde foi colocado o RouterView
-import { RouterView } from 'vue-router'
+import { computed } from "vue";
+import Main from "./layout/Main.vue";
+import { useRouter } from "vue-router";
+
+const { currentRoute } = useRouter();
+
+const layout = computed(() => {
+  return currentRoute.value.meta.layout || Main;
+});
 </script>
 
 <!-- Parte de Template: template (a estrutura, o "html") -->
 <template>
-  <RouterView />
+  <component :is="layout">
+    <router-view />
+  </component>
 </template>
 
 <!-- Parte de Estilo: Style (CSS), vale salientar que esse é o App.vue, e todas as páginas serão exibidas nesse arquivo por conta do RouterView, colocar o CSS aqui afeta todas as outras páginas, então o CSS geral (que será repetido em diversas páginas) é posto aqui (isso não significa que não tem como colocar css global em outras páginas, mas por organização e convenção é posto aqui) -->
