@@ -1,19 +1,20 @@
 ﻿using Api.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Data{
-    public class APIDbContext : DbContext
+    public class APIDbContext : IdentityDbContext<User>
     {
         public APIDbContext(DbContextOptions<APIDbContext> options):base(options){
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Favorites>()
                 .HasKey(f => new { f.UserId, f.QuestionId });
-
-            modelBuilder.Entity<QuestionTags>()
-                .HasKey(f => new {f.QuestionId, f.TagId});
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
@@ -29,6 +30,5 @@ namespace Api.Data{
         public DbSet<Institution> Institution { get; set; }
         public DbSet<Subject> Subject { set; get; }
         public DbSet<Tag> Tag { get; set; }
-        public DbSet<QuestionTags> QuestionTags { get; set;}
     }
 }

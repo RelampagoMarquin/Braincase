@@ -4,6 +4,9 @@ import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
 import Home from '../views/HomePage.vue'
 import Start from '../views/StartPage.vue'
+import UserProfile from '../views/UserProfile.vue'
+import registerQuestion from '../views/registerQuestion.vue'
+
 
 //cria a instância dorouter com as rotas
 const router = createRouter({
@@ -15,14 +18,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: {
+        layout: "EmptyLayout",
+      }
     },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: SignUp
-    },
-    {
+     {
       path: '/home',
       name: 'home',
       component: Home
@@ -32,7 +33,25 @@ const router = createRouter({
       name: 'start',
       component: Start
     }
-  ]
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUp,
+      meta: {
+        layout: "EmptyLayout",
+      }
+    },
+    {
+      path: '/userprofile',
+      name: 'userprofile',
+      component: UserProfile
+    },
+    {
+      path: '/registerQuestion',
+      name: 'resgisterQuestion',
+      component: registerQuestion
+    },
+  ]  
 })
 
 //exportando as rotas

@@ -7,118 +7,126 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
 using Api.Models;
+using Api.Dto.User;
+using Api.Repository.Interfaces;
+using Api.utils;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class UserController : ControllerBase
     {
-        private readonly APIDbContext _context;
-
-        public UserController(APIDbContext context)
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
+        public UserController(IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         // GET: api/User
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<IEnumerable<ResposeUserDTO>>> GetUser()
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            return await _context.User.ToListAsync();
+            var users = await _userRepository.GetAllUsers();
+            var responseUsers = new List<ResposeUserDTO>();
+            foreach (var user in users)
+            {
+                var response = _mapper.Map<ResposeUserDTO>(user);
+                responseUsers.Add(response);
+            }
+            return responseUsers;
         }
 
         // GET: api/User/5
+        [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult<ResposeUserDTO>> GetUserById(String id)
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            var user = await _context.User.FindAsync(id);
 
+            var user = await _userRepository.GetUserById(id);
+            
             if (user == null)
             {
-                return NotFound();
+                return NotFound("Usuário não encontrado");
             }
-
-            return user;
+            var response = _mapper.Map<ResposeUserDTO>(user);
+            return response;
         }
 
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        public async Task<IActionResult> PutUserById(String id, UpdateUserDTO userUpdateDTO)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-          if (_context.User == null)
-          {
-              return Problem("Entity set 'APIDbContext.User'  is null.");
-          }
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
-
-        // DELETE: api/User/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.User.FindAsync(id);
+            var user = await _userRepository.GetUserById(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound("Usuário não encontrado");
+            }
+            // var userUpdate = _mapper.Map(userUpdateDTO, userBanco);
+            // _userRepository.Update(userUpdate);
+            if(userUpdateDTO.Name != null && userUpdateDTO.Name != user.Name)
+            {
+                user.Name = userUpdateDTO.Name;
+            }
+            if (userUpdateDTO.Registration != null && userUpdateDTO.Registration != user.Registration)
+            {
+                user.Registration = userUpdateDTO.Registration;
+            }
+            if (userUpdateDTO.Email != null && userUpdateDTO.Email != user.Email)
+            {
+                user.Email = userUpdateDTO.Email;
+            }
+            if(userUpdateDTO.Password != userUpdateDTO.ConfirmedPassword)
+            {
+                return BadRequest("Senhas diferentes");
+            }
+            if (userUpdateDTO.Password != null && userUpdateDTO.ConfirmedPassword != null )
+            {
+                var resultpass = await _userRepository.ChangePassword(user, userUpdateDTO.oldPassword, userUpdateDTO.Password);
+                if (!resultpass.Succeeded)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new Response { Success = false, Message = "Erro ao alterar senha" });
+                }
             }
 
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var result = await _userRepository.UpdateUser(user);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new Response { Success = false, Message = "Erro ao alterar usuario" });
+            }
+            return Ok(new Response { Message = "Usuário Atualizado com sucesso!" });
         }
 
-        private bool UserExists(Guid id)
+
+        // DELETE: api/User/5
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(String id)
         {
-            return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado");
+            }
+
+            var result = await _userRepository.DeleteUser(user);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response { Success = false, Message = "Erro ao deletar usuario" });
+            }
+            return Ok(new Response { Message = "Usuário Deletado com sucesso!" });
         }
+
     }
 }
