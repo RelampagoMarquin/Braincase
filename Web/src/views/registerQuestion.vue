@@ -10,13 +10,14 @@ export default {
     return {
       selectedItem: null,
       items1: ['Objetiva', 'Discusirva'],
-      dificuldade:['Facil','Medio','Dificil']
+      dificuldade:['Facil','Medio','Dificil'],
+      questionType:[questionType.value]
     }
-  }
+  },
 }
 
 
-const questionType= ref('')
+const questionType = ref('')
 const difficulty = ref('')
 const Tags = ref('')
 const Institution = ref('')
@@ -35,6 +36,7 @@ function registerquestion() {
   };
 }
 
+
 </script>
 
 <template>
@@ -44,7 +46,7 @@ function registerquestion() {
             <h2 class="text-primary-custom  text-center title">QUESTÕES</h2>
         </v-row>
         <v-row clas="mb-4 ">
-            <v-btn  class="btn-primary " > VOLTAR </v-btn>
+            <v-btn  class="btn-primary ml-6  " > VOLTAR </v-btn>
         </v-row>
     </div>
    <v-row>
@@ -62,9 +64,9 @@ function registerquestion() {
                
 
               <label for="">Privacidade:</label>
-              <v-radio-group  inline>
-                <v-radio label="Privada" value="Privada" ></v-radio>
-                <v-radio label="publica" value="Publica"></v-radio>
+              <v-radio-group  inline v-model="privacidade">
+                <v-radio label="Privada" value="Privada" name="privacidade" ></v-radio>
+                <v-radio label="publica" value="Publica" name="privacidade"></v-radio>
               </v-radio-group>
 
               <label for="">Tags</label>
@@ -81,12 +83,11 @@ function registerquestion() {
             </v-col>
             <v-col cols="6" >
             
-              
-                <!-- <discursive></discursive> -->
-              <objective></objective>
+              <discursive v-if="questionType ==='Discusirva'"></discursive> 
+              <objective v-if="questionType !=='Discusirva'"></objective>
               
               <label for="">Jutificativa:</label>
-              <v-textarea class="v-locale--is-ltr mt-2" v-model="justification" rounded label="Escreva o texto da justificativa" variant="outlined" density="compact">
+              <v-textarea class="v-locale--is-ltr mt-2" v-model="justification" rounded label="Escreva o texto da justificativa" variant="outlined" >
               </v-textarea>
             </v-col>
           </v-row>
