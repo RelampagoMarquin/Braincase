@@ -28,7 +28,7 @@ const cards = [
     },
     {
         name: 'Perfil',
-        path: 'logout',
+        path: '/userprofile',
         icon: 'mdi-account-circle-outline'
     }
 ]

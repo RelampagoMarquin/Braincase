@@ -2,7 +2,6 @@
 import { useAuthStore } from "../stores/authStore";
 import { ref } from "vue";
 const authStore = useAuthStore();
-
 const email = ref("")
 const password = ref("");
 
@@ -37,7 +36,7 @@ async function login() {
                 variant="outlined"
                 class="mb-2"
               ></v-text-field>
-              <v-btn class="btn-primary" block outlined rounded="sm">
+              <v-btn class="btn-primary" @click="login()" block outlined rounded="sm">
                 Entrar
               </v-btn>
             </v-form>

@@ -1,17 +1,29 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/userStore";
+import type { User, UserUpdate } from "@/utils/types";
 import { ref } from "vue";
 
-const name = ref('Nome de Usuário');
-const email = ref('email-ficticio@gmail.com');
-const password = ref();
+const userStore = useUserStore()
+const userid = JSON.parse(localStorage.getItem("user")!);
+const user = await userStore.getUserById(userid) as User
+const name = ref(user.name);
+const email = ref(user.email);
+const registration = ref(user.registration);
+const oldPassword = ref('')
+const password = ref('');
+const confirmedPassword = ref('');
 
-// function update() {
-//     const data = {
-//         name: name.value,
-//         email: email.value,
-//         password: password.value
-//     }
-// }
+function update() {
+    const data:UserUpdate = {
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        confirmedPassword: confirmedPassword.value,
+        oldPassword: oldPassword.value,
+        registration: registration.value
+    }
+    userStore.updateUser(userid, data)
+}
 </script>
 
 <template>
@@ -38,13 +50,25 @@ const password = ref();
                                 type="password"
                                 variant="solo"
                                 placeholder="Senha"
-                                v-model="senha"
+                                v-model="registration"
                             />
                             <v-text-field
                                 type="password"
                                 variant="solo"
                                 placeholder="Confirme a senha"
-                                v-model="senha"
+                                v-model="oldPassword"
+                            />
+                            <v-text-field
+                                type="password"
+                                variant="solo"
+                                placeholder="Senha"
+                                v-model="password"
+                            />
+                            <v-text-field
+                                type="password"
+                                variant="solo"
+                                placeholder="Confirme a senha"
+                                v-model="confirmedPassword"
                             />
                             <div class="btn-box">
                                 <v-btn

@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiAxios, apiAxiosAuth } from '@/utils/axios'
-import type { User, UserCreate } from '@/utils/types'
+import type { User, UserCreate, UserUpdate } from '@/utils/types'
 
 export const useUserStore = defineStore('user', () => {
     // variables to be on front
@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', () => {
     const users = ref<User[]>([])
     const user = ref<User>()
     let axiosAuth = apiAxios
-    if(token){
+    if (token) {
         axiosAuth = apiAxiosAuth(token)
     }
 
@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
             password: user.password,
             confirmedPassword: user.confirmedPassword,
             registration: user.registration
-        }).then(function (){
+        }).then(function () {
             alert('criado com sucesso')
         }).catch(function (error) {
             console.log(error.message);
@@ -29,61 +29,35 @@ export const useUserStore = defineStore('user', () => {
     }
 
     async function getUserById(id: string) {
-        const response = await axiosAuth.get(`/User/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).catch(function (error) {
-            if (error.response) {
-                // Request made and server responded
-                if (error.response.message == 409) {
-                    alert('Usuario com email já cadastrado')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.log(error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-
-        });
-        return response
+        try {
+            user.value = await axiosAuth.get(`/User/${id}`)
+            return user.value
+        } catch (error) {
+            alert('Usuario não encontrado')
+        }
     }
 
-    async function updateUser(id: string) {
-        const response = await apiAxios.get(`/User/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).catch(function (error) {
-            if (error.response) {
-                // Request made and server responded
-                if (error.response.message == 409) {
-                    alert('Usuario com email já cadastrado')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.log(error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
+    async function updateUser(id: string, user: UserUpdate) {
+        try {
+            const response = await axiosAuth.post(`/User/${id}`, {
+                name: user.name,
+                email: user.email,
+                password: user.password,
+                confirmedPassword: user.confirmedPassword,
+                registration: user.registration,
+                oldPassword: user.oldPassword
+            })
 
-        });
-        return response
+            return response
+
+        } catch (error) {
+            alert('Erro ao atualizar usuario')
+        }
+
     }
 
     async function deleteUser(id: string) {
-        const response = await apiAxios.delete(`/User/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).catch(function (error) {
+        const response = await axiosAuth.delete(`/User/${id}`).catch(function (error) {
             if (error.request) {
                 // The request was made but no response was received
                 console.log(error.request);

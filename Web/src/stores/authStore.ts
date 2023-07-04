@@ -15,12 +15,12 @@ export const useAuthStore = defineStore('auth', () => {
             email,
             password
         })
-        localStorage.setItem('token', response.data.data.token)
+        localStorage.setItem('token', JSON.stringify(response.data.data.token))
         token.value = response.data.data.token;
         localStorage.setItem('user', JSON.stringify(response.data.user))
         userid.value = response.data.user;
         if (response) {
-            // router.go(-1)
+            router.push('/')
         }
         return {token: token.value, userId: userid.value}
     }
@@ -28,22 +28,27 @@ export const useAuthStore = defineStore('auth', () => {
     async function signOut() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        router.push('/login')
     }
 
-    function isExpired() {
-        const token:string | null = localStorage.getItem('token');
-        if(token){
+      function isExpired() {
+        const token = localStorage.getItem("token");
+      
+        if (!token) {
+          return true; // Não há token presente, considerar como expirado
+        }
+      
         try {
           const decodedToken: any = decode(token);
-          if (Date.now() >= decodedToken.exp * 1000){
-            return true;
+      
+          if (Date.now() >= decodedToken.exp * 1000) {
+            return true; // Token expirado
           }
-          return false;
-        } catch (error) {   // O "jwt-decode" lança erros pra tokens inválidos.
-          return true; // Com um token inválido o usuário não está assinado.
+      
+          return false; // Token válido
+        } catch (error) {
+          return true; // Erro ao decodificar o token, considerar como expirado
         }
-        }
-        
       }
 
     function isLogged() {
