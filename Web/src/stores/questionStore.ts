@@ -33,9 +33,40 @@ export const useQuestionStore = defineStore('question', () => {
         });
         return questions.value
     }
-    
+
+    async function getAllPublic() {
+        questions.value = await axiosAuth.get('/public', {
+        });
+        return questions.value
+    }
+
+    async function getAllUserQuestion() {
+        questions.value = await axiosAuth.get('/user/all/{id}', {
+        });
+        return questions.value
+    }
+
     async function getQuestionById(id: string) {
         const response = await axiosAuth.get(`/Question/${id}`, {
+        }).catch(function (error) {
+            if (error.response) {
+                if (error.response.message == 409) {
+                    alert('Pergunta não encontrada')
+                } else {
+                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
+                }
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
+
+        });
+        return response
+    }
+
+    async function getByUserQuestion(id: string) {
+        const response = await axiosAuth.get(`/user/{id}`, {
         }).catch(function (error) {
             if (error.response) {
                 if (error.response.message == 409) {
@@ -90,7 +121,10 @@ export const useQuestionStore = defineStore('question', () => {
         questions,
         createQuestion,
         getAllQuestion,
+        getAllPublic,
+        getAllUserQuestion,
         getQuestionById,
+        getByUserQuestion,
         updateQuestion,
         deleteQuestion,
     }
