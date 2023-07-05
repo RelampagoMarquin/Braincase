@@ -6,6 +6,7 @@ import Home from '../views/HomePage.vue'
 import Start from '../views/StartPage.vue'
 import UserProfile from '../views/UserProfile.vue'
 import registerQuestion from '../views/registerQuestion.vue'
+import Questions from '../views/Questions.vue'
 import { useAuthStore } from '@/stores/authStore'
 
 
@@ -63,6 +64,14 @@ const router = createRouter({
         auth: true,
       },
     },
+    {
+      path: '/questions',
+      name: 'questions',
+      component: Questions,
+      meta: {
+        // auth: true,
+      }
+    }
   ]  
 })
 
