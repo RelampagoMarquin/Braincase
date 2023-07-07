@@ -70,9 +70,22 @@ namespace Api.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetByUserQuestion(string id)
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyQuestions(string id)
         {
-            var questions = await _questionRepository.GetByUserQuestion(id);
+            var questions = await _questionRepository.GetMyQuestions(id);
+            var responseQuestions = new List<ResponseQuestionDTO>();
+            foreach (var question in questions)
+            {
+                var response = _mapper.Map<ResponseQuestionDTO>(question);
+                responseQuestions.Add(response);
+            }
+            return responseQuestions;
+        }
+
+        [HttpGet("user/favotites/{id}")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyFavorites(string id)
+        {
+            var questions = await _questionRepository.GetMyFavorites(id);
             var responseQuestions = new List<ResponseQuestionDTO>();
             foreach (var question in questions)
             {
