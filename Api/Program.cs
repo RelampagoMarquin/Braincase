@@ -16,6 +16,18 @@ using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Cors
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+
 //AddIdentity
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<APIDbContext>()
@@ -121,6 +133,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseCors();
 //Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,19 +1,13 @@
-<!-- Parte Lógica: Script -->
 <script setup lang="ts">
-// import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../stores/authStore";
 import { ref } from "vue";
-// const authStore = useAuthStore();
-
+const authStore = useAuthStore();
 const email = ref("")
 const password = ref("");
 
-// function login() {
-//   const data = {
-//     password: senha.value,
-//     email: email.value,
-//   };
-//   authStore.login(data);
-// }
+async function login() {
+  await authStore.login(email.value, password.value);
+}
 </script>
 
 <!-- Parte de Estrutura: Template, o "html" -->
@@ -42,7 +36,7 @@ const password = ref("");
                 variant="outlined"
                 class="mb-2"
               ></v-text-field>
-              <v-btn class="btn-primary" block outlined rounded="sm">
+              <v-btn class="btn-primary" @click="login()" block outlined rounded="sm">
                 Entrar
               </v-btn>
             </v-form>
@@ -104,7 +98,8 @@ div.text-input.v-field.v-field--appended {
   color: #F7A156;
 }
 
-.signup-text, .signup-link {
+.signup-text,
+.signup-link {
   color: #F7A156;
 }
 

@@ -1,6 +1,6 @@
 <template>
         <label for="">Alternativas:</label>
-              <div class=" d-flex mt-5">
+              <div class=" d-flex mt-4">
                 <v-row>
                   <v-col cols="1">
                     <v-radio value="a">a)</v-radio>

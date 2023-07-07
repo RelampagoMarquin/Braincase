@@ -6,6 +6,7 @@ import Home from '../views/HomePage.vue'
 import Start from '../views/StartPage.vue'
 import UserProfile from '../views/UserProfile.vue'
 import registerQuestion from '../views/registerQuestion.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 
 //cria a instância dorouter com as rotas
@@ -16,43 +17,71 @@ const router = createRouter({
   routes: [
     //para criar uma rota, importe o elemento que vai se tornar uma rota e adicione a essa lista, com o caminho (url), nome e o component é o arquivo importado, e o nome que você atribuiu a importação.
     {
-      path: '/',
+      path: '/login',
       name: 'login',
       component: Login,
       meta: {
         layout: "EmptyLayout",
+        auth: false,
       }
     },
      {
-      path: '/home',
+      path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: {
+        auth: true,
+      },
     },
     {
       path: '/start',
       name: 'start',
       component: Start
-    }
+    },
     {
       path: '/signup',
       name: 'signup',
       component: SignUp,
       meta: {
         layout: "EmptyLayout",
+        auth: false,
       }
     },
     {
       path: '/userprofile',
       name: 'userprofile',
-      component: UserProfile
+      component: UserProfile,
+      meta: {
+        auth: true,
+      },
     },
     {
       path: '/registerQuestion',
       name: 'resgisterQuestion',
-      component: registerQuestion
+      component: registerQuestion,
+      meta: {
+        auth: true,
+      },
     },
   ]  
 })
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  const auth = localStorage.getItem("token");
+
+  if (to.meta?.auth && !auth) { // Verifica se a rota de destino requer autenticação e se o usuário não está autenticado
+    next("/login"); // Redireciona para a rota de login
+    return;
+  }
+
+  if (auth && authStore.isExpired()) { // Verifica se o usuário está autenticado, mas o token expirou
+    next("/login"); // Redireciona para a rota de login
+    return;
+  }
+
+  next(); // Permite a navegação normalmente
+});
 
 //exportando as rotas
 export default router
