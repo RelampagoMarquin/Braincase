@@ -88,7 +88,7 @@ namespace Api.Controllers
             {
                 return BadRequest("Senhas diferentes");
             }
-            if (userUpdateDTO.Password != null && userUpdateDTO.ConfirmedPassword != null )
+            if (!string.IsNullOrEmpty(userUpdateDTO.Password) && !string.IsNullOrEmpty(userUpdateDTO.ConfirmedPassword) && !string.IsNullOrEmpty(userUpdateDTO.oldPassword))
             {
                 var resultpass = await _userRepository.ChangePassword(user, userUpdateDTO.oldPassword, userUpdateDTO.Password);
                 if (!resultpass.Succeeded)

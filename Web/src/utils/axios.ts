@@ -11,7 +11,8 @@ export function apiAxiosAuth(token:string){
     baseURL: 'https://localhost:7188/api',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      'Accept': '*/*',
+      Authorization: `Bearer ${token.trim().replace(/^"|"$/g, '')}`,
     },
   });
 }
