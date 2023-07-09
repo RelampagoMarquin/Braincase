@@ -42,10 +42,16 @@ namespace Api.Repository
                 .ToListAsync();
         }
 
-        async Task<IEnumerable<Question>> IQuestionRepository.GetByUserQuestion(string id)
+        async Task<IEnumerable<Question>> IQuestionRepository.GetMyQuestions(string id)
         {
             return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
                 .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true)).ToListAsync();
+        }
+
+        async Task<IEnumerable<Question>> IQuestionRepository.GetMyFavorites(string id)
+        {
+            return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
+                .Where(x => x.Favorites.Any(x => x.UserId == id)).ToListAsync();
         }
 
         // este get pega todas as questões publicas e soma com as privadas do usuário
