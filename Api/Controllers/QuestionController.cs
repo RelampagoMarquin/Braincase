@@ -88,7 +88,7 @@ namespace Api.Controllers
             return responseQuestions;
         }
 
-        [HttpGet("user/favotites")]
+        [HttpGet("user/favorites")]
         public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyFavorites()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
