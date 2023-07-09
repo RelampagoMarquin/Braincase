@@ -88,7 +88,7 @@ console.log(a)
       <v-row>
         <v-col cols="1">
           <v-checkbox v-model="c">
-            <p>c)</p>
+            <p>c) </p>
           </v-checkbox>
         </v-col>
         <v-col cols="11">
