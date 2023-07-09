@@ -66,7 +66,8 @@ namespace Api.Controllers
 
                 var authClaims = new List<Claim>
             {
-                new (ClaimTypes.Name, user.UserName),
+                new (ClaimTypes.NameIdentifier, user.Id),
+                new (ClaimTypes.Email, user.Email),
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -83,7 +84,7 @@ namespace Api.Controllers
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddHours(2),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
