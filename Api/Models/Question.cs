@@ -20,6 +20,9 @@ namespace Api.Models
         public byte Dificult { get; set; } = 2;
         // 1 para fácil, 2 para medio e 3 pra difícil 
 
+        [MaxLength(int.MaxValue)]
+        public String? Justify { get; set; }
+
         [Required]
         public bool IsPrivate { get; set; } = true;
         // rela��o n n

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Api.Dto.Question;
 using AutoMapper;
 using Api.Repository.Interfaces;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -70,9 +71,22 @@ namespace Api.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetByUserQuestion(string id)
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyQuestions(string id)
         {
-            var questions = await _questionRepository.GetByUserQuestion(id);
+            var questions = await _questionRepository.GetMyQuestions(id);
+            var responseQuestions = new List<ResponseQuestionDTO>();
+            foreach (var question in questions)
+            {
+                var response = _mapper.Map<ResponseQuestionDTO>(question);
+                responseQuestions.Add(response);
+            }
+            return responseQuestions;
+        }
+
+        [HttpGet("user/favotites/{id}")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyFavorites(string id)
+        {
+            var questions = await _questionRepository.GetMyFavorites(id);
             var responseQuestions = new List<ResponseQuestionDTO>();
             foreach (var question in questions)
             {
@@ -121,16 +135,19 @@ namespace Api.Controllers
 
         // POST: api/Question
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult> PostQuestion(CreateQuestionDTO createQuestionDTO)
+        public async Task<Question> PostQuestion(CreateQuestionDTO createQuestionDTO)
         {
-            var question = _mapper.Map<Question>(createQuestionDTO);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usereEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new InvalidOperationException("Id null"); 
+            }
+            var question = await _questionRepository.CreateQuestion(createQuestionDTO, userId);
 
-            _questionRepository.Add(question);
-
-            return await _questionRepository.SaveChangesAsync()
-            ? Ok("Questão criada com Sucesso")
-            : BadRequest("Erro ao criar a Questão");
+            return question;
         }
 
         // DELETE: api/Question/5
