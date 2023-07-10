@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Api.Repository.Interfaces;
 using Api.Dto.Favorites;
 using AutoMapper;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -43,11 +44,25 @@ namespace Api.Controllers
             return responseFavorites;
         }
 
-        // GET: api/Favorites/5
-        [HttpGet("{UserId},{QuestionId}")]
-        public async Task<ActionResult<ResponseFavoritesDTO>> GetFavoritesById(String UserId, Guid QuestionId)
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<ResponseFavoritesDTO>>> GetFavoritesByUser()
         {
-            var favorite = await _favoriteRepository.GetFavoritesById(UserId, QuestionId);
+            var favorites = await _favoriteRepository.GetAllFavorites();
+            var responseFavorites = new List<ResponseFavoritesDTO>();
+            foreach (var favorite in favorites)
+            {
+                var response = _mapper.Map<ResponseFavoritesDTO>(favorite);
+                responseFavorites.Add(response);
+            }
+            return responseFavorites;
+        }
+
+        // GET: api/Favorites/5
+        [HttpGet("{QuestionId}")]
+        public async Task<ActionResult<ResponseFavoritesDTO>> GetFavoritesById(Guid QuestionId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var favorite = await _favoriteRepository.GetFavoritesById(userId, QuestionId);
             if(favorite == null)
             {
                 return NotFound("Favorito não encontrada");
@@ -61,6 +76,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostFavorites(FavoritesDTO favoritesDTO)
         {
+            favoritesDTO.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var favorite = _mapper.Map<Favorites>(favoritesDTO);
 
             _favoriteRepository.Add(favorite);
@@ -71,10 +87,11 @@ namespace Api.Controllers
         }
 
         // DELETE: api/Favorites/5
-        [HttpDelete("{UserId},{QuestionId}")]
-        public async Task<IActionResult> DeleteFavorites(String UserId, Guid QuestionId)
+        [HttpDelete("{QuestionId}")]
+        public async Task<IActionResult> DeleteFavorites(Guid QuestionId)
         {
-            var farovite = await _favoriteRepository.GetFavoritesById(UserId, QuestionId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var farovite = await _favoriteRepository.GetFavoritesById(userId, QuestionId);
             if(farovite == null)
             {
                 return NotFound("Favorito não encontrado");

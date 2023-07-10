@@ -5,10 +5,15 @@ namespace Api.Dto.Answer
         public String Text { get; set; }
 
         public Boolean IsCorrect { get; set; }
-        
-        public String? Justify { get; set; }
 
         public Guid QuestionId { get; set; } 
+    }
+
+    public class CreateAnswerForQuestionDTO
+    {
+        public String Text { get; set; }
+
+        public Boolean IsCorrect { get; set; }
     }
 
     public class UpdateAnswerDTO
@@ -16,8 +21,6 @@ namespace Api.Dto.Answer
         public String? Text { get; set; }
 
         public Boolean? IsCorrect { get; set;}
-        
-        public String? Justify { get; set; }
         
     }
 
@@ -28,8 +31,6 @@ namespace Api.Dto.Answer
         public String Text { get; set; }
 
         public Boolean IsCorrect { get; set;}
-        
-        public String? Justify { get; set; }
         
         public Guid QuestionId { get; set; }
     }

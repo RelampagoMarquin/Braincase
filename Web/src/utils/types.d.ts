@@ -62,6 +62,14 @@ export interface CreateQuestion {
   type: number;
   dificult: number;
   isPrivate: boolean;
+  justify?: string;
+  answers: {
+    Text: string;
+    IsCorrect: boolean
+  }[];
+  InstitutionName: string;
+  tags: string[];
+  subjectId: string;
 }
 
 export interface Comment {

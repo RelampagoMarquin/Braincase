@@ -56,6 +56,20 @@ namespace Api.Controllers
             return response;
         }
 
+        // GET: api/Tag/subject/5
+        [HttpGet("subject/{Subjectid}")]
+        public async Task<ActionResult<IEnumerable<ResponseTagDTO>>> GetTagBySubjectId(Guid Subjectid)
+        {
+            var tags = await _tagRepository.GetTagBySubjectId(Subjectid);
+            var responseTags = new List<ResponseTagDTO>();
+            foreach (var tag in tags)
+            {
+                var response = _mapper.Map<ResponseTagDTO>(tag);
+                responseTags.Add(response);
+            }
+            return responseTags;
+        }
+
         // PUT: api/Tag/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
