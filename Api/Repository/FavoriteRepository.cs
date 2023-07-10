@@ -33,5 +33,10 @@ namespace Api.Repository
             }
             return favorite;
         }
+
+        public async Task<IEnumerable<Favorites>> GetFavoritesByUser(String UserId)
+        {
+            return await _context.Favorites.Where(x => x.UserId == UserId).ToListAsync();
+        }
     }
 }

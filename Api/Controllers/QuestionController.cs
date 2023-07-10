@@ -70,10 +70,15 @@ namespace Api.Controllers
             return responseQuestions;
         }
 
-        [HttpGet("user/{id}")]
-        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyQuestions(string id)
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyQuestions()
         {
-            var questions = await _questionRepository.GetMyQuestions(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new InvalidOperationException("Id null");
+            }
+            var questions = await _questionRepository.GetMyQuestions(userId);
             var responseQuestions = new List<ResponseQuestionDTO>();
             foreach (var question in questions)
             {
@@ -83,10 +88,15 @@ namespace Api.Controllers
             return responseQuestions;
         }
 
-        [HttpGet("user/favotites/{id}")]
-        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyFavorites(string id)
+        [HttpGet("user/favorites")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetMyFavorites()
         {
-            var questions = await _questionRepository.GetMyFavorites(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new InvalidOperationException("Id null");
+            }
+            var questions = await _questionRepository.GetMyFavorites(userId);
             var responseQuestions = new List<ResponseQuestionDTO>();
             foreach (var question in questions)
             {
@@ -97,10 +107,15 @@ namespace Api.Controllers
         }
 
         // este get pega todas as questões publicas e soma com as privadas do usuário
-        [HttpGet("user/all/{id}")]
-        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetAllUserQuestion(string id)
+        [HttpGet("user/all")]
+        public async Task<ActionResult<IEnumerable<ResponseQuestionDTO>>> GetAllUserQuestion()
         {
-            var questions = await _questionRepository.GetAllUserQuestion(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new InvalidOperationException("Id null");
+            }
+            var questions = await _questionRepository.GetAllUserQuestion(userId);
             var responseQuestions = new List<ResponseQuestionDTO>();
             foreach (var question in questions)
             {
@@ -140,7 +155,6 @@ namespace Api.Controllers
         public async Task<Question> PostQuestion(CreateQuestionDTO createQuestionDTO)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var usereEmail = User.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(userId))
             {
                 throw new InvalidOperationException("Id null"); 
