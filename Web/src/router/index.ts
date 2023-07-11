@@ -71,6 +71,7 @@ const router = createRouter({
         auth: true,
       }
     },
+      {
       path: '/commentQuestion',
       name: 'commentQuestion',
       component: CommentQuestion,
