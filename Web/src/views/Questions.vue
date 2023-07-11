@@ -15,13 +15,13 @@ const cards = 3;
                 <!-- SEACHER -->
                 <v-card>
                     <v-card-title>
-                    Buscar Questões
+                    Buscar Questões e Filtro
                     <v-spacer></v-spacer>
                     <v-text-field
                         bg-color="white"
                         variant="outlined"
                         append-icon="mdi-magnify"
-                        label="Progressão Aritmética"
+                        label="Enunciado, matéria, assunto..."
                         single-line
                         hide-details
                     ></v-text-field>
@@ -29,6 +29,32 @@ const cards = 3;
                     <v-data-table
                     
                     ></v-data-table>
+                    <!-- FILTER -->
+                    <!-- <v-select
+                        label="Tipo"
+                        :items="['Objetiva', 'Subjetiva']"
+                        variant="outlined"
+                    ></v-select>
+                    <v-select
+                        label="Dificuldade"
+                        :items="['Fácil', 'Média', 'Difícil']"
+                        variant="outlined"
+                    ></v-select>
+                    <v-select
+                        label="Privacidade"
+                        :items="['Pública', 'Privada']"
+                        variant="outlined"
+                    ></v-select>
+                    <v-select
+                        label="Propriedade"
+                        :items="['Minhas Questões', 'Todas Questões']"
+                        variant="outlined"
+                    ></v-select>
+                    <v-select
+                        label="Marcadas"
+                        :items="['Apenas favoritas', 'Não favoritas']"
+                        variant="outlined"
+                    ></v-select> -->
                 </v-card>
             </v-col>
         </v-row>
