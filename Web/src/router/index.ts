@@ -8,8 +8,7 @@ import UserProfile from '../views/UserProfile.vue'
 import registerQuestion from '../views/registerQuestion.vue'
 import Questions from '../views/Questions.vue'
 import { useAuthStore } from '@/stores/authStore'
-
-
+import CommentQuestion from '../views/CommentQuestion.vue'
 //cria a instância dorouter com as rotas
 const router = createRouter({
   //Cria um histórico HTML5. Histórico mais comum para aplicativos de página única.
@@ -22,17 +21,17 @@ const router = createRouter({
       name: 'login',
       component: Login,
       meta: {
-        layout: "EmptyLayout",
-        auth: false,
+        layout: 'EmptyLayout',
+        auth: false
       }
     },
-     {
+    {
       path: '/',
       name: 'home',
       component: Home,
       meta: {
-        auth: true,
-      },
+        auth: true
+      }
     },
     {
       path: '/start',
@@ -44,8 +43,8 @@ const router = createRouter({
       name: 'signup',
       component: SignUp,
       meta: {
-        layout: "EmptyLayout",
-        auth: false,
+        layout: 'EmptyLayout',
+        auth: false
       }
     },
     {
@@ -53,16 +52,16 @@ const router = createRouter({
       name: 'userprofile',
       component: UserProfile,
       meta: {
-        auth: true,
-      },
+        auth: true
+      }
     },
     {
       path: '/registerQuestion',
       name: 'resgisterQuestion',
       component: registerQuestion,
       meta: {
-        auth: true,
-      },
+        auth: true
+      }
     },
     {
       path: '/questions',
@@ -71,26 +70,35 @@ const router = createRouter({
       meta: {
         auth: true,
       }
+    },
+      path: '/commentQuestion',
+      name: 'commentQuestion',
+      component: CommentQuestion,
+      meta: {
+        auth: true
+      }
     }
-  ]  
+  ]
 })
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  const auth = localStorage.getItem("token");
+  const authStore = useAuthStore()
+  const auth = localStorage.getItem('token')
 
-  if (to.meta?.auth && !auth) { // Verifica se a rota de destino requer autenticação e se o usuário não está autenticado
-    next("/login"); // Redireciona para a rota de login
-    return;
+  if (to.meta?.auth && !auth) {
+    // Verifica se a rota de destino requer autenticação e se o usuário não está autenticado
+    next('/login') // Redireciona para a rota de login
+    return
   }
 
-  if (auth && authStore.isExpired()) { // Verifica se o usuário está autenticado, mas o token expirou
-    next("/login"); // Redireciona para a rota de login
-    return;
+  if (auth && authStore.isExpired()) {
+    // Verifica se o usuário está autenticado, mas o token expirou
+    next('/login') // Redireciona para a rota de login
+    return
   }
 
-  next(); // Permite a navegação normalmente
-});
+  next() // Permite a navegação normalmente
+})
 
 //exportando as rotas
 export default router

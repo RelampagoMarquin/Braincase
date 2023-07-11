@@ -17,7 +17,12 @@ export const useQuestionStore = defineStore('question', () => {
             text: question.text,
             type: question.type,
             dificult: question.dificult,
-            isPrivate: question.isPrivate
+            isPrivate: question.isPrivate,
+            justify: question.justify,
+            answers: question.answers,
+            InstitutionName: question.InstitutionName,
+            tags: question.tags,
+            subjectId: question.subjectId,
         },
             {
             }).then(function () {

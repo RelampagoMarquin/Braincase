@@ -2,10 +2,16 @@
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
 import type { User } from '@/utils/types';
-import { ref } from 'vue'
-const userid = JSON.parse(localStorage.getItem("user")!);
+import { ref, onBeforeMount  } from 'vue'
+
 const userStore = useUserStore()
-// console.log(await userStore.getUserById(userid))
+const user = ref<User>() 
+
+onBeforeMount(async () => {
+  const userid = JSON.parse(localStorage.getItem("user")!);
+  await userStore.getUserById(userid)
+  user.value = userStore.user
+})
 
 const authStore = useAuthStore()
 function logout(){
@@ -24,10 +30,15 @@ const isLogged = ref(true)
         <div v-if="isLogged" class="login-area">
             <v-row>
                 <v-col cols="6">
-                    <v-row>
-                        <v-col cols="12" class="user-name">nome do usuario</v-col>
+                    <v-row v-if="isLogged">
+                        <v-col cols="12" class="user-name">{{ user?.name }}</v-col>
                         <v-col cols="12" class="logout-btn">
                             <v-btn class="login-btn" @click="logout" size="small">Sair</v-btn>
+                        </v-col>
+                    </v-row>
+                    <v-row v-else>
+                        <v-col cols="12" class="logout-btn">
+                            <v-btn class="login-btn" @click="logout" size="small">Entrar</v-btn>
                         </v-col>
                     </v-row>
                 </v-col>

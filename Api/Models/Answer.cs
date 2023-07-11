@@ -12,9 +12,6 @@ namespace Api.Models
         public String Text { get; set; }
 
         public Boolean IsCorrect { get; set; } = false;
-        
-        [MaxLength(int.MaxValue)]
-        public String? Justify { get; set; }
 
         public Guid QuestionId { get; set; }
 
