@@ -31,7 +31,7 @@ const router = createRouter({
       name: 'home',
       component: Home,
       meta: {
-        // auth: true,
+        auth: true,
       },
     },
     {
@@ -53,7 +53,7 @@ const router = createRouter({
       name: 'userprofile',
       component: UserProfile,
       meta: {
-        // auth: true,
+        auth: true,
       },
     },
     {
@@ -61,7 +61,7 @@ const router = createRouter({
       name: 'resgisterQuestion',
       component: registerQuestion,
       meta: {
-        // auth: true,
+        auth: true,
       },
     },
     {
@@ -69,7 +69,7 @@ const router = createRouter({
       name: 'questions',
       component: Questions,
       meta: {
-        // auth: true,
+        auth: true,
       }
     }
   ]  
