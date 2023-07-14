@@ -30,6 +30,12 @@ export const useTagStore = defineStore('tag', () =>{
         });
         return tags.value
     }
+    async function getAllTagsBySubject(subjectid:string) {
+        const res = await axiosAuth.get(`/Tag/subject/${subjectid}`, {
+        });
+        tags.value = res.data
+        return tags.value
+    }
 
     async function getTagById(id: string) {
         const response = await axiosAuth.get(`/Tag/${id}`, {
@@ -89,5 +95,6 @@ export const useTagStore = defineStore('tag', () =>{
         getTagById,
         updateTag,
         deleteTag,
+        getAllTagsBySubject
     }
 })

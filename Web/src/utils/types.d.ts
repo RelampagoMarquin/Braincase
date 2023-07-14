@@ -40,13 +40,11 @@ export interface Answer {
   id: string;
   text: string;
   IsCorrect: boolean;
-  Justify: string | null;
 }
 
 export interface CreateAnswer {
   text: string;
   IsCorrect: boolean;
-  Justify: string | null;
 }
 
 export interface Question {
