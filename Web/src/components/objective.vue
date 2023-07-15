@@ -1,5 +1,6 @@
 <script setup lang="ts" >
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import {CreateAnswer} from "../stores/answerStore.ts"
 
 const cont = ref(6)
 async function adicionar() {
@@ -28,19 +29,48 @@ const textc = ref('')
 const textd = ref('')
 const texte = ref('')
 const textf = ref('')
-const a = ref([{ text: texta }])
-const b = ref([{ text: textb }])
-const c = ref([{ text: textc }])
-const d = ref([{ text: textd }])
-const e = ref([{ text: texte }])
-const f = ref([{ text: texte }])
-console.log(a)
+const a = ref()
+const b = ref()
+const c = ref()
+const d = ref()
+const e = ref()
+const f = ref()
+const aa = ref<CreateAnswer>({text: texta, IsCorrect: a })
+const ba = ref<CreateAnswer>({text: textb, IsCorrect: b })
+const ca = ref<CreateAnswer>({text: textc, IsCorrect: c })
+const da = ref<CreateAnswer>({text: textd, IsCorrect: d })
+const ea = ref<CreateAnswer>({text: texte, IsCorrect: e })
+const fa = ref<CreateAnswer>({text: textf, IsCorrect: f })
+
+ const  answers = ref<CreateAnswer>([aa, ba])
+watch(async () => {
+
+if (ca.value.text !== ''){
+  answers.value.splice(2)
+  answers.value.push(ca)
+}
+if (da.value.text !== ''){
+  answers.value.splice(3)
+  answers.value.push(da)
+}
+if (ea.value.text !== ''){
+  answers.value.splice(4)
+  answers.value.push(ea)
+}
+if (fa.value.text !== ''){
+  answers.value.splice(5)
+  answers.value.push(fa)
+}
+
+})
+
 </script>
+
 
 <template>
   <div class="mr-5">
     <label for="">Alternativas:</label>
-    <div class="ml-2 mt-4" v-if="cont >= 1">
+    <div class="ml-2 mt-1" v-if="cont >= 1">
       <v-row>
         <v-col cols="1">
           <v-checkbox v-model="a">
@@ -61,7 +91,7 @@ console.log(a)
         </v-col>
       </v-row>
     </div>
-
+{{answers}}
     <div class="d-flex ml-2" v-if="cont >= 2">
       <v-row>
         <v-col cols="1">
@@ -150,6 +180,7 @@ console.log(a)
         </v-col>
       </v-row>
     </div>
+    {{answers}}
     <div class="d-flex ml-2" v-if="cont >= 6">
       <v-row>
         <v-col cols="1">
@@ -174,7 +205,7 @@ console.log(a)
 
     <v-row>
       <v-col cols="12" :align="'center'">
-        <v-btn @click="adicionar" density="compact" class="btn-primary ml-6" icon="mdi-plus">
+        <v-btn @click="adicionar" density="compact" class="btn-primary ml-6" icon="mdi-plus" >
         </v-btn>
         <v-btn @click="deletar" density="compact" class="btn-primary ml-6" icon="mdi-delete">
         </v-btn>

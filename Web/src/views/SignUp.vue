@@ -89,7 +89,7 @@ async function signup(){
           </v-form>
           <p class="text-center mt-4 login-text">
             Já possui um cadastro?
-            <router-link to="/" class="login-link"> Fazer Login </router-link>
+            <router-link to="/login" class="login-link"> Fazer Login </router-link>
           </p>
         </v-col>
       </v-row>
