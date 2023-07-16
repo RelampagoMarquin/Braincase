@@ -12,25 +12,26 @@ export const useQuestionStore = defineStore('question', () => {
         axiosAuth = apiAxiosAuth(token)
     }
 
-    async function createQuestion(question: CreateQuestion) {
-        const response = await axiosAuth.post('/Question', {
-            text: question.text,
-            type: question.type,
-            dificult: question.dificult,
-            isPrivate: question.isPrivate,
-            justify: question.justify,
-            answers: question.answers,
-            InstitutionName: question.InstitutionName,
-            tags: question.tags,
-            subjectId: question.subjectId,
-        },
-            {
-            }).then(function () {
-                alert('Criada com sucesso!')
-            }).catch(function (error) {
-                console.log(error.message);
-            });
-        return response
+    async function createQuestion(questionCreate: CreateQuestion) {
+        try {
+            const res = await axiosAuth.post('/Question', {
+            text: questionCreate.text,
+            type: questionCreate.type,
+            dificult: questionCreate.dificult,
+            isPrivate: questionCreate.isPrivate,
+            justify: questionCreate.justify,
+            answers: questionCreate.answers,
+            InstitutionName: questionCreate.InstitutionName,
+            tags: questionCreate.tags,
+            subjectId: questionCreate.subjectId,
+        })
+        alert('Criada com sucesso')
+        question.value = res.data
+        return question.value
+        } catch (error) {
+            alert('erro ao criar')
+            console.log(error);
+        }
     }
     
     async function getAllQuestion() {

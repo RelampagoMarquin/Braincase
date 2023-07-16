@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref, onBeforeMount, watch } from "vue";
+import { ref, onBeforeMount, watch, watchEffect } from "vue";
 import Discursive from "../components/discursive.vue";
 import Objective from "../components/objective.vue";
 import { useSubjectStore } from "@/stores/subjectStore";
 import { useTagStore } from "@/stores/tagStore";
-import { CreateAnswer } from "../stores/answerStore.ts";
-import type { CreateQuestion } from "@/utils/types";
-import { useQuestionStore } from "@/stores/questionStore.ts";
+import type { CreateQuestion, Subject, Tag } from "@/utils/types";
+import { useQuestionStore } from "@/stores/questionStore";
+import type { CreateAnswer, Institution } from "@/utils/types";
+import { useInstitutionStore } from "@/stores/instituitionStore";
 
 const cont = ref(6);
 async function adicionar() {
   if (cont.value <= 5) {
     cont.value = cont.value + 1;
-    console.log(cont.value);
     return cont;
   } else {
     alert("O máximo de questão é 6");
@@ -21,7 +21,6 @@ async function adicionar() {
 async function deletar() {
   if (cont.value >= 3) {
     cont.value = cont.value - 1;
-    console.log(cont.value);
     return cont;
   } else {
     alert("O minimo de questão é 2");
@@ -35,36 +34,33 @@ const textc = ref("");
 const textd = ref("");
 const texte = ref("");
 const textf = ref("");
-const a = ref();
-const b = ref();
-const c = ref();
-const d = ref();
-const e = ref();
-const f = ref();
-const aa = ref<CreateAnswer>({ text: texta, IsCorrect: a });
-const ba = ref<CreateAnswer>({ text: textb, IsCorrect: b });
-const ca = ref<CreateAnswer>({ text: textc, IsCorrect: c });
-const da = ref<CreateAnswer>({ text: textd, IsCorrect: d });
-const ea = ref<CreateAnswer>({ text: texte, IsCorrect: e });
-const fa = ref<CreateAnswer>({ text: textf, IsCorrect: f });
+const a = ref(false);
+const b = ref(false);
+const c = ref(false);
+const d = ref(false);
+const e = ref(false);
+const f = ref(false);
+const aa = ref<CreateAnswer>({ text: texta.value, IsCorrect: a.value });
+const ba = ref<CreateAnswer>({ text: textb.value, IsCorrect: b.value });
+const ca = ref<CreateAnswer>({ text: textc.value, IsCorrect: c.value });
+const da = ref<CreateAnswer>({ text: textd.value, IsCorrect: d.value });
+const ea = ref<CreateAnswer>({ text: texte.value, IsCorrect: e.value });
+const fa = ref<CreateAnswer>({ text: textf.value, IsCorrect: f.value });
 
-const answers = ref<CreateAnswer>([aa, ba]);
-watch(async () => {
+const answers = ref<CreateAnswer[]>([aa.value, ba.value]);
+
+watch(ca.value || da.value || ea.value || fa.value,async () => {
   if (ca.value.text !== "") {
-    answers.value.splice(2);
-    answers.value.push(ca);
+    answers.value.push(ca.value);
   }
   if (da.value.text !== "") {
-    answers.value.splice(3);
-    answers.value.push(da);
+    answers.value.push(da.value);
   }
   if (ea.value.text !== "") {
-    answers.value.splice(4);
-    answers.value.push(ea);
+    answers.value.push(ea.value);
   }
   if (fa.value.text !== "") {
-    answers.value.splice(5);
-    answers.value.push(fa);
+    answers.value.push(fa.value);
   }
 });
 
@@ -77,32 +73,33 @@ const dificuldade = [
   { id: 2, name: "Médio" },
   { id: 2, name: "Dificil" },
 ];
-const questionStore = useQuestionStore()
+// stores
+const questionStore = useQuestionStore();
+const subjectStore = useSubjectStore();
+const instituitionStore = useInstitutionStore();
+
+// variables
+const institutions = ref<Institution[]>([]);
 const questionType = ref(1);
 const difficulty = ref(1);
 const tags = ref(); //PASSAR COMO parametro o subject
 const institution = ref(); //string
 const questiontext = ref("");
 const justification = ref("");
-const subject = ref(""); //subject id:materia
+const subject = ref<Subject>(); //subject id:materia
 const privacy = ref<boolean>(true); //true
 const response = ref("");
 
-const subjectStore = useSubjectStore();
 
-const materias = ref<subject[]>();
+const materias = ref<Subject[]>();
 onBeforeMount(async () => {
   materias.value = await subjectStore.getAllSubject();
+  institutions.value = await instituitionStore.getAllInstitution();
 });
 
 const tagsStore = useTagStore();
 
 const tag = ref<Tag[]>();
-watch(async () => {
-  if (subject.value.id) {
-    tag.value = await tagsStore.getAllTagsBySubject(subject.value.id);
-  }
-});
 
 async function voltar() {
   window.history.back();
@@ -116,13 +113,19 @@ async function registerquestion() {
     isPrivate: privacy.value,
     justify: justification.value,
     answers: answers.value,
-    InstitutionName: institution.value,
+    InstitutionName: institution.value[0].name,
     tags: tags.value,
-    subjectid: subject.value.id,
+    subjectId: subject.value?.id as string,
   };
   console.log(question)
   await questionStore.createQuestion(question);
 }
+
+watch(subject, async () => { 
+  if (subject.value) {
+    tag.value = await tagsStore.getAllTagsBySubject(subject.value?.id as string);
+  }
+});
 </script>
 
 <template>
@@ -147,45 +150,21 @@ async function registerquestion() {
               <h3 for="" class="text-primary-custom text-center title">
                 Texto da Questão:
               </h3>
-              <v-textarea
-                class="v-locale--is-ltr mt-1"
-                v-model="questiontext"
-                label="Digite sua questão aqui"
-                variant="outlined"
-                density="compact"
-                bg-color="white"
-              >
+              <v-textarea class="v-locale--is-ltr mt-1" v-model="questiontext" label="Digite sua questão aqui"
+                variant="outlined" density="compact" bg-color="white">
               </v-textarea>
             </v-col>
           </v-row>
           <v-row class="container ml-5">
             <v-col cols="6">
               <label for="">Tipo da Questão</label>
-              <v-select
-                v-model="questionType"
-                class="mt-2 v-locale--is-ltr"
-                :items="items1"
-                item-title="name"
-                item-value="id"
-                label="Escolha o tipo"
-                variant="outlined"
-                density="compact"
-                bg-color="white"
-              >
+              <v-select v-model="questionType" class="mt-2 v-locale--is-ltr" :items="items1" item-title="name"
+                item-value="id" label="Escolha o tipo" variant="outlined" density="compact" bg-color="white">
               </v-select>
 
               <label for="">Dificuldade</label>
-              <v-select
-                v-model="difficulty"
-                class="mt-1 v-locale--is-ltr"
-                :items="dificuldade"
-                item-title="name"
-                item-value="id"
-                label="Escolha a dificuldade"
-                variant="outlined"
-                density="compact"
-                bg-color="white"
-              >
+              <v-select v-model="difficulty" class="mt-1 v-locale--is-ltr" :items="dificuldade" item-title="name"
+                item-value="id" label="Escolha a dificuldade" variant="outlined" density="compact" bg-color="white">
               </v-select>
 
               <label for="">Privacidade:</label>
@@ -195,43 +174,16 @@ async function registerquestion() {
               </v-radio-group>
 
               <label for="">Disciplina</label>
-              <v-combobox
-                v-model="subject"
-                :items="materias"
-                item-title="name"
-                item-value="id"
-                variant="outlined"
-                density="compact"
-                placeholder="Matematica"
-                autocomplete
-                bg-color="white"
-              ></v-combobox>
+              <v-combobox v-model="subject" :items="materias" item-title="name" item-value="id" variant="outlined"
+                density="compact" placeholder="Matematica" autocomplete bg-color="white"></v-combobox>
 
               <label for="">Tags</label>
-              <v-combobox
-                v-model="tags"
-                :items="tag"
-                item-title="name"
-                item-value="id"
-                variant="outlined"
-                density="compact"
-                placeholder="#Matematica"
-                multiple
-                chips
-                bg-color="white"
-              ></v-combobox>
+              <v-combobox v-model="tags" :items="tag" item-title="name" item-value="name" variant="outlined"
+                density="compact" placeholder="#Matematica" multiple chips bg-color="white"></v-combobox>
 
               <label for="">Instituição</label>
-              <v-combobox
-                v-model="institution"
-                :items="instituicao"
-                variant="outlined"
-                density="compact"
-                placeholder="ifrn"
-                multiple
-                chips
-                bg-color="white"
-              ></v-combobox>
+              <v-combobox v-model="institution" :items="institutions" item-title="name" item-value="name" variant="outlined" density="compact"
+                placeholder="ifrn" multiple chips bg-color="white"></v-combobox>
             </v-col>
             <v-col cols="6">
               <label v-if="questionType === 1">Resposta:</label>
@@ -247,15 +199,9 @@ async function registerquestion() {
                       </v-checkbox>
                     </v-col>
                     <v-col cols="11">
-                      <v-textarea
-                        class="v-locale--is-ltr ml-2"
-                        v-model="texta"
-                        label="Escreva o texto para a alternativa A"
-                        variant="outlined"
-                        bg-color="white"
-                        rows="1"
-                        row-height="15"
-                      >
+                      <v-textarea class="v-locale--is-ltr ml-2" v-model="texta"
+                        label="Escreva o texto para a alternativa A" variant="outlined" bg-color="white" rows="1"
+                        row-height="15">
                       </v-textarea>
                     </v-col>
                   </v-row>
@@ -269,15 +215,9 @@ async function registerquestion() {
                       </v-checkbox>
                     </v-col>
                     <v-col cols="11">
-                      <v-textarea
-                        class="text-input v-locale--is-ltr ml-2"
-                        v-model="textb"
-                        label="Escreva o texto para a alternativa B"
-                        variant="outlined"
-                        bg-color="white"
-                        rows="1"
-                        row-height="15"
-                      >
+                      <v-textarea class="text-input v-locale--is-ltr ml-2" v-model="textb"
+                        label="Escreva o texto para a alternativa B" variant="outlined" bg-color="white" rows="1"
+                        row-height="15">
                       </v-textarea>
                     </v-col>
                   </v-row>
@@ -291,16 +231,9 @@ async function registerquestion() {
                       </v-checkbox>
                     </v-col>
                     <v-col cols="11">
-                      <v-textarea
-                        class="text-input v-locale--is-ltr ml-2"
-                        rounded-lg
-                        v-model="textc"
-                        label="Escreva o texto para a alternativa C"
-                        variant="outlined"
-                        bg-color="white"
-                        rows="1"
-                        row-height="15"
-                      >
+                      <v-textarea class="text-input v-locale--is-ltr ml-2" rounded-lg v-model="textc"
+                        label="Escreva o texto para a alternativa C" variant="outlined" bg-color="white" rows="1"
+                        row-height="15">
                       </v-textarea>
                     </v-col>
                   </v-row>
@@ -314,15 +247,9 @@ async function registerquestion() {
                       </v-checkbox>
                     </v-col>
                     <v-col cols="11">
-                      <v-textarea
-                        class="v-locale--is-ltr ml-2"
-                        v-model="textd"
-                        label="Escreva o texto para a alternativa D"
-                        variant="outlined"
-                        bg-color="white"
-                        rows="1"
-                        row-height="15"
-                      >
+                      <v-textarea class="v-locale--is-ltr ml-2" v-model="textd"
+                        label="Escreva o texto para a alternativa D" variant="outlined" bg-color="white" rows="1"
+                        row-height="15">
                       </v-textarea>
                     </v-col>
                   </v-row>
@@ -336,20 +263,14 @@ async function registerquestion() {
                       </v-checkbox>
                     </v-col>
                     <v-col cols="11">
-                      <v-textarea
-                        class="text-input v-locale--is-ltr ml-2"
-                        v-model="texte"
-                        label="Escreva o texto para a alternativa E "
-                        variant="outlined"
-                        bg-color="white"
-                        rows="1"
-                        row-height="15"
-                      >
+                      <v-textarea class="text-input v-locale--is-ltr ml-2" v-model="texte"
+                        label="Escreva o texto para a alternativa E " variant="outlined" bg-color="white" rows="1"
+                        row-height="15">
                       </v-textarea>
                     </v-col>
                   </v-row>
                 </div>
-                
+
                 <div class="d-flex ml-2" v-if="cont >= 6">
                   <v-row>
                     <v-col cols="1">
@@ -358,15 +279,9 @@ async function registerquestion() {
                       </v-checkbox>
                     </v-col>
                     <v-col cols="11">
-                      <v-textarea
-                        class="text-input v-locale--is-ltr ml-2"
-                        v-model="textf"
-                        label="Escreva o texto para a alternativa F "
-                        variant="outlined"
-                        bg-color="white"
-                        rows="1"
-                        row-height="15"
-                      >
+                      <v-textarea class="text-input v-locale--is-ltr ml-2" v-model="textf"
+                        label="Escreva o texto para a alternativa F " variant="outlined" bg-color="white" rows="1"
+                        row-height="15">
                       </v-textarea>
                     </v-col>
                   </v-row>
@@ -374,19 +289,9 @@ async function registerquestion() {
 
                 <v-row>
                   <v-col cols="12" :align="'center'">
-                    <v-btn
-                      @click="adicionar"
-                      density="compact"
-                      class="btn-primary ml-6"
-                      icon="mdi-plus"
-                    >
+                    <v-btn @click="adicionar" density="compact" class="btn-primary ml-6" icon="mdi-plus">
                     </v-btn>
-                    <v-btn
-                      @click="deletar"
-                      density="compact"
-                      class="btn-primary ml-6"
-                      icon="mdi-delete"
-                    >
+                    <v-btn @click="deletar" density="compact" class="btn-primary ml-6" icon="mdi-delete">
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -396,14 +301,8 @@ async function registerquestion() {
           <v-row class="ml-5 mr-3" :justify="'center'">
             <v-col cols="12" variant="outlined">
               <h3 for="" class="text-primary-custom text-center title">Justificativa:</h3>
-              <v-textarea
-                class="v-locale--is-ltr mt-1"
-                v-model="justification"
-                label="Digite sua Justificativa aqui"
-                variant="outlined"
-                density="compact"
-                bg-color="white"
-              >
+              <v-textarea class="v-locale--is-ltr mt-1" v-model="justification" label="Digite sua Justificativa aqui"
+                variant="outlined" density="compact" bg-color="white">
               </v-textarea>
             </v-col>
           </v-row>
@@ -423,3 +322,4 @@ async function registerquestion() {
   border-radius: 10px;
 }
 </style>
+@/stores/instituitionStore

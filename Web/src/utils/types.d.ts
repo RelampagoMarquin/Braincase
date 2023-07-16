@@ -61,10 +61,7 @@ export interface CreateQuestion {
   dificult: number;
   isPrivate: boolean;
   justify?: string;
-  answers: {
-    Text: string;
-    IsCorrect: boolean
-  }[];
+  answers: CreateAnswer[];
   InstitutionName: string;
   tags: string[];
   subjectId: string;
