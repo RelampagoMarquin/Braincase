@@ -40,13 +40,11 @@ export interface Answer {
   id: string;
   text: string;
   IsCorrect: boolean;
-  Justify: string | null;
 }
 
 export interface CreateAnswer {
   text: string;
   IsCorrect: boolean;
-  Justify: string | null;
 }
 
 export interface Question {
@@ -63,11 +61,8 @@ export interface CreateQuestion {
   dificult: number;
   isPrivate: boolean;
   justify?: string;
-  answers: {
-    Text: string;
-    IsCorrect: boolean
-  }[];
-  InstitutionName: string;
+  answers: CreateAnswer[];
+  InstitutionName?: string;
   tags: string[];
   subjectId: string;
 }

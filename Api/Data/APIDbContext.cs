@@ -21,7 +21,7 @@ namespace Api.Data{
                 .IsUnique();
 
             modelBuilder.Entity<Tag>()
-                .HasIndex(t => t.Name)
+                .HasIndex(t => new { t.Name, t.SubjectId })
                 .IsUnique();
 
             modelBuilder.Entity<Subject>()

@@ -13,8 +13,9 @@ export const useSubjectStore = defineStore('subject', () =>{
     }
 
     async function getAllSubject() {
-        subjects.value = await axiosAuth.get('/Subject', {
+        const res = await axiosAuth.get('/Subject', {
         });
+        subjects.value = res.data
         return subjects.value
     }
 

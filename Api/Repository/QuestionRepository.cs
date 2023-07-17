@@ -92,7 +92,7 @@ namespace Api.Repository
 
             // Verify Institution if not exist create
             var institution = await _context.Institution
-                .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
+                            .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
             if (!String.IsNullOrEmpty(createQuestionDTO.InstitutionName))
             {
                 if (institution == null)
@@ -104,7 +104,7 @@ namespace Api.Repository
                         .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
                 }
             }
-
+            
             // Create Question
             Question question = new Question
             {

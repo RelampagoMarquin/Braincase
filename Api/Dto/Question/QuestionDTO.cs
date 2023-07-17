@@ -17,7 +17,7 @@ namespace Api.Dto.Question
 
         public List<CreateAnswerForQuestionDTO> Answers { get; set; }
         
-        public String InstitutionName { get; set; }
+        public String? InstitutionName { get; set; }
 
         public List<String> Tags { get; set; }
 

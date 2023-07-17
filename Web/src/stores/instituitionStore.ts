@@ -26,8 +26,9 @@ export const useInstitutionStore = defineStore('institution', () => {
     }
 
     async function getAllInstitution() {
-        institutions.value = await axiosAuth.get('/Institution', {
+        const res = await axiosAuth.get('/Institution', {
         });
+        institutions.value = res.data;
         return institutions.value
     }
 
