@@ -12,17 +12,16 @@ export const useCommentStore = defineStore('comment', () => {
         axiosAuth = apiAxiosAuth(token)
     }
 
-    async function createComment(comment: Comment) {
+    async function createComment(commentCreate: Comment) {
+        try{
         const response = await axiosAuth.post('/Comment', {
-            text: comment.text,
-        },
-            {
-            }).then(function () {
-                alert('Criado com sucesso!')
-            }).catch(function (error) {
-                console.log(error.message);
-            });
-        return response
+            text: commentCreate.text,
+        });
+            alert('Criado com sucesso!')
+            return response.data
+        }catch(error){
+            console.log(error);
+        }
     }    
 
     async function getAllComment() {
