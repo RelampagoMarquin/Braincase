@@ -5,7 +5,7 @@ import SignUp from '../views/SignUp.vue'
 import Home from '../views/HomePage.vue'
 import Start from '../views/StartPage.vue'
 import UserProfile from '../views/UserProfile.vue'
-import registerQuestion from '../views/registerQuestion.vue'
+import RegisterQuestion from '../views/RegisterQuestion.vue'
 import Questions from '../views/Questions.vue'
 import { useAuthStore } from '@/stores/authStore'
 import CommentQuestion from '../views/CommentQuestion.vue'
@@ -58,7 +58,7 @@ const router = createRouter({
     {
       path: '/registerQuestion',
       name: 'resgisterQuestion',
-      component: registerQuestion,
+      component: RegisterQuestion,
       meta: {
         auth: true
       }
