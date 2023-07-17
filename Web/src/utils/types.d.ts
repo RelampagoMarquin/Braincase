@@ -62,7 +62,7 @@ export interface CreateQuestion {
   isPrivate: boolean;
   justify?: string;
   answers: CreateAnswer[];
-  InstitutionName: string;
+  InstitutionName?: string;
   tags: string[];
   subjectId: string;
 }
