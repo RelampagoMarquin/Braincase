@@ -29,8 +29,9 @@ export const useTestStore = defineStore('test', () => {
     }
 
     async function getAllTest() {
-        tests.value = await axiosAuth.get('/Test', {
+        const res = await axiosAuth.get('/Test', {
         });
+        tests.value = res.data
         return tests.value
     }
 

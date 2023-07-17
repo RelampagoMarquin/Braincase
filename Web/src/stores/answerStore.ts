@@ -15,7 +15,6 @@ export const useAnswerStore = defineStore('answer', () => {
         const response = await axiosAuth.post('/Answer', {
             text: Answer.text,
             Iscorrect: Answer.IsCorrect,
-            Justify: Answer.Justify,
         },
             {
             }).then(function () {

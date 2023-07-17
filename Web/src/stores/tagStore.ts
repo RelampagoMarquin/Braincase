@@ -26,8 +26,9 @@ export const useTagStore = defineStore('tag', () =>{
     }
 
     async function getAllTag() {
-        tags.value = await axiosAuth.get('/Tag', {
+        const res = await axiosAuth.get('/Tag', {
         });
+        tags.value = res.data
         return tags.value
     }
     async function getAllTagsBySubject(subjectid:string) {

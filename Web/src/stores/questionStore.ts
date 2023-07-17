@@ -35,20 +35,23 @@ export const useQuestionStore = defineStore('question', () => {
     }
     
     async function getAllQuestion() {
-        questions.value = await axiosAuth.get('/Question', {
+        const res = await axiosAuth.get('/Question', {
         });
+        questions.value = res.data
         return questions.value
     }
 
     async function getAllPublic() {
-        questions.value = await axiosAuth.get('/public', {
+        const res = await axiosAuth.get('/public', {
         });
+        questions.value = res.data
         return questions.value
     }
 
     async function getAllUserQuestion() {
-        questions.value = await axiosAuth.get('/user/all/{id}', {
+        const res = await axiosAuth.get('/user/all/{id}', {
         });
+        questions.value = res.data
         return questions.value
     }
 

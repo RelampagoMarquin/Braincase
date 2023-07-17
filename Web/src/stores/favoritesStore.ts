@@ -26,8 +26,9 @@ export const useFavoritesStore = defineStore('favorites', () => {
     } 
 
     async function getAllFavorites() {
-        favorites.value = await axiosAuth.get('/Favorites', {
+        const res = await axiosAuth.get('/Favorites', {
         });
+        favorites.value = res.data
         return favorites.value
     }
 

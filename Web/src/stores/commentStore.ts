@@ -26,8 +26,9 @@ export const useCommentStore = defineStore('comment', () => {
     }    
 
     async function getAllComment() {
-        comments.value = await axiosAuth.get('/Comment', {
+        const res = await axiosAuth.get('/Comment', {
         });
+        comment.value = res.data
         return comments.value
     }
 
