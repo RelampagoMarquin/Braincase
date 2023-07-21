@@ -34,6 +34,7 @@ export interface Subject {
 export interface Tag {
   id?: string;
   name: string;
+  subjectName?: string;
 }
 
 export interface Answer {
@@ -53,6 +54,10 @@ export interface Question {
   type: number;
   dificult: number;
   isPrivate: boolean;
+  tags: Tag[],
+  favorites: {
+    own?: boolean;
+  }[]
 }
 
 export interface CreateQuestion {

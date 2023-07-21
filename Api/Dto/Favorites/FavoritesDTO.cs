@@ -17,4 +17,10 @@ namespace Api.Dto.Favorites
 
         public Guid QuestionId { get; set; } 
     }
+
+    public class ResponseFavoritesForQuestionDTO
+    {
+        public bool Own { get; set; }
+
+    }
 }

@@ -54,56 +54,65 @@ export const useQuestionStore = defineStore('question', () => {
         return questions.value
     }
 
-    async function getAllUserQuestion() {
+    async function getAllFavorites() {
         isLoading.value = true;
-        const res = await axiosAuth.get('/user/all/{id}', {
+        const res = await axiosAuth.get('/Question/user/favorites', {
         });
         questions.value = res.data
         isLoading.value = false;
         return questions.value
     }
 
-    async function getQuestionById(id: string) {
-        isLoading.value = true;
-        const response = await axiosAuth.get(`/Question/${id}`, {
-        }).catch(function (error) {
-            if (error.response) {
-                if (error.response.message == 409) {
-                    alert('Pergunta não encontrada')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
+    // async function getAllUserQuestion() {
+    //     isLoading.value = true;
+    //     const res = await axiosAuth.get('/user/all/{id}', {
+    //     });
+    //     questions.value = res.data
+    //     isLoading.value = false;
+    //     return questions.value
+    // }
 
-        });
-        isLoading.value = false;
-        return response
-    }
+    // async function getQuestionById(id: string) {
+    //     isLoading.value = true;
+    //     const response = await axiosAuth.get(`/Question/${id}`, {
+    //     }).catch(function (error) {
+    //         if (error.response) {
+    //             if (error.response.message == 409) {
+    //                 alert('Pergunta não encontrada')
+    //             } else {
+    //                 alert('Erro ao cadastrar' + error.response.data + error.response.headers)
+    //             }
+    //         } else if (error.request) {
+    //             console.log(error.request);
+    //         } else {
+    //             console.log('Error', error.message);
+    //         }
 
-    async function getByUserQuestion(id: string) {
-        isLoading.value = true;
-        const response = await axiosAuth.get(`/user/{id}`, {
-        }).catch(function (error) {
-            if (error.response) {
-                if (error.response.message == 409) {
-                    alert('Pergunta não encontrada')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
+    //     });
+    //     isLoading.value = false;
+    //     return response
+    // }
 
-        });
-        isLoading.value = false;
-        return response
-    }
+    // async function getByUserQuestion(id: string) {
+    //     isLoading.value = true;
+    //     const response = await axiosAuth.get(`/user/{id}`, {
+    //     }).catch(function (error) {
+    //         if (error.response) {
+    //             if (error.response.message == 409) {
+    //                 alert('Pergunta não encontrada')
+    //             } else {
+    //                 alert('Erro ao cadastrar' + error.response.data + error.response.headers)
+    //             }
+    //         } else if (error.request) {
+    //             console.log(error.request);
+    //         } else {
+    //             console.log('Error', error.message);
+    //         }
+
+    //     });
+    //     isLoading.value = false;
+    //     return response
+    // }
 
     async function updateQuestion(id: string) {
         const response = await axiosAuth.put(`/Question/${id}`, {
@@ -144,9 +153,10 @@ export const useQuestionStore = defineStore('question', () => {
         createQuestion,
         getAllQuestion,
         getAllPublic,
-        getAllUserQuestion,
-        getQuestionById,
-        getByUserQuestion,
+        getAllFavorites,
+        // getAllUserQuestion,
+        // getQuestionById,
+        // getByUserQuestion,
         updateQuestion,
         deleteQuestion,
     }

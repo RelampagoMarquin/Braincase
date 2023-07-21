@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router'
 
 /* props definition */
@@ -9,6 +9,8 @@ interface Props {
     type: number;
     dificult: number;
     isPrivate: boolean;
+    subjectName?: string;
+    isOwn?: boolean
 }
 
 const props = defineProps<Props>()
@@ -34,16 +36,14 @@ const truncatedText = computed(() => {
 
 const router = useRouter()
 
-function toComment(){
-    router.push('/commentQuestion');
+function toComment(idquestion:string){
+    router.push(`/commentQuestion/${idquestion}`);
 }
 
-//Renderização de tipo, dificuldade, privacidade, e pertencimento
-const isOwner = ref(1)
 </script>
 
 <template>
-    <v-card class="question-card d-flex flex-column" @click="toComment">
+    <v-card class="question-card d-flex flex-column" @click="toComment(id)">
         <v-row>
             <v-col cols="10" class="card-text">
                 <div class="indicators d-flex align-center">
@@ -55,9 +55,9 @@ const isOwner = ref(1)
                     <span class="dificult medium" v-else-if="dificult == 2">Média</span>
                     <span class="dificult hard" v-else-if="dificult == 3">Difícil</span>
                     <!-- Privacidade -->
-                    <v-icon class="mdi mdi-lock" v-if="isPrivate == 1"></v-icon>
+                    <v-icon class="mdi mdi-lock" v-if="isPrivate"></v-icon>
                     <!-- pertencimento/proprietário -->
-                    <v-icon class="mdi mdi-folder" v-if="isOwner == 1"></v-icon>
+                    <v-icon class="mdi mdi-folder" v-if="isOwn"></v-icon>
                 </div>
                 <p>{{ truncatedText }}</p>
             </v-col>
@@ -67,7 +67,7 @@ const isOwner = ref(1)
         </v-row>
         <v-row align="end">
             <v-col cols="12" class="card-tag">
-                <p>Nome da matéria aqui</p>
+                <p>{{ subjectName }}</p>
             </v-col>
         </v-row>
     </v-card>

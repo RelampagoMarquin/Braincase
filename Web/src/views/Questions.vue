@@ -6,16 +6,18 @@ import { useQuestionStore } from '../stores/questionStore';
 
 /* getQuestions */
 const questionStore = useQuestionStore();
-const questions = ref<Question[]>()
+const questions = ref<Question[]>([])
 
 
 /* Loader */
-const { isLoading } = useQuestionStore();
-
+const isLoading  = ref(true)
 
 onBeforeMount(async () => {
-   questions.value = await questionStore.getAllQuestion();
+   questions.value = await questionStore.getAllFavorites();
+   isLoading.value = false
 })
+
+
 </script>
 
 <template>
@@ -68,6 +70,8 @@ onBeforeMount(async () => {
                 :type="question.type"
                 :dificult="question.dificult"
                 :isPrivate="question.isPrivate"
+                :subject-name="question.tags[0].subjectName"
+                :is-own="question.favorites[0].own"
                 >
                 </QuestionCard>
             </v-col>
