@@ -2,9 +2,10 @@
 import { onBeforeMount, ref } from 'vue';
 import type { Question } from "@/utils/types";
 import QuestionCard from '../components/QuestionCard.vue';
+import SeacherQuestion from '../components/SeacherQuestion.vue';
 import { useQuestionStore } from '../stores/questionStore';
 
-/* getQuestions */
+/* stores */
 const questionStore = useQuestionStore();
 const questions = ref<Question[]>([])
 
@@ -16,7 +17,6 @@ onBeforeMount(async () => {
    questions.value = await questionStore.getAllFavorites();
    isLoading.value = false
 })
-
 
 </script>
 
@@ -30,23 +30,7 @@ onBeforeMount(async () => {
         <v-row>
             <v-col cols="12">
                 <!-- SEACHER -->
-                <v-card>
-                    <v-card-title>
-                    Buscar Questões e Filtro
-                    <v-spacer></v-spacer>
-                    <v-text-field
-                        bg-color="white"
-                        variant="outlined"
-                        append-icon="mdi-magnify"
-                        label="Enunciado, matéria, assunto..."
-                        single-line
-                        hide-details
-                    ></v-text-field>
-                    </v-card-title>
-                    <v-data-table
-                    
-                    ></v-data-table>
-                </v-card>
+                <SeacherQuestion />
             </v-col>
         </v-row>
         <!-- Loading -->
