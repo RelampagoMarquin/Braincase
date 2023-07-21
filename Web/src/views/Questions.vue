@@ -1,6 +1,21 @@
 <script setup lang="ts">
+import { onBeforeMount, ref } from 'vue';
+import type { Question } from "@/utils/types";
 import QuestionCard from '../components/QuestionCard.vue';
-const cards = 3;
+import { useQuestionStore } from '../stores/questionStore';
+
+/* getQuestions */
+const questionStore = useQuestionStore();
+const questions = ref<Question[]>()
+
+
+/* Loader */
+const { isLoading } = useQuestionStore();
+
+
+onBeforeMount(async () => {
+   questions.value = await questionStore.getAllQuestion();
+})
 </script>
 
 <template>
@@ -29,41 +44,32 @@ const cards = 3;
                     <v-data-table
                     
                     ></v-data-table>
-                    <!-- FILTER -->
-                    <!-- <v-select
-                        label="Tipo"
-                        :items="['Objetiva', 'Subjetiva']"
-                        variant="outlined"
-                    ></v-select>
-                    <v-select
-                        label="Dificuldade"
-                        :items="['Fácil', 'Média', 'Difícil']"
-                        variant="outlined"
-                    ></v-select>
-                    <v-select
-                        label="Privacidade"
-                        :items="['Pública', 'Privada']"
-                        variant="outlined"
-                    ></v-select>
-                    <v-select
-                        label="Propriedade"
-                        :items="['Minhas Questões', 'Todas Questões']"
-                        variant="outlined"
-                    ></v-select>
-                    <v-select
-                        label="Marcadas"
-                        :items="['Apenas favoritas', 'Não favoritas']"
-                        variant="outlined"
-                    ></v-select> -->
                 </v-card>
             </v-col>
         </v-row>
+        <!-- Loading -->
+        <v-col cols="12" class="text-center mt-5 mb-5" v-if="isLoading">
+          <v-progress-circular
+            model-value="20"
+            :size="70"
+            :width="5"
+            color="#F69541"
+            indeterminate
+          ></v-progress-circular>
+        </v-col>
         <v-row class="cards-container">
             <v-col cols="12" sm="6" 
-            v-for="card in cards"
-            :key="card"
+            v-for="question in questions"
+            :key="question.id"
             >
-                <QuestionCard />
+                <QuestionCard
+                :id="question.id"
+                :text="question.text"
+                :type="question.type"
+                :dificult="question.dificult"
+                :isPrivate="question.isPrivate"
+                >
+                </QuestionCard>
             </v-col>
         </v-row>
     </v-container>

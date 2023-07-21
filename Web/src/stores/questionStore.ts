@@ -4,9 +4,11 @@ import { apiAxios, apiAxiosAuth } from '@/utils/axios'
 import type { Question, CreateQuestion } from '@/utils/types'
 
 export const useQuestionStore = defineStore('question', () => {
+
     const token = localStorage.getItem("token")
     const questions = ref<Question[]>([])
     const question = ref<Question>()
+    const isLoading = ref(false)
     let axiosAuth = apiAxios
     if (token) {
         axiosAuth = apiAxiosAuth(token)
@@ -35,27 +37,34 @@ export const useQuestionStore = defineStore('question', () => {
     }
     
     async function getAllQuestion() {
+        isLoading.value = true;
         const res = await axiosAuth.get('/Question', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
     async function getAllPublic() {
+        isLoading.value = true;
         const res = await axiosAuth.get('/public', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
     async function getAllUserQuestion() {
+        isLoading.value = true;
         const res = await axiosAuth.get('/user/all/{id}', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
     async function getQuestionById(id: string) {
+        isLoading.value = true;
         const response = await axiosAuth.get(`/Question/${id}`, {
         }).catch(function (error) {
             if (error.response) {
@@ -71,10 +80,12 @@ export const useQuestionStore = defineStore('question', () => {
             }
 
         });
+        isLoading.value = false;
         return response
     }
 
     async function getByUserQuestion(id: string) {
+        isLoading.value = true;
         const response = await axiosAuth.get(`/user/{id}`, {
         }).catch(function (error) {
             if (error.response) {
@@ -90,6 +101,7 @@ export const useQuestionStore = defineStore('question', () => {
             }
 
         });
+        isLoading.value = false;
         return response
     }
 
@@ -128,6 +140,7 @@ export const useQuestionStore = defineStore('question', () => {
     return {
         question,
         questions,
+        isLoading,
         createQuestion,
         getAllQuestion,
         getAllPublic,
