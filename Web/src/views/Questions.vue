@@ -78,7 +78,7 @@ watch(selectedOption, async () => {
                 :dificult="question.dificult"
                 :isPrivate="question.isPrivate"
                 :subject-name="question.tags[0].subjectName"
-                :is-own="question.favorites[0]?.own ?? false"
+                :favorite="question.favorites[0]"
                 >
                 </QuestionCard>
             </v-col>

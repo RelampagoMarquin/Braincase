@@ -2,11 +2,11 @@
 import { ref, onBeforeMount, watch} from 'vue';
 import type { Subject } from "@/utils/types";
 import { useSubjectStore } from "@/stores/subjectStore";
-import { useTagStore } from "@/stores/tagStore"
+import { useTagStore } from "@/stores/tagStore";
 
 /* store */
 const subjectStore = useSubjectStore();
-const tagsStore = useTagStore()
+const tagsStore = useTagStore();
 
 /* variables */
 const subject = ref();
@@ -35,6 +35,8 @@ watch(subject, async () => {
     tags.value = map
   }
 });
+
+// retorna valores para o componente pai
 defineEmits(['update:radio'])
 
 </script>

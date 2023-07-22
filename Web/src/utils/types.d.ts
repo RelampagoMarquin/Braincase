@@ -55,9 +55,7 @@ export interface Question {
   dificult: number;
   isPrivate: boolean;
   tags: Tag[],
-  favorites: {
-    own?: boolean;
-  }[]
+  favorites: Favorites[]
 }
 
 export interface CreateQuestion {
@@ -78,7 +76,9 @@ export interface Comment {
 }
 
 export interface Favorites {
+  questionId?: string;
   own: boolean;
+  userId?: string;
 }
 
 export interface Test {
