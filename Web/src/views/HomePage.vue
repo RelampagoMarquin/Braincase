@@ -4,7 +4,7 @@ const cards = [
     name: 'Minhas Questões',
     path: 'home',
     icon: 'mdi-home',
-    route: '/myQuestions'
+    route: '/questions'
   },
   {
     name: 'Buscar',

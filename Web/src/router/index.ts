@@ -37,7 +37,10 @@ const router = createRouter({
     {
       path: '/start',
       name: 'start',
-      component: Start
+      component: Start,
+      meta: {
+        auth: false
+      }
     },
     {
       path: '/signup',
@@ -73,7 +76,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/commentQuestion',
+      path: '/commentQuestion/:idquestion',
       name: 'commentQuestion',
       component: CommentQuestion,
       meta: {
