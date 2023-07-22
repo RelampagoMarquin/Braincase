@@ -7,13 +7,15 @@ import { useQuestionStore } from '../stores/questionStore';
 
 /* stores */
 const questionStore = useQuestionStore();
-const questions = ref<Question[]>([])
+const questions = ref<Question[]>([]);
+const questionsAux = ref<Question[]>([]); // essa é apenas para ser usada na filtragem e manter question intacta
 
 
 /* variables */
 const isLoading  = ref(true)
 const selectedOption = ref(1);
-
+const selectSubject = ref('')
+const selectTags = ref<string[]>([])
 
 onBeforeMount(async () => {
    // questions.value = await questionStore.getAllQUestionByFavorites();
@@ -41,6 +43,32 @@ watch(selectedOption, async () => {
     } 
     isLoading.value = false
 })
+
+// faz a filtragem pela materia
+watch(selectSubject, () => {
+    if(selectSubject.value === '' || selectSubject.value == null){
+        questionsAux.value = []
+    }else{
+        questionsAux.value = questions.value.filter(question =>
+            question.tags.some(tag => tag.subjectName === selectSubject.value)
+        )
+    }
+})
+
+// faz a filtragem pela disciplina
+watch(selectTags, () => {
+    if(selectTags.value.length === 0){
+        questionsAux.value = []
+    }else{
+        questionsAux.value = []
+        selectTags.value.forEach(name => {
+        const q = questions.value.filter(question =>
+            question.tags.some(tag => tag.name === name)
+        )
+        questionsAux.value.push(...q)
+    });
+    }
+})
 </script>
 
 <template>
@@ -50,10 +78,15 @@ watch(selectedOption, async () => {
                 <v-btn class="btn-primary"> VOLTAR </v-btn>
             </v-col>
         </v-row>
+        <!-- {{ selectSubject.length }} -->
         <v-row>
             <v-col cols="12">
                 <!-- SEACHER -->
-                <SeacherQuestion v-model:radio="selectedOption"/>
+                <SeacherQuestion 
+                v-model:radio="selectedOption"
+                v-model:subject="selectSubject"
+                v-model:tags="selectTags"
+                />
             </v-col>
         </v-row>
         <!-- Loading -->
@@ -68,7 +101,7 @@ watch(selectedOption, async () => {
         </v-col>
         <v-row class="cards-container">
             <v-col cols="12" sm="6" 
-            v-for="question in questions"
+            v-for="question in questionsAux.length > 0 ? questionsAux : questions"
             :key="question.id"
             >
                 <QuestionCard
