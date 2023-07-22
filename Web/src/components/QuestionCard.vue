@@ -43,9 +43,9 @@ function toComment(idquestion:string){
 </script>
 
 <template>
-    <v-card class="question-card d-flex flex-column" @click="toComment(id)">
+    <v-card class="question-card d-flex flex-column" >
         <v-row>
-            <v-col cols="10" class="card-text">
+            <v-col cols="10" class="card-text" @click="toComment(id)">
                 <div class="indicators d-flex align-center">
                     <!-- Tipo da questão -->
                     <span class="type" v-if="type == 2">Objetiva</span>

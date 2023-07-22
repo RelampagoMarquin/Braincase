@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, onBeforeMount, watch, watchEffect } from 'vue';
+import { ref, onBeforeMount, watch} from 'vue';
 import type { Subject } from "@/utils/types";
 import { useSubjectStore } from "@/stores/subjectStore";
 import { useTagStore } from "@/stores/tagStore"
@@ -12,10 +12,20 @@ const tagsStore = useTagStore()
 const subject = ref();
 const subjects = ref<Subject[]>();
 const tags = ref<string[]>([]);
+const questionList = ref(1)
 
+/* props definition */
+interface Props {
+    radio: number;
+    subjectName?: string;
+    isOwn?: boolean;
+}
+
+const props = defineProps<Props>()
 onBeforeMount(async () => {
    subjects.value = await subjectStore.getAllSubject();
 })
+
 
 /* functions */
 watch(subject, async () => {
@@ -25,6 +35,7 @@ watch(subject, async () => {
     tags.value = map
   }
 });
+defineEmits(['update:radio'])
 
 </script>
 
@@ -56,11 +67,11 @@ watch(subject, async () => {
                     />
                 </v-col>
             </v-row>
-            <v-radio-group inline>
-                <v-radio label="Favoritas" value="1"></v-radio>
-                <v-radio label="Públicas" value="2"></v-radio>
-                <v-radio label="Apenas minhas" value="3"></v-radio>
-                <v-radio label="Todas as questões" value="4"></v-radio>
+            <v-radio-group v-model="questionList"  @input="$emit('update:radio', Number($event.target.value))" color="orange" inline>
+                <v-radio label="Favoritas"  v-bind:value="1"></v-radio>
+                <v-radio label="Públicas" v-bind:value="2"></v-radio>
+                <v-radio label="Apenas minhas" v-bind:value="3"></v-radio>
+                <v-radio label="Todas as questões" v-bind:value="4"></v-radio>
             </v-radio-group>
             <v-btn class="filter-btn" block append-icon='mdi mdi-magnify'>
             Filtrar
