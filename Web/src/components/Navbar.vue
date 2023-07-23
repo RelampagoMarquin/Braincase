@@ -2,22 +2,22 @@
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
 import type { User } from '@/utils/types';
-import { ref, onBeforeMount  } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const userStore = useUserStore()
 const user = ref<User>() 
+const isLogged = ref(false)
 
-onBeforeMount(async () => {
-  const userid = JSON.parse(localStorage.getItem("user")!);
-  await userStore.getUserById(userid)
-  user.value = userStore.user
+onMounted(async () => { 
+  user.value = await userStore.user
+  isLogged.value = true
 })
 
 const authStore = useAuthStore()
 function logout(){
     authStore.signOut()
 }
-const isLogged = ref(true)
+
 
 </script>
 
@@ -38,7 +38,7 @@ const isLogged = ref(true)
                     </v-row>
                     <v-row v-else>
                         <v-col cols="12" class="logout-btn">
-                            <v-btn class="login-btn" @click="logout" size="small">Entrar</v-btn>
+                            <v-btn class="login-btn" @click="$router.push('login')" size="small">Entrar</v-btn>
                         </v-col>
                     </v-row>
                 </v-col>

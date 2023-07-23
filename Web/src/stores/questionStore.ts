@@ -4,9 +4,11 @@ import { apiAxios, apiAxiosAuth } from '@/utils/axios'
 import type { Question, CreateQuestion } from '@/utils/types'
 
 export const useQuestionStore = defineStore('question', () => {
+
     const token = localStorage.getItem("token")
     const questions = ref<Question[]>([])
     const question = ref<Question>()
+    const isLoading = ref(false)
     let axiosAuth = apiAxios
     if (token) {
         axiosAuth = apiAxiosAuth(token)
@@ -34,63 +36,54 @@ export const useQuestionStore = defineStore('question', () => {
         }
     }
     
+    // não faz destinção de nada, busca tudo mesmo
     async function getAllQuestion() {
+        isLoading.value = true;
         const res = await axiosAuth.get('/Question', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
-    async function getAllPublic() {
-        const res = await axiosAuth.get('/public', {
+    // busca as questões publicas
+    async function getAllQuestionPublic() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/public', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
-    async function getAllUserQuestion() {
-        const res = await axiosAuth.get('/user/all/{id}', {
+    // busca todas as favoritas do usuario logado
+    async function getAllQUestionByFavorites() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/user/favorites', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
-    async function getQuestionById(id: string) {
-        const response = await axiosAuth.get(`/Question/${id}`, {
-        }).catch(function (error) {
-            if (error.response) {
-                if (error.response.message == 409) {
-                    alert('Pergunta não encontrada')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-
+    // busca todas as questões que o usuario é dono
+    async function getAllQuestionByUserOwn() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/user', {
         });
-        return response
+        questions.value = res.data
+        isLoading.value = false;
+        return questions.value
     }
-
-    async function getByUserQuestion(id: string) {
-        const response = await axiosAuth.get(`/user/{id}`, {
-        }).catch(function (error) {
-            if (error.response) {
-                if (error.response.message == 409) {
-                    alert('Pergunta não encontrada')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-
+    
+    // busca todos as questões publicas + as favoritos do usuario
+    async function getAllQuestionFavoritesAndPublic() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/user/all', {
         });
-        return response
+        questions.value = res.data
+        isLoading.value = false;
+        return questions.value
     }
 
     async function updateQuestion(id: string) {
@@ -128,12 +121,13 @@ export const useQuestionStore = defineStore('question', () => {
     return {
         question,
         questions,
+        isLoading,
         createQuestion,
         getAllQuestion,
-        getAllPublic,
-        getAllUserQuestion,
-        getQuestionById,
-        getByUserQuestion,
+        getAllQuestionPublic,
+        getAllQUestionByFavorites,
+        getAllQuestionByUserOwn,
+        getAllQuestionFavoritesAndPublic,
         updateQuestion,
         deleteQuestion,
     }

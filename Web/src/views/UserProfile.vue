@@ -13,8 +13,6 @@ const password = ref('')
 const confirmedPassword = ref('')
 
 onBeforeMount(async () => {
-  const userid = JSON.parse(localStorage.getItem('user')!)
-  await userStore.getUserById(userid)
   user.value = userStore.user
   name.value = user.value.name
   email.value = user.value.email

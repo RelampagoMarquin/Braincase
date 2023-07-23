@@ -15,13 +15,13 @@ export const useFavoritesStore = defineStore('favorites', () => {
     async function createFavorites(favorites: Favorites) {
         const response = await axiosAuth.post('/Favorites', {
             own: favorites.own,
-        },
-            {
-            }).then(function () {
-                alert('Criado com sucesso!')
-            }).catch(function (error) {
-                console.log(error.message);
-            });
+            questionId: favorites.questionId
+        })
+        // .then(function () {
+        //         alert('Adicionado aos Favoritos!')
+        //     }).catch(function (error) {
+        //         console.log(error.message);
+        //     });
         return response
     } 
 
@@ -32,8 +32,8 @@ export const useFavoritesStore = defineStore('favorites', () => {
         return favorites.value
     }
 
-    async function getFavoriteById(id: string) {
-        const response = await axiosAuth.get(`/Favorites/${id}`, {
+    async function getFavoriteByQuestionId(questionid: string) {
+        const response = await axiosAuth.get(`/Favorites/${questionid}`, {
         }).catch(function (error) {
             if (error.response) {
                 if (error.response.message == 409) {
@@ -71,12 +71,24 @@ export const useFavoritesStore = defineStore('favorites', () => {
         return response
     }
 
+    async function deleteFavorite(questionId: string) {
+        const response = await axiosAuth.delete(`/Favorites/${questionId}`, {
+        })
+        // .then(function () {
+        //     alert('Removido dos Favoritos!')
+        // }).catch(function (error) {
+        //     console.log(error.message);
+        // });
+        return response
+    }
+
     return{
         favorite,
         favorites,
         createFavorites,
         getAllFavorites,
-        getFavoriteById,
+        deleteFavorite,
+        getFavoriteByQuestionId,
         updateFavorites,
     }
 })

@@ -1,59 +1,86 @@
 <script setup lang="ts">
+import { useFavoritesStore } from '@/stores/favoritesStore';
+import type { Favorites } from '@/utils/types';
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router'
+
+const favoritesStore = useFavoritesStore()
+/* props definition */
+interface Props {
+    id: string;
+    text: string;
+    type: number;
+    dificult: number;
+    isPrivate: boolean;
+    subjectName?: string;
+    favorite?: Favorites
+}
+
+const props = defineProps<Props>()
 
 // Código que muda o botão estrela de acordo com ele ser favorito ou não
 const isFavorited = ref(false);
-const favorite = () => {
-  isFavorited.value = !isFavorited.value;
+if (props.favorite){
+    isFavorited.value = true
+}
+
+const favoritite = async () => {
+    const questionId = props.id
+    if(isFavorited.value){
+        await favoritesStore.deleteFavorite(questionId)
+    }else{
+        await favoritesStore.createFavorites({own: false, questionId: questionId})
+    }
+    isFavorited.value = !isFavorited.value;
 };
 const starIcon = computed(() => {
   return isFavorited.value ? 'mdi mdi-star' : 'mdi mdi-star-outline';
 });
 
-// Código responsável pelo truncamento do texto da questão, criando um padrão de tamanho de texto mostrado
-const questionText = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Mollitia libero a ratione, quia officiis consequuntur deserunt dolore quos. Reprehenderit at enim eos unde magnam sunt doloremque voluptate voluptatibus eaque molestias?";
+// Código responsável pelo truncamento do texto da questão
 const maxTextLength = 200;
 const truncatedText = computed(() => {
-  if (questionText.length <= maxTextLength) {
-    return questionText;
+  if (props.text.length <= maxTextLength) {
+    return props.text;
   } else {
-    return questionText.substring(0, maxTextLength) + ' [...]';
+    return props.text.substring(0, maxTextLength) + ' [...]';
   }
 });
 
-//Renderização de tipo, dificuldade, privacidade, e pertencimento
-const dificult = ref(2)
-const questionType = ref(2)
-const isPrivate = ref(1)
-const isOwner = ref(1)
+const router = useRouter()
+
+function toComment(idquestion:string){
+    router.push(`/commentQuestion/${idquestion}`);
+}
+
 </script>
 
 <template>
-    <v-card class="question-card d-flex flex-column">
+    <v-card class="question-card d-flex flex-column" >
         <v-row>
-            <v-col cols="10" class="card-text">
+            <v-col cols="10" class="card-text" @click="toComment(id)">
                 <div class="indicators d-flex align-center">
                     <!-- Tipo da questão -->
-                    <span class="type" v-if="questionType == 1">Objetiva</span>
-                    <span class="type" v-else-if="questionType == 2">Subjetiva</span>
+                    <span class="type" v-if="type == 2">Objetiva</span>
+                    <span class="type" v-else-if="type == 1">Subjetiva</span>
                     <!-- Dificuldade -->
                     <span class="dificult easy" v-if="dificult == 1">Fácil</span>
                     <span class="dificult medium" v-else-if="dificult == 2">Média</span>
                     <span class="dificult hard" v-else-if="dificult == 3">Difícil</span>
                     <!-- Privacidade -->
-                    <v-icon class="mdi mdi-lock" v-if="isPrivate == 1"></v-icon>
+                    <v-icon class="mdi mdi-lock" v-if="isPrivate"></v-icon>
                     <!-- pertencimento/proprietário -->
-                    <v-icon class="mdi mdi-folder" v-if="isOwner == 1"></v-icon>
+                    <v-icon class="mdi mdi-folder" v-if="favorite?.own"></v-icon>
                 </div>
                 <p>{{ truncatedText }}</p>
             </v-col>
             <v-col cols="2" class="card-star d-flex justify-center">
-                <v-icon :class="starIcon" color="orange" size="large" @click="favorite"></v-icon>
+                <v-icon :class="starIcon" color="orange" size="large" @click="favoritite"></v-icon>
             </v-col>
         </v-row>
         <v-row align="end">
             <v-col cols="12" class="card-tag">
-                <p>Língua Portguesa e Literatura</p>
+                <p>{{ subjectName }}</p>
             </v-col>
         </v-row>
     </v-card>
@@ -66,6 +93,11 @@ const isOwner = ref(1)
     height: 220px;
     max-height: 220px;
     box-sizing: border-box;
+}
+
+.question-card:hover {
+    cursor: pointer;
+    background-color: #e3e3e3;
 }
 
 .indicators {
