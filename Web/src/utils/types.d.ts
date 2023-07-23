@@ -34,17 +34,18 @@ export interface Subject {
 export interface Tag {
   id?: string;
   name: string;
+  subjectName?: string;
 }
 
 export interface Answer {
   id: string;
   text: string;
-  IsCorrect: boolean;
+  isCorrect: boolean;
 }
 
 export interface CreateAnswer {
   text: string;
-  IsCorrect: boolean;
+  isCorrect: boolean;
 }
 
 export interface Question {
@@ -53,6 +54,15 @@ export interface Question {
   type: number;
   dificult: number;
   isPrivate: boolean;
+  justify: string,
+  institutionName: string,
+  criador: string,
+  email: string,
+  tags: Tag[],
+  favorites: {
+    own?: boolean;
+  }[],
+  answers: Answer[],
 }
 
 export interface CreateQuestion {
@@ -70,6 +80,13 @@ export interface CreateQuestion {
 export interface Comment {
   id?: string;
   text: string;
+  userName: string
+}
+
+export interface CreateComment {
+  UserId: string;
+  questionId: string;
+  text: string;
 }
 
 export interface Favorites {
@@ -81,7 +98,7 @@ export interface Test {
   name: string;
   className: string;
   createAt: Date;
-  LastUse: Date;
+  lastUse: Date;
   logoUrl?: string | null; //Vai poder enviar imagem?
 }
 
@@ -89,6 +106,6 @@ export interface CreateTest {
   name: string;
   className: string;
   createAt: Date;
-  LastUse: Date;
+  lastUse: Date;
   logoUrl?: string | null;  //Vai poder enviar imagem?
 }

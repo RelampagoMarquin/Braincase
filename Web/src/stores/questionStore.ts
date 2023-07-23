@@ -4,9 +4,11 @@ import { apiAxios, apiAxiosAuth } from '@/utils/axios'
 import type { Question, CreateQuestion } from '@/utils/types'
 
 export const useQuestionStore = defineStore('question', () => {
+
     const token = localStorage.getItem("token")
     const questions = ref<Question[]>([])
     const question = ref<Question>()
+    const isLoading = ref(false)
     let axiosAuth = apiAxios
     if (token) {
         axiosAuth = apiAxiosAuth(token)
@@ -35,27 +37,43 @@ export const useQuestionStore = defineStore('question', () => {
     }
     
     async function getAllQuestion() {
+        isLoading.value = true;
         const res = await axiosAuth.get('/Question', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
     async function getAllPublic() {
+        isLoading.value = true;
         const res = await axiosAuth.get('/public', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
-    async function getAllUserQuestion() {
-        const res = await axiosAuth.get('/user/all/{id}', {
+    async function getAllFavorites() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/user/favorites', {
         });
         questions.value = res.data
+        isLoading.value = false;
         return questions.value
     }
 
+    // async function getAllUserQuestion() {
+    //     isLoading.value = true;
+    //     const res = await axiosAuth.get('/user/all/{id}', {
+    //     });
+    //     questions.value = res.data
+    //     isLoading.value = false;
+    //     return questions.value
+    // }
+
     async function getQuestionById(id: string) {
+        isLoading.value = true;
         const response = await axiosAuth.get(`/Question/${id}`, {
         }).catch(function (error) {
             if (error.response) {
@@ -71,27 +89,33 @@ export const useQuestionStore = defineStore('question', () => {
             }
 
         });
-        return response
+        if(response){
+            question.value = response.data
+            isLoading.value = false;
+            return question.value;
+        }
     }
 
-    async function getByUserQuestion(id: string) {
-        const response = await axiosAuth.get(`/user/{id}`, {
-        }).catch(function (error) {
-            if (error.response) {
-                if (error.response.message == 409) {
-                    alert('Pergunta não encontrada')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
+    // async function getByUserQuestion(id: string) {
+    //     isLoading.value = true;
+    //     const response = await axiosAuth.get(`/user/{id}`, {
+    //     }).catch(function (error) {
+    //         if (error.response) {
+    //             if (error.response.message == 409) {
+    //                 alert('Pergunta não encontrada')
+    //             } else {
+    //                 alert('Erro ao cadastrar' + error.response.data + error.response.headers)
+    //             }
+    //         } else if (error.request) {
+    //             console.log(error.request);
+    //         } else {
+    //             console.log('Error', error.message);
+    //         }
 
-        });
-        return response
-    }
+    //     });
+    //     isLoading.value = false;
+    //     return response
+    // }
 
     async function updateQuestion(id: string) {
         const response = await axiosAuth.put(`/Question/${id}`, {
@@ -128,12 +152,14 @@ export const useQuestionStore = defineStore('question', () => {
     return {
         question,
         questions,
+        isLoading,
         createQuestion,
         getAllQuestion,
         getAllPublic,
-        getAllUserQuestion,
+        getAllFavorites,
+        // getAllUserQuestion,
         getQuestionById,
-        getByUserQuestion,
+        // getByUserQuestion,
         updateQuestion,
         deleteQuestion,
     }

@@ -87,7 +87,10 @@ namespace Api.Helpers
                 .ForMember(dest => dest.InstitutionName, opt =>
                 {
                     opt.MapFrom(src => src.Institution != null ? src.Institution.Name : null);
-                });
+                })
+                .ForMember(dest => dest.Criador, opt => opt.MapFrom(src => src.Favorites.Where(f => f.Own == true).First().User.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Favorites.Where(f => f.Own == true).First().User.Email));
+
             CreateMap<UpdateQuestionDTO, Question>()
                 .ForAllMembers(opts =>
                 {

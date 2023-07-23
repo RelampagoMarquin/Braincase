@@ -29,7 +29,12 @@ namespace Api.Repository
 
         async Task<Question?> IQuestionRepository.GetQuestionById(Guid id)
         {
-            var question = await _context.Question.Include(x => x.Institution).FirstOrDefaultAsync(x => x.Id == id);
+            var question = await _context.Question
+                .Include(x => x.Institution)
+                .Include(x => x.Answers)
+                .Include(x => x.Favorites).ThenInclude(favorite => favorite.User).Where(x => x.Favorites.Any(x => x.Own == true))
+                .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (question is null)
             {
                 return null;
@@ -51,8 +56,10 @@ namespace Api.Repository
 
         async Task<IEnumerable<Question>> IQuestionRepository.GetMyFavorites(string id)
         {
-            return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
-                .Where(x => x.Favorites.Any(x => x.UserId == id)).ToListAsync();
+            return await _context.Question.Include(x => x.Institution)
+                .Include(x => x.Favorites).Where(x => x.Favorites.Any(favorite => favorite.UserId == id))
+                .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .ToListAsync();
         }
 
         // este get pega todas as questões publicas e soma com as privadas do usuário

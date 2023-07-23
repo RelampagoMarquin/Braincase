@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiAxios, apiAxiosAuth } from '@/utils/axios'
-import type { Comment } from '@/utils/types'
+import type { Comment, CreateComment } from '@/utils/types'
 
 export const useCommentStore = defineStore('comment', () => {
     const token = localStorage.getItem("token")
@@ -12,13 +12,15 @@ export const useCommentStore = defineStore('comment', () => {
         axiosAuth = apiAxiosAuth(token)
     }
 
-    async function createComment(commentCreate: Comment) {
+    async function createComment(commentCreate: CreateComment) {
         try{
         const response = await axiosAuth.post('/Comment', {
+            userId: commentCreate.UserId.trim(),
+            questionId: commentCreate.questionId,
             text: commentCreate.text,
         });
             alert('Criado com sucesso!')
-            return response.data
+            return response
         }catch(error){
             console.log(error);
         }
@@ -48,6 +50,25 @@ export const useCommentStore = defineStore('comment', () => {
 
         });
         return response
+    }
+
+    async function GetCommentByQuestionId(id: string) {
+        const response = await axiosAuth.get(`/Comment/question/${id}`, {
+        }).catch(function (error) {
+            if (error.response) {
+                if (error.response.message == 409) {
+                    alert('Comentários não encontrada')
+                } 
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
+        });
+        if(response){
+            comments.value = response.data
+            return comments.value;
+        }
     }
 
     async function updateComment(id: string) {
@@ -89,6 +110,7 @@ export const useCommentStore = defineStore('comment', () => {
         createComment,
         getAllComment,
         getCommentById,
+        GetCommentByQuestionId,
         updateComment,
         deleteComment,
     }
