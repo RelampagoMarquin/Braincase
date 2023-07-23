@@ -7,9 +7,14 @@ import { ref, onMounted } from 'vue'
 const userStore = useUserStore()
 const user = ref<User>() 
 const isLogged = ref(false)
+const userId = ref('')
 
 onMounted(async () => { 
+  userId.value = localStorage.getItem("user")! as string;  
   user.value = await userStore.user
+  if(!user.value && userId.value){
+    user.value = await userStore.getUserById(userId.value.trim().replace(/^"|"$/g, ''))
+  }
   isLogged.value = true
 })
 

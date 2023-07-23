@@ -11,9 +11,14 @@ const registration = ref('')
 const oldPassword = ref('')
 const password = ref('')
 const confirmedPassword = ref('')
+const userId = ref('')
 
 onBeforeMount(async () => {
-  user.value = userStore.user
+  userId.value = localStorage.getItem("user")! as string;  
+  user.value = await userStore.user
+  if(!user.value && userId.value){
+    user.value = await userStore.getUserById(userId.value.trim().replace(/^"|"$/g, ''))
+  }
   name.value = user.value.name
   email.value = user.value.email
   registration.value = user.value.registration
