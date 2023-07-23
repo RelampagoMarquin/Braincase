@@ -90,7 +90,9 @@ export interface CreateComment {
 }
 
 export interface Favorites {
+  questionId?: string;
   own: boolean;
+  userId?: string;
 }
 
 export interface Test {

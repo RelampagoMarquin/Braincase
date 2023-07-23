@@ -36,6 +36,7 @@ export const useQuestionStore = defineStore('question', () => {
         }
     }
     
+    // não faz destinção de nada, busca tudo mesmo
     async function getAllQuestion() {
         isLoading.value = true;
         const res = await axiosAuth.get('/Question', {
@@ -45,16 +46,18 @@ export const useQuestionStore = defineStore('question', () => {
         return questions.value
     }
 
-    async function getAllPublic() {
+    // busca as questões publicas
+    async function getAllQuestionPublic() {
         isLoading.value = true;
-        const res = await axiosAuth.get('/public', {
+        const res = await axiosAuth.get('/Question/public', {
         });
         questions.value = res.data
         isLoading.value = false;
         return questions.value
     }
 
-    async function getAllFavorites() {
+    // busca todas as favoritas do usuario logado
+    async function getAllQUestionByFavorites() {
         isLoading.value = true;
         const res = await axiosAuth.get('/Question/user/favorites', {
         });
@@ -62,15 +65,6 @@ export const useQuestionStore = defineStore('question', () => {
         isLoading.value = false;
         return questions.value
     }
-
-    // async function getAllUserQuestion() {
-    //     isLoading.value = true;
-    //     const res = await axiosAuth.get('/user/all/{id}', {
-    //     });
-    //     questions.value = res.data
-    //     isLoading.value = false;
-    //     return questions.value
-    // }
 
     async function getQuestionById(id: string) {
         isLoading.value = true;
@@ -96,26 +90,24 @@ export const useQuestionStore = defineStore('question', () => {
         }
     }
 
-    // async function getByUserQuestion(id: string) {
-    //     isLoading.value = true;
-    //     const response = await axiosAuth.get(`/user/{id}`, {
-    //     }).catch(function (error) {
-    //         if (error.response) {
-    //             if (error.response.message == 409) {
-    //                 alert('Pergunta não encontrada')
-    //             } else {
-    //                 alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-    //             }
-    //         } else if (error.request) {
-    //             console.log(error.request);
-    //         } else {
-    //             console.log('Error', error.message);
-    //         }
-
-    //     });
-    //     isLoading.value = false;
-    //     return response
-    // }
+    async function getAllQuestionByUserOwn() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/user', {
+        });
+        questions.value = res.data
+        isLoading.value = false;
+        return questions.value
+    }
+    
+    // busca todos as questões publicas + as favoritos do usuario
+    async function getAllQuestionFavoritesAndPublic() {
+        isLoading.value = true;
+        const res = await axiosAuth.get('/Question/user/all', {
+        });
+        questions.value = res.data
+        isLoading.value = false;
+        return questions.value
+    }
 
     async function updateQuestion(id: string) {
         const response = await axiosAuth.put(`/Question/${id}`, {
@@ -155,11 +147,11 @@ export const useQuestionStore = defineStore('question', () => {
         isLoading,
         createQuestion,
         getAllQuestion,
-        getAllPublic,
-        getAllFavorites,
-        // getAllUserQuestion,
+        getAllQuestionPublic,
+        getAllQUestionByFavorites,
         getQuestionById,
-        // getByUserQuestion,
+        getAllQuestionByUserOwn,
+        getAllQuestionFavoritesAndPublic,
         updateQuestion,
         deleteQuestion,
     }

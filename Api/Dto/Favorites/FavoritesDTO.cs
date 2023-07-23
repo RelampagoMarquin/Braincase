@@ -4,7 +4,7 @@ namespace Api.Dto.Favorites
     {
         public bool Own { get; set; }
 
-        public String UserId { get; set; }
+        public String? UserId { get; set; }
 
         public Guid? QuestionId { get; set; } 
     }

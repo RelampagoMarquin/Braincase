@@ -3,13 +3,14 @@ import { defineStore } from 'pinia';
 import decode from "jwt-decode"
 import router from '../router/index';
 import { apiAxios } from '@/utils/axios';
-
+import { useUserStore } from './userStore';
 
 export const useAuthStore = defineStore('auth', () => {
     // variables to be on front
     const token = ref('')
     const userid = ref('')
-
+    const userStore = useUserStore()
+    
     async function login(email: string, password: string) {
         const response = await apiAxios.post('/Auth/login', {
             email,
@@ -19,9 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = response.data.data.token;
         localStorage.setItem('user', JSON.stringify(response.data.user))
         userid.value = response.data.user;
-        if (response) {
-            router.push('/')
-        }
+        await userStore.getUserById(userid.value, token.value)
         return {token: token.value, userId: userid.value}
     }
 

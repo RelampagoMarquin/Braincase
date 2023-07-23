@@ -89,13 +89,13 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const auth = localStorage.getItem('token')
 
-  if (to.meta?.auth && !auth) {
+  if (to.path !== '/login' && to.meta?.auth && !auth) {
     // Verifica se a rota de destino requer autenticação e se o usuário não está autenticado
     next('/login') // Redireciona para a rota de login
     return
   }
 
-  if (auth && authStore.isExpired()) {
+  if (to.path !== '/login' && auth && authStore.isExpired()) {
     // Verifica se o usuário está autenticado, mas o token expirou
     next('/login') // Redireciona para a rota de login
     return

@@ -21,7 +21,7 @@ namespace Api.Repository
             _context = context;
             _mapper = mapper;
         }
-
+        // pega todas as questões do banco
         async Task<IEnumerable<Question>> IQuestionRepository.GetAllQuestions()
         {
             return await _context.Question.Include(x => x.Institution).ToListAsync();
@@ -41,19 +41,25 @@ namespace Api.Repository
             }
             return question;
         }
-
+        // pega todas as publicas 
         async Task<IEnumerable<Question>> IQuestionRepository.GetAllPublic()
         {
-            return await _context.Question.Where(x => x.IsPrivate == false).Include(x => x.Institution)
+            return await _context.Question.Where(x => x.IsPrivate == false)
+                .Include(x => x.Institution)
+                .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
 
+        // pega somente as questões que o usuario criou
         async Task<IEnumerable<Question>> IQuestionRepository.GetMyQuestions(string id)
         {
-            return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
-                .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true)).ToListAsync();
+            return await _context.Question.Include(x => x.Institution)
+                .Include(x => x.Favorites).Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true))
+                .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .ToListAsync();
         }
 
+        // pega todos as questões favoritas
         async Task<IEnumerable<Question>> IQuestionRepository.GetMyFavorites(string id)
         {
             return await _context.Question.Include(x => x.Institution)
@@ -66,7 +72,9 @@ namespace Api.Repository
         async Task<IEnumerable<Question>> IQuestionRepository.GetAllUserQuestion(string id)
         {
             return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
-                .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true) || x.IsPrivate == false).ToListAsync();
+                .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true) || x.IsPrivate == false)
+                .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .ToListAsync();
         }
 
         public async Task<Question> CreateQuestion(CreateQuestionDTO createQuestionDTO, string userId)

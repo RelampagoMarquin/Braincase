@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useFavoritesStore } from '@/stores/favoritesStore';
+import type { Favorites } from '@/utils/types';
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router'
 
+const favoritesStore = useFavoritesStore()
 /* props definition */
 interface Props {
     id: string;
@@ -10,15 +13,25 @@ interface Props {
     dificult: number;
     isPrivate: boolean;
     subjectName?: string;
-    isOwn?: boolean
+    favorite?: Favorites
 }
 
 const props = defineProps<Props>()
 
 // Código que muda o botão estrela de acordo com ele ser favorito ou não
 const isFavorited = ref(false);
-const favorite = () => {
-  isFavorited.value = !isFavorited.value;
+if (props.favorite){
+    isFavorited.value = true
+}
+
+const favoritite = async () => {
+    const questionId = props.id
+    if(isFavorited.value){
+        await favoritesStore.deleteFavorite(questionId)
+    }else{
+        await favoritesStore.createFavorites({own: false, questionId: questionId})
+    }
+    isFavorited.value = !isFavorited.value;
 };
 const starIcon = computed(() => {
   return isFavorited.value ? 'mdi mdi-star' : 'mdi mdi-star-outline';
@@ -43,9 +56,9 @@ function toComment(idquestion:string){
 </script>
 
 <template>
-    <v-card class="question-card d-flex flex-column" @click="toComment(id)">
+    <v-card class="question-card d-flex flex-column" >
         <v-row>
-            <v-col cols="10" class="card-text">
+            <v-col cols="10" class="card-text" @click="toComment(id)">
                 <div class="indicators d-flex align-center">
                     <!-- Tipo da questão -->
                     <span class="type" v-if="type == 2">Objetiva</span>
@@ -57,12 +70,12 @@ function toComment(idquestion:string){
                     <!-- Privacidade -->
                     <v-icon class="mdi mdi-lock" v-if="isPrivate"></v-icon>
                     <!-- pertencimento/proprietário -->
-                    <v-icon class="mdi mdi-folder" v-if="isOwn"></v-icon>
+                    <v-icon class="mdi mdi-folder" v-if="favorite?.own"></v-icon>
                 </div>
                 <p>{{ truncatedText }}</p>
             </v-col>
             <v-col cols="2" class="card-star d-flex justify-center">
-                <v-icon :class="starIcon" color="orange" size="large" @click="favorite"></v-icon>
+                <v-icon :class="starIcon" color="orange" size="large" @click="favoritite"></v-icon>
             </v-col>
         </v-row>
         <v-row align="end">
