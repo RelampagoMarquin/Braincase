@@ -38,7 +38,7 @@ namespace Api.Models
         public ICollection<Answer> Answers { get; } = new List<Answer>();
 
         // relacao 1 para n
-        public ICollection<Comment> Comment { get; } = new List<Comment>();
+        public ICollection<Comment> Comments { get; } = new List<Comment>();
 
         // relacao n para n
         public List<Test> Tests { get; } = new();

@@ -58,6 +58,12 @@ namespace Api.Dto.Question
 
         public List<ResponseFavoritesDTO> Favorites { get; set; }
 
+        public String Criador { get; set; }
+
+        public String Email { get; set; }
+
+        public List<ResponseAnswerDTO> Answers { get; set; }
+
         public List<ResponseTagDTO> Tags { get; set; }
 
         public String? InstitutionName { get; set; }

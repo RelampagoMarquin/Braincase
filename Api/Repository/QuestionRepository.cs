@@ -29,9 +29,12 @@ namespace Api.Repository
 
         async Task<Question?> IQuestionRepository.GetQuestionById(Guid id)
         {
-            var question = await _context.Question.Include(x => x.Institution)
-                    .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+            var question = await _context.Question
+                .Include(x => x.Institution)
+                .Include(x => x.Answers)
+                .Include(x => x.Favorites).ThenInclude(favorite => favorite.User).Where(x => x.Favorites.Any(x => x.Own == true))
+                .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (question is null)
             {
                 return null;

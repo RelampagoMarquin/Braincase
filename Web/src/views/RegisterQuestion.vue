@@ -16,8 +16,8 @@ const tagsStore = useTagStore();
 // variables
 const letter = ['a', 'b', 'c', 'd', 'e', 'f']
 const answers = ref<CreateAnswer[]>([
-  { text: "", IsCorrect: false },
-  { text: "", IsCorrect: false }
+  { text: "", isCorrect: false },
+  { text: "", isCorrect: false }
 ]);
 
 const types = [
@@ -62,7 +62,7 @@ async function registerquestion() {
     dificult: difficulty.value,
     isPrivate: privacy.value,
     justify: justification.value,
-    answers: difficulty.value == 1 ? [{ text: answer.value, IsCorrect: true }] : answers.value,
+    answers: questionType.value == 1 ? [{ text: answer.value, isCorrect: true }] : answers.value,
     InstitutionName: institution.value,
     tags: tagsTosend.value,
     subjectId: subject.value,
@@ -80,7 +80,7 @@ watch(subject, async () => {
 
 async function adicionar() {
   if (6 > answers.value.length) {
-    answers.value.push({ text: '', IsCorrect: false })
+    answers.value.push({ text: '', isCorrect: false })
   } else {
     alert("O máximo de alternativas é 6");
   }
@@ -171,7 +171,7 @@ async function deletar() {
                 <div class="ml-2 mt-1" v-for="(item, index) in answers">
                   <v-row>
                     <v-col cols="1">
-                      <v-checkbox v-model="item.IsCorrect">
+                      <v-checkbox v-model="item.isCorrect">
                         <p>{{ letter[index] }})</p>
                       </v-checkbox>
                     </v-col>

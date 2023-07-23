@@ -11,5 +11,7 @@ namespace Api.Repository.Interfaces
         Task<IEnumerable<Comment>> GetAllComments();
 
         Task<Comment?> GetCommentById(Guid id);
+
+        Task<IEnumerable<Comment>> GetCommentByQuestionId(Guid id);
     }
 }

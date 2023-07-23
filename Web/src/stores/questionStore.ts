@@ -72,26 +72,29 @@ export const useQuestionStore = defineStore('question', () => {
     //     return questions.value
     // }
 
-    // async function getQuestionById(id: string) {
-    //     isLoading.value = true;
-    //     const response = await axiosAuth.get(`/Question/${id}`, {
-    //     }).catch(function (error) {
-    //         if (error.response) {
-    //             if (error.response.message == 409) {
-    //                 alert('Pergunta não encontrada')
-    //             } else {
-    //                 alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-    //             }
-    //         } else if (error.request) {
-    //             console.log(error.request);
-    //         } else {
-    //             console.log('Error', error.message);
-    //         }
+    async function getQuestionById(id: string) {
+        isLoading.value = true;
+        const response = await axiosAuth.get(`/Question/${id}`, {
+        }).catch(function (error) {
+            if (error.response) {
+                if (error.response.message == 409) {
+                    alert('Pergunta não encontrada')
+                } else {
+                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
+                }
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
 
-    //     });
-    //     isLoading.value = false;
-    //     return response
-    // }
+        });
+        if(response){
+            question.value = response.data
+            isLoading.value = false;
+            return question.value;
+        }
+    }
 
     // async function getByUserQuestion(id: string) {
     //     isLoading.value = true;
@@ -155,7 +158,7 @@ export const useQuestionStore = defineStore('question', () => {
         getAllPublic,
         getAllFavorites,
         // getAllUserQuestion,
-        // getQuestionById,
+        getQuestionById,
         // getByUserQuestion,
         updateQuestion,
         deleteQuestion,
