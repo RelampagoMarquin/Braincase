@@ -4,9 +4,13 @@ import { ref } from "vue";
 const authStore = useAuthStore();
 const email = ref("")
 const password = ref("");
+import router from '../router/index';
 
 async function login() {
-  await authStore.login(email.value, password.value);
+  const response = await authStore.login(email.value, password.value);
+  if(response.userId){
+    router.push('/')
+  }
 }
 </script>
 

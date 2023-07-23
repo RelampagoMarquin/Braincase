@@ -12,6 +12,7 @@ using Api.Repository.Interfaces;
 using Api.utils;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -65,11 +66,17 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUserById(String id, UpdateUserDTO userUpdateDTO)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id != userId)
+            {
+                return BadRequest("Usuário Logado é diferente do que esta tendando ser modificado");
+            }
             var user = await _userRepository.GetUserById(id);
             if (user == null)
             {
                 return NotFound("Usuário não encontrado");
             }
+            
             // var userUpdate = _mapper.Map(userUpdateDTO, userBanco);
             // _userRepository.Update(userUpdate);
             if(userUpdateDTO.Name != null && userUpdateDTO.Name != user.Name)

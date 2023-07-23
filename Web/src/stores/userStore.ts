@@ -5,7 +5,7 @@ import type { User, UserCreate, UserUpdate } from '@/utils/types'
 
 export const useUserStore = defineStore('user', () => {
     // variables to be on front
-    const token = localStorage.getItem("token") as string
+    let token = localStorage.getItem("token") as string
     const users = ref<User[]>([])
     const user = ref<User>()
     let axiosAuth = apiAxios
@@ -29,8 +29,11 @@ export const useUserStore = defineStore('user', () => {
         return response
     }
 
-    async function getUserById(id: string) {
-
+    async function getUserById(id: string, tokenaux?:string) {
+        if(tokenaux){
+            token = tokenaux
+            axiosAuth = apiAxiosAuth(token) 
+        }
         try {
             const result = await axiosAuth.get(`/User/${id}`, {})
             user.value = result.data
@@ -43,7 +46,6 @@ export const useUserStore = defineStore('user', () => {
         } else {
             console.log('Erro ao configurar a requisição:', error.message)
         }
-        alert('Ocorreu um erro na solicitação.')
         }
         return user.value
     }

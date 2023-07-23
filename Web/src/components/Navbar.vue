@@ -2,19 +2,14 @@
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
 import type { User } from '@/utils/types';
-import { ref, onBeforeMount  } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const userStore = useUserStore()
 const user = ref<User>() 
-
 const isLogged = ref(false)
-onBeforeMount(async () => {
-  const userid = JSON.parse(localStorage.getItem("user")!);
-  if(!userid) {
-    return
-  }
-  await userStore.getUserById(userid)
-  user.value = userStore.user
+
+onMounted(async () => { 
+  user.value = await userStore.user
   isLogged.value = true
 })
 
