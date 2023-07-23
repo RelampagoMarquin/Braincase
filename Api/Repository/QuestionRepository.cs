@@ -43,6 +43,7 @@ namespace Api.Repository
         {
             return await _context.Question.Where(x => x.IsPrivate == false)
                 .Include(x => x.Institution)
+                .Include(x => x.Favorites)
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
