@@ -81,6 +81,9 @@ namespace Api.Helpers
                     });
                 });
             CreateMap<CreateTestDTO, Test>();
+            /* CreateMap<ResponseQuestionTestDTO, Test>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId.ToString()))
+            .ForMember(dest => dest.User, opt => opt.Ignore());*/
 
             // mapper de question
             CreateMap<Question, ResponseQuestionDTO>()
