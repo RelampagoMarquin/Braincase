@@ -128,24 +128,19 @@ namespace Api.Controllers
         // PUT: api/Question/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuestion(Guid id, UpdateQuestionDTO updateQuestionDTO)
+        public async Task<ActionResult<ResponseQuestionDTO>> PutQuestion(Guid id, UpdateQuestionDTO updateQuestionDTO)
         {
-            var questionBanco = await _questionRepository.GetQuestionById(id);
-            if(questionBanco == null)
+            var question = await _questionRepository.GetQuestionById(id);
+            if(question == null)
             {
                 return NotFound("Questão não encontrada");
             }
-            var questionUpdate = _mapper.Map(updateQuestionDTO, questionBanco);
-
-            // o institutionId não pode ser omitido na request!!!
-            if(updateQuestionDTO.InstitutionId is not Guid)
-                questionUpdate.InstitutionId = null;
+            // var questionUpdate = _mapper.Map(updateQuestionDTO, question);
             
-            _questionRepository.Update(questionUpdate);
+            question = await _questionRepository.UpdateQuestion(updateQuestionDTO, question);
 
-            return await _questionRepository.SaveChangesAsync()
-            ? Ok("Questão atualizada com sucesso")
-            : BadRequest("Não foi possível atualizar a questão");
+            var response = _mapper.Map<ResponseQuestionDTO>(question);
+            return response;
         }
 
         // POST: api/Question

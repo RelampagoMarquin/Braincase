@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Api.Dto.Question;
 using AutoMapper;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Api.Repository
 {
@@ -86,6 +87,9 @@ namespace Api.Repository
                 {
                     // verify tag if not exist create
                     var tags = new List<Tag>();
+                    if (! (createQuestionDTO.Tags.Count() > 0)) {
+                        throw new Exception("Não há tags");
+                    }
                     foreach (var tag in createQuestionDTO.Tags)
                     {
                         var tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
@@ -97,11 +101,7 @@ namespace Api.Repository
                                 SubjectId = createQuestionDTO.SubjectId,
                             };
                             await _context.AddAsync(newTag);
-                            tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
-                            if (tagAux != null)
-                            {
-                                tags.Add(tagAux);
-                            }
+                            tags.Add(newTag);
                         }
                         else
                         {
@@ -118,8 +118,6 @@ namespace Api.Repository
                         {
                             var newInstitution = new Institution { Name = createQuestionDTO.InstitutionName };
                             await _context.AddAsync(newInstitution);
-                            institution = await _context.Institution
-                                .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
                         }
                     }
 
@@ -192,5 +190,109 @@ namespace Api.Repository
             }
         }
 
+        public async Task<Question> UpdateQuestion(UpdateQuestionDTO updateQuestionDTO, Question question)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // verify tags
+                    var tagsAux = new List<Tag>();
+                    if (!(updateQuestionDTO.Tags.Count() > 0))
+                    {
+                        throw new Exception("Não há tags");
+                    }
+                    foreach (var tag in updateQuestionDTO.Tags)
+                    {
+                        var tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
+                        if (tagAux == null)
+                        {
+                            var newTag = new Tag
+                            {
+                                Name = tag,
+                                SubjectId = updateQuestionDTO.SubjectId,
+                            };
+                            await _context.AddAsync(newTag);
+                            tagsAux.Add(newTag);
+                        }
+                        else
+                        {
+                            tagsAux.Add(tagAux);
+                        }
+                    }
+                    question.Tags.Clear();
+                    foreach (var tag in tagsAux)
+                    {
+                        question.Tags.Add(tag);
+                    }
+
+                    // Verify Institution if not exist create
+                    var institution = question.Institution;
+                    if(updateQuestionDTO.InstitutionName != question.Institution?.Name)
+                    {
+                        institution = await _context.Institution
+                                    .FirstOrDefaultAsync(x => x.Name == updateQuestionDTO.InstitutionName);
+                        if (!String.IsNullOrEmpty(updateQuestionDTO.InstitutionName))
+                        {
+                            if (institution == null)
+                            {
+                            var newInstitution = new Institution { Name = updateQuestionDTO.InstitutionName };
+                            await _context.AddAsync(newInstitution);
+                            }
+                        }
+                    }
+
+                    // Verify Answers
+                    var answersAux = new List<Answer>();
+                    foreach (var answer in updateQuestionDTO.Answers)
+                    {
+                        var answerAux = await _context.Answer
+                                        .FirstOrDefaultAsync(x => x.QuestionId == question.Id && x.Text == answer.Text);
+                        if(answerAux == null) 
+                        { 
+                            answerAux = new Answer
+                            {
+                                QuestionId = question.Id,
+                                Text = answer.Text,
+                                IsCorrect = answer.IsCorrect,
+                            };
+                            await _context.AddAsync(answerAux);
+                        }
+                        answersAux.Add(answerAux);
+                    }
+                    foreach (var res in question.Answers.ToList())
+                    {
+                        var resAux = answersAux.FirstOrDefault(aux => aux.Id == res.Id);
+                        if (resAux == null)
+                        {
+                            _context.Remove(res);
+                        }
+                    }
+
+                    // Update Question
+                    question.Dificult = updateQuestionDTO.Dificult;
+                    question.IsPrivate = updateQuestionDTO.IsPrivate;
+                    question.Text = updateQuestionDTO.Text;
+                    question.InstitutionId = institution?.Id;
+                    question.Justify = updateQuestionDTO.Justify;
+                    question.Type = updateQuestionDTO.Type;
+
+                    // Execute update
+                    _context.Update(question);
+                    await _context.SaveChangesAsync();
+
+                    // finish transaction
+                    transaction.Commit();
+                    return question;
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction if something goes wrong
+                    transaction.Rollback();
+
+                    throw;
+                }
+        }
+    }
     }
 }

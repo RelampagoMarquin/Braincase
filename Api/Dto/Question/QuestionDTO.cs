@@ -28,17 +28,23 @@ namespace Api.Dto.Question
 
     public class UpdateQuestionDTO
     {
-        public String? Text { get; set; } = null;
+        public String Text { get; set; }
 
-        public byte? Type { get; set; } = null;
+        public byte Type { get; set; }
 
-        public byte? Dificult { get; set; } = null;
+        public byte Dificult { get; set; }
 
-        public bool? IsPrivate { get; set; } = null;
+        public bool IsPrivate { get; set; }
 
         public String? Justify { get; set; }
 
-        public Guid? InstitutionId { get; set; } = null;
+        public List<CreateAnswerForQuestionDTO> Answers { get; set; }
+
+        public String? InstitutionName { get; set; }
+
+        public List<String> Tags { get; set; }
+
+        public Guid SubjectId { get; set; }
     }
     public class ResponseQuestionDTO
     {

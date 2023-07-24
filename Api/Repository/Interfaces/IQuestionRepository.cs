@@ -19,5 +19,7 @@ namespace Api.Repository.Interfaces
         Task<IEnumerable<Question>> GetAllUserQuestion(string id);
 
         Task<Question> CreateQuestion(CreateQuestionDTO createQuestionDTO, string userid);
+
+        Task<Question> UpdateQuestion(UpdateQuestionDTO updateQuestionDTO, Question question);
     }
 }
