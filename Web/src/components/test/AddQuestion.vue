@@ -3,12 +3,17 @@ import { onBeforeMount, ref } from 'vue'
 import QuestionCard from '../QuestionCard.vue'
 import type { Question } from '@/utils/types'
 import { useQuestionStore } from '@/stores/questionStore'
+import { useTestStore } from '@/stores/testStore'
 
 interface Props {
   testId: string
 }
 
+const testStore = useTestStore()
+
 const props = defineProps<Props>()
+
+const currentQuestions = ref<Question[]>([])
 
 /* stores */
 
@@ -20,6 +25,20 @@ const questionsAux = ref<Question[]>([]) // essa é apenas para ser usada na fil
 onBeforeMount(async () => {
   questions.value = await questionStore.getAllQUestionByFavorites()
 })
+
+const pushQuestion = (quest: any) => {
+  currentQuestions.value.push(quest)
+  console.log(currentQuestions.value)
+}
+
+const popQuestion = (quest: any) => {
+  currentQuestions.value = currentQuestions.value.filter((q: any) => q.id !== quest.id)
+}
+
+const addQuestions = async () => {
+  await testStore.updateQuestionInTest(props.testId, currentQuestions.value)
+  console.log(currentQuestions.value)
+}
 </script>
 
 <template>
@@ -33,7 +52,7 @@ onBeforeMount(async () => {
     <v-row justify="end" class="mr-5 mt-4">
       <v-dialog transition="dialog-bottom-transition" width="auto">
         <template v-slot:activator="{ props }">
-          <v-btn color="orange-accent-3" v-bind="props" @click="addQuestion">
+          <v-btn color="orange-accent-3" v-bind="props">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </template>
@@ -60,6 +79,8 @@ onBeforeMount(async () => {
                     :isPrivate="question.isPrivate"
                     :favorite="question.favorites[0]"
                     :addQuestion="true"
+                    @push="pushQuestion"
+                    @pop="popQuestion"
                   >
                   </QuestionCard>
                 </v-col>
@@ -71,10 +92,25 @@ onBeforeMount(async () => {
           </v-card>
         </template>
       </v-dialog>
+      <v-btn color="green-accent-3" @click="addQuestions">
+        <v-icon>mdi-check</v-icon>
+      </v-btn>
     </v-row>
 
     <v-row class="mt-5">
-      <v-col cols="12" md="7" class="pl-5 mx-auto"> </v-col>
+      <v-col cols="12" md="12" class="pl-5 mx-auto">
+        <v-col cols="12" sm="12" v-for="question in currentQuestions" :key="question.id">
+          <QuestionCard
+            :id="question.id"
+            :text="question.text"
+            :type="question.type"
+            :dificult="question.dificult"
+            :isPrivate="question.isPrivate"
+            :addQuestion="false"
+          >
+          </QuestionCard>
+        </v-col>
+      </v-col>
     </v-row>
   </div>
 </template>

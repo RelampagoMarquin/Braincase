@@ -21,6 +21,17 @@ const props = withDefaults(defineProps<Props>(), {
   addQuestion: false
 })
 
+const data = ref({
+  id: props.id,
+  text: props.text,
+  type: props.type,
+  dificult: props.dificult,
+  isPrivate: props.isPrivate,
+  subjectName: props.subjectName,
+  favorite: props.favorite,
+  addQuestion: props.addQuestion
+})
+
 // Código que muda o botão estrela de acordo com ele ser favorito ou não
 const isFavorited = ref(false)
 if (props.favorite) {
@@ -89,14 +100,14 @@ function toComment(idquestion: string) {
           class="mdi mdi-plus-box"
           color="orange"
           size="large"
-          @click="favoritite"
+          @click="$emit('push', data)"
         ></v-icon>
         <v-icon
           v-if="addQuestion"
           class="mdi mdi-minus-box"
           color="orange"
           size="large"
-          @click="favoritite"
+          @click="$emit('pop', data)"
         ></v-icon>
       </v-col>
     </v-row>

@@ -16,7 +16,7 @@ const testStore = useTestStore()
 const header = ref(true)
 const addQuestions = ref(false)
 
-const testId = ref(null)
+const testId = ref('')
 
 const createTest = async (data: Header) => {
   const now = new Date()
@@ -32,7 +32,7 @@ const createTest = async (data: Header) => {
 
   const response = await testStore.createTest(payload)
 
-  testId.value = response.id
+  testId.value = response.id.toString()
 
   header.value = false
 
