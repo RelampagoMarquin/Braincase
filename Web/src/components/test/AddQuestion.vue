@@ -36,6 +36,7 @@ const popQuestion = (quest: any) => {
 }
 
 const addQuestions = async () => {
+  console.log(props.testId)
   await testStore.updateQuestionInTest(props.testId, currentQuestions.value)
   console.log(currentQuestions.value)
 }

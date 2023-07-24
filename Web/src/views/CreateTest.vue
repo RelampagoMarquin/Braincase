@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useTestStore } from '../stores/testStore'
 import HeaderTest from '../components/test/HeaderTest.vue'
 import AddQuestion from '../components/test/AddQuestion.vue'
+import type { CreateTest } from '@/utils/types';
 
 interface Header {
   name: string
@@ -19,20 +20,20 @@ const addQuestions = ref(false)
 const testId = ref('')
 
 const createTest = async (data: Header) => {
-  const now = new Date()
   name.value = data.name
   className.value = data.className
 
-  const payload = {
+  const payload:CreateTest = {
     name: name.value,
-    className: className.value
+    className: className.value,
+    logoUrl: ''
   }
 
   // create test and get id
 
   const response = await testStore.createTest(payload)
 
-  testId.value = response.id.toString()
+  testId.value = response?.id as string
 
   header.value = false
 

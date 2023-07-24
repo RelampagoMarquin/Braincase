@@ -100,7 +100,7 @@ export interface Test {
 export interface CreateTest {
   name: string
   className: string
-  createAt: Date
-  LastUse: Date
+  createAt?: Date
+  LastUse?: Date
   logoUrl?: string | null //Vai poder enviar imagem?
 }
