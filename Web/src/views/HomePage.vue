@@ -10,7 +10,7 @@ const cards = [
     name: 'Buscar',
     path: 'user',
     icon: 'mdi-magnify',
-    route: '/buscar'
+    route: '/questions'
   },
   {
     name: 'Criar Questão',
