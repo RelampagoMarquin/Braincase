@@ -115,7 +115,7 @@ async function voltar() {
                 :dificult="question.dificult"
                 :isPrivate="question.isPrivate"
                 :subject-name="question.tags[0].subjectName"
-                :favorite="question.favorites[0]"
+                :favorites="question.favorites[0]"
                 >
                 </QuestionCard>
             </v-col>

@@ -85,12 +85,11 @@ namespace Api.Helpers
             // mapper de question
             CreateMap<Question, ResponseQuestionDTO>()
                 .ForMember(dest => dest.InstitutionName, opt =>
-                {
-                    opt.MapFrom(src => src.Institution != null ? src.Institution.Name : null);
-                })
-                .ForMember(dest => dest.Criador, opt => opt.MapFrom(src => src.Favorites.Where(f => f.Own == true).First().User.Name))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Favorites.Where(f => f.Own == true).First().User.Email));
-
+                    {
+                        opt.MapFrom(src => src.Institution != null ? src.Institution.Name : null);
+                    })
+                .ForMember(dest => dest.Criador, opt => opt.MapFrom(src => src.Favorites.Any(f => f.Own == true) ? src.Favorites.First(f => f.Own == true).User.Name : null))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Favorites.Any(f => f.Own == true) ? src.Favorites.First(f => f.Own == true).User.Email : null));
             CreateMap<UpdateQuestionDTO, Question>()
                 .ForAllMembers(opts =>
                 {
