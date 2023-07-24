@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useTestStore } from '../stores/testStore'
 import HeaderTest from '../components/test/HeaderTest.vue'
+import AddQuestion from '../components/test/AddQuestion.vue'
 
 interface Header {
   name: string
@@ -9,10 +11,32 @@ interface Header {
 
 const name = ref('')
 const className = ref('')
+const testStore = useTestStore()
 
-const getHeader = (data: Header) => {
+const header = ref(true)
+const addQuestions = ref(false)
+
+const testId = ref(null)
+
+const createTest = async (data: Header) => {
+  const now = new Date()
   name.value = data.name
   className.value = data.className
+
+  const payload = {
+    name: name.value,
+    className: className.value
+  }
+
+  // create test and get id
+
+  const response = await testStore.createTest(payload)
+
+  testId.value = response.id
+
+  header.value = false
+
+  addQuestions.value = true
 }
 </script>
 
@@ -24,15 +48,26 @@ const getHeader = (data: Header) => {
         <v-btn
           class="form-bg rounded-xl white--text"
           style="font-weight: bold"
+          v-show="header"
           @click="$router.back()"
+          >Voltar</v-btn
+        >
+        <v-btn
+          class="form-bg rounded-xl white--text"
+          style="font-weight: bold"
+          v-show="!header"
+          @click=";(header = true), (addQuestions = false)"
           >Voltar</v-btn
         >
       </v-col>
       <v-col cols="6"><h2>Novo Teste</h2></v-col>
     </v-row>
+
     <v-row justify="center">
       <v-col cols="12" md="12" lg="12">
-        <div class="rounded-xl elevation-2 my-4 form-bg pa-5"><HeaderTest @next="getHeader" /></div
+        <div class="rounded-xl elevation-2 my-4 form-bg pa-5">
+          <HeaderTest v-if="header" @next="createTest" />
+          <AddQuestion v-if="addQuestions" :testId="testId" /></div
       ></v-col>
     </v-row>
   </v-container>
