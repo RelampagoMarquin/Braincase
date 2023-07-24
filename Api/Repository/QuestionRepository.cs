@@ -76,105 +76,116 @@ namespace Api.Repository
 
         public async Task<Question> CreateQuestion(CreateQuestionDTO createQuestionDTO, string userId)
         {
-            // verify tag if not exist create
-            var tags = new List<Tag>();
-            foreach (var tag in createQuestionDTO.Tags)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                var tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
-                if (tagAux == null)
+                try
                 {
-                    var newTag = new Tag
+                    // verify tag if not exist create
+                    var tags = new List<Tag>();
+                    foreach (var tag in createQuestionDTO.Tags)
                     {
-                        Name = tag,
-                        SubjectId = createQuestionDTO.SubjectId,
-                    };
-                    await _context.AddAsync(newTag);
-                    await _context.SaveChangesAsync();
-                    tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
-                    if (tagAux != null)
-                    {
-                        tags.Add(tagAux);
+                        var tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
+                        if (tagAux == null)
+                        {
+                            var newTag = new Tag
+                            {
+                                Name = tag,
+                                SubjectId = createQuestionDTO.SubjectId,
+                            };
+                            await _context.AddAsync(newTag);
+                            tagAux = await _context.Tag.FirstOrDefaultAsync(x => x.Name == tag);
+                            if (tagAux != null)
+                            {
+                                tags.Add(tagAux);
+                            }
+                        }
+                        else
+                        {
+                            tags.Add(tagAux);
+                        }
                     }
-                }
-                else
-                {
-                    tags.Add(tagAux);
-                }
-            }
 
-            // Verify Institution if not exist create
-            var institution = await _context.Institution
-                            .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
-            if (!String.IsNullOrEmpty(createQuestionDTO.InstitutionName))
-            {
-                if (institution == null)
-                {
-                    var newInstitution = new Institution { Name = createQuestionDTO.InstitutionName };
-                    await _context.AddAsync(newInstitution);
+                    // Verify Institution if not exist create
+                    var institution = await _context.Institution
+                                    .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
+                    if (!String.IsNullOrEmpty(createQuestionDTO.InstitutionName))
+                    {
+                        if (institution == null)
+                        {
+                            var newInstitution = new Institution { Name = createQuestionDTO.InstitutionName };
+                            await _context.AddAsync(newInstitution);
+                            institution = await _context.Institution
+                                .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
+                        }
+                    }
+
+                    // Create Question
+                    Question question = new Question
+                    {
+                        Dificult = createQuestionDTO.Dificult,
+                        IsPrivate = createQuestionDTO.IsPrivate,
+                        Text = createQuestionDTO.Text,
+                        InstitutionId = institution?.Id,
+                        Justify = createQuestionDTO.Justify,
+                        Type = createQuestionDTO.Type,
+                    };
+
+                    foreach (var tag in tags)
+                    {
+                        question.Tags.Add(tag);
+                    }
+
+                    await _context.AddAsync(question);
+
+                    var questionAux = await _context.Question.Where(x =>
+                            x.Text == createQuestionDTO.Text &&
+                            x.Justify == createQuestionDTO.Justify &&
+                            x.IsPrivate == createQuestionDTO.IsPrivate &&
+                            x.Dificult == createQuestionDTO.Dificult &&
+                            x.Type == createQuestionDTO.Type
+                        ).OrderByDescending(x => x.Id)
+                        .FirstOrDefaultAsync();
+
+                    if (questionAux != null)
+                    {
+                        question = questionAux;
+                    }
+
+                    // Create Answer
+                    foreach (var answer in createQuestionDTO.Answers)
+                    {
+                        var answerAux = new Answer
+                        {
+                            QuestionId = question.Id,
+                            Text = answer.Text,
+                            IsCorrect = answer.IsCorrect,
+                        };
+                        await _context.AddAsync(answerAux);
+                    }
+
+                    // Add to favorites
+                    var favorites = new Favorites
+                    {
+                        UserId = userId,
+                        QuestionId = question.Id,
+                        Own = true
+                    };
+                    await _context.AddAsync(favorites);
                     await _context.SaveChangesAsync();
-                    institution = await _context.Institution
-                        .FirstOrDefaultAsync(x => x.Name == createQuestionDTO.InstitutionName);
+
+                    // Commit transaction if all commands succeed
+                    transaction.Commit();
+
+                    return question;
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction if something goes wrong
+                    transaction.Rollback();
+
+                    throw;
                 }
             }
-            
-            // Create Question
-            Question question = new Question
-            {
-                Dificult = createQuestionDTO.Dificult,
-                IsPrivate = createQuestionDTO.IsPrivate,
-                Text = createQuestionDTO.Text,
-                InstitutionId = institution?.Id,
-                Justify = createQuestionDTO.Justify,
-                Type = createQuestionDTO.Type,
-            };
-
-            foreach (var tag in tags)
-            {
-                question.Tags.Add(tag);
-            }
-
-            await _context.AddAsync(question);
-            await _context.SaveChangesAsync();
-
-            var questionAux = await _context.Question.Where(x =>
-                    x.Text == createQuestionDTO.Text &&
-                    x.Justify == createQuestionDTO.Justify &&
-                    x.IsPrivate == createQuestionDTO.IsPrivate &&
-                    x.Dificult == createQuestionDTO.Dificult &&
-                    x.Type == createQuestionDTO.Type
-                ).OrderByDescending(x => x.Id)
-                .FirstOrDefaultAsync();
-
-
-            if (questionAux != null)
-            {
-                question = questionAux;
-            }
-
-            // Create Answer
-            foreach (var answer in createQuestionDTO.Answers)
-            {
-                var answerAux = new Answer
-                {
-                    QuestionId = question.Id,
-                    Text = answer.Text,
-                    IsCorrect = answer.IsCorrect,
-                };
-                await _context.AddAsync(answerAux);
-                await _context.SaveChangesAsync();
-            }
-
-            // Add to favorites
-            var favorites = new Favorites
-            {
-                UserId = userId,
-                QuestionId = question.Id,
-                Own = true
-            };
-            await _context.AddAsync(favorites);
-            await _context.SaveChangesAsync();
-
-            return question;
         }
 
     }
