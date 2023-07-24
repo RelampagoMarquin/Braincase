@@ -9,6 +9,7 @@ import RegisterQuestion from '../views/RegisterQuestion.vue'
 import Questions from '../views/Questions.vue'
 import { useAuthStore } from '@/stores/authStore'
 import CommentQuestion from '../views/CommentQuestion.vue'
+import CreateTest from '../views/CreateTest.vue'
 //cria a instância dorouter com as rotas
 const router = createRouter({
   //Cria um histórico HTML5. Histórico mais comum para aplicativos de página única.
@@ -30,7 +31,7 @@ const router = createRouter({
       name: 'home',
       component: Home,
       meta: {
-        auth: true
+        auth: false
       }
     },
     {
@@ -55,7 +56,7 @@ const router = createRouter({
       name: 'userprofile',
       component: UserProfile,
       meta: {
-        auth: true
+        auth: false
       }
     },
     {
@@ -63,7 +64,7 @@ const router = createRouter({
       name: 'resgisterQuestion',
       component: RegisterQuestion,
       meta: {
-        auth: true
+        auth: false
       }
     },
     {
@@ -71,16 +72,21 @@ const router = createRouter({
       name: 'questions',
       component: Questions,
       meta: {
-        auth: true,
+        auth: false
       }
     },
-      {
+    {
       path: '/commentQuestion/:idquestion',
       name: 'commentQuestion',
       component: CommentQuestion,
       meta: {
-        auth: true
+        auth: false
       }
+    },
+    {
+      path: '/createTest',
+      name: 'createTest',
+      component: CreateTest
     }
   ]
 })

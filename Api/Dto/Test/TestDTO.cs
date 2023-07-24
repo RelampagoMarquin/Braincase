@@ -1,3 +1,6 @@
+using Api.Dto.Question;
+using Api.Models;
+
 namespace Api.Dto.Test
 {
     public class CreateTestDTO
@@ -8,7 +11,11 @@ namespace Api.Dto.Test
 
         public String? LogoUrl { get; set; }
 
-        public Guid UserId { get; set; }
+    }
+
+    public class AddQuestionTetstDTO
+    {
+        public List<Models.Question> Questions { get; set; }
     }
 
     public class UpdateTestDTO
@@ -36,12 +43,12 @@ namespace Api.Dto.Test
 
         public String? LogoUrl { get; set; }
 
-        public Guid UserId { get; set; }
+        public String UserId { get; set; }
     }
 
-    public class responseQuestionTest
+    public class ResponseQuestionTestDTO: ResponseTestDTO
     {
-        // DTO não implementado ainda
-        // este DTO deverá informar os dados dos testes, suas questões e das alternativas de suas questões
+        public List<ResponseQuestionDTO> Questions { get; set; }
+
     }
 }

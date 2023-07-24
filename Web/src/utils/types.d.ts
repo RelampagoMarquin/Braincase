@@ -1,40 +1,40 @@
 export interface User {
-    id: number;
-    name: string;
-    email: string;
-    registration: string | null;
-  }
+  id: number
+  name: string
+  email: string
+  registration: string | null
+}
 
 export interface UserCreate {
-    name: string;
-    email: string;
-    password: string;
-    confirmedPassword: string;
-    registration: string | null;
-  }
+  name: string
+  email: string
+  password: string
+  confirmedPassword: string
+  registration: string | null
+}
 export interface UserUpdate {
-    name?: string;
-    email?: string;
-    password?: string;
-    confirmedPassword?: string;
-    registration?: string | null;
-    oldPassword?: string;
-  }
+  name?: string
+  email?: string
+  password?: string
+  confirmedPassword?: string
+  registration?: string | null
+  oldPassword?: string
+}
 
 export interface Institution {
-  id?: string;  
-  name: string;
+  id?: string
+  name: string
 }
 
 export interface Subject {
-  id?: string;
-  name: string;
+  id?: string
+  name: string
 }
 
 export interface Tag {
-  id?: string;
-  name: string;
-  subjectName?: string;
+  id?: string
+  name: string
+  subjectName?: string
 }
 
 export interface Answer {
@@ -49,50 +49,43 @@ export interface CreateAnswer {
 }
 
 export interface Question {
-  id: string;
-  text: string;
-  type: number;
-  dificult: number;
-  isPrivate: boolean;
-  justify: string,
-  institutionName: string,
-  criador: string,
-  email: string,
-  tags: Tag[],
-  favorites: {
-    own?: boolean;
-  }[],
-  answers: Answer[],
+  id: string
+  text: string
+  type: number
+  dificult: number
+  justify?: string
+  institutionId?: string
+  criador?: string | null
+  email?: string | null
+  comments: Comment[] | null
+  answers: Answer[]
+  institutionName?: string
+  isPrivate: boolean
+  tags: Tag[]
+  favorites: Favorites[]
 }
 
 export interface CreateQuestion {
-  text: string;
-  type: number;
-  dificult: number;
-  isPrivate: boolean;
-  justify?: string;
-  answers: CreateAnswer[];
-  InstitutionName?: string;
-  tags: string[];
-  subjectId: string;
+  text: string
+  type: number
+  dificult: number
+  isPrivate: boolean
+  justify?: string
+  answers: CreateAnswer[]
+  InstitutionName?: string
+  tags: string[]
+  subjectId: string
 }
 
 export interface Comment {
   id?: string;
   text: string;
-  userName: string
-}
-
-export interface CreateComment {
-  UserId: string;
-  questionId: string;
-  text: string;
 }
 
 export interface Favorites {
-  questionId?: string;
-  own: boolean;
-  userId?: string;
+  questionId?: string
+  own: boolean
+  userId?: string
 }
 
 export interface Test {
@@ -100,14 +93,14 @@ export interface Test {
   name: string;
   className: string;
   createAt: Date;
-  lastUse: Date;
+  LastUse: Date;
   logoUrl?: string | null; //Vai poder enviar imagem?
 }
 
 export interface CreateTest {
-  name: string;
-  className: string;
-  createAt: Date;
-  lastUse: Date;
-  logoUrl?: string | null;  //Vai poder enviar imagem?
+  name: string
+  className: string
+  createAt?: Date
+  LastUse?: Date
+  logoUrl?: string | null //Vai poder enviar imagem?
 }
