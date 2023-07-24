@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Api.Repository.Interfaces;
 using Api.Dto.Test;
+using System.Security.Claims;
+using Api.Dto.Question;
 
 namespace Api.Controllers
 {
@@ -45,21 +47,37 @@ namespace Api.Controllers
 
         // GET: api/Test/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseTestDTO>> GetTestById(Guid id)
+        public async Task<ActionResult<ResponseQuestionTestDTO>> GetTestById(Guid id)
         {
             var test = await _testRepository.GetTestById(id);
             if (test == null)
             {
                 return NotFound("Prova não encontrada");
             }
-            var response = _mapper.Map<ResponseTestDTO>(test);
+            var mapQuestion = new List<ResponseQuestionDTO>();
+            foreach (var question in test.Questions)
+            {
+                mapQuestion.Add(_mapper.Map<ResponseQuestionDTO>(question));
+            }
+            var response = new ResponseQuestionTestDTO
+            {
+                Questions = mapQuestion,
+                ClassName = test.ClassName,
+                CreateAt = test.CreateAt,
+                Id = test.Id,
+                LastUse = test.LastUse,
+                LogoUrl = test.LogoUrl,
+                Name = test.Name,
+                UserId = test.UserId
+            };
             return response;
         }
 
-        [HttpGet("user/{id}")]
-        public async Task<ActionResult<IEnumerable<ResponseTestDTO>>> GetAllTestsByUser(String id)
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<ResponseTestDTO>>> GetAllTestByUser()
         {
-            var tests = await _testRepository.GetAllTestsByUser(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tests = await _testRepository.GetAllTestsByUser(userId);
             var responseTests = new List<ResponseTestDTO>();
             foreach (var test in tests)
             {
@@ -70,20 +88,32 @@ namespace Api.Controllers
         }
 
 
+        // PUT: api/Test/addquestions/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("addquestions/{id}")]
+        public async Task<ActionResult<Test>> PutQuestionOnTest(Guid id, AddQuestionTetstDTO addQuestionTetstDTO)
+        {
+            var test = await _testRepository.GetTestById(id);
+            if (test == null)
+            {
+                return NotFound("Prova não encontrada");
+            }
+            return await _testRepository.AddQuestionToTest(addQuestionTetstDTO, test);
+        }
+
         // PUT: api/Test/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTest(Guid id, UpdateTestDTO updateTestDTO)
         {
-            var testBanco = await _testRepository.GetTestById(id);
-            if (testBanco == null)
+            var test = await _testRepository.GetTestById(id);
+            if (test == null)
             {
                 return NotFound("Prova não encontrada");
             }
-            var institutionUpdate = _mapper.Map(updateTestDTO, testBanco);
-            
+            var institutionUpdate = _mapper.Map(updateTestDTO, test);
             _testRepository.Update(institutionUpdate);
-            
+
             return await _testRepository.SaveChangesAsync()
                 ? Ok("Prova Atualizada com sucesso")
                 : BadRequest("Erro ao atualizar a Prova");
@@ -94,13 +124,9 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Test>> PostTest(CreateTestDTO createTestDTO)
         {
-            var test = _mapper.Map<Test>(createTestDTO);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            _testRepository.Add(test);
-
-            return await _testRepository.SaveChangesAsync()
-                ? Ok("Prova criada com sucesso")
-                : BadRequest("Erro ao criar a Prova");
+            return await _testRepository.CreateTest(createTestDTO, userId);
         }
 
         // DELETE: api/Test/5
