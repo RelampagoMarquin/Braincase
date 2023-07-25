@@ -33,7 +33,7 @@ onBeforeMount(async () => {
 
 /* functions */
 watch(subject, async () => {
-
+    selectTags.value = [];
     const subjectName = subjects.value?.find(sub => sub.id === subject.value);
     emit('update:subject', subjectName?.name) // outra forma de gerar o emit
     if (subject.value !== '' && subject.value) {

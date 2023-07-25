@@ -31,7 +31,7 @@ const router = createRouter({
       name: 'home',
       component: Home,
       meta: {
-        auth: false
+        auth: true
       }
     },
     {
@@ -56,7 +56,7 @@ const router = createRouter({
       name: 'userprofile',
       component: UserProfile,
       meta: {
-        auth: false
+        auth: true
       }
     },
     {
@@ -64,7 +64,7 @@ const router = createRouter({
       name: 'resgisterQuestion',
       component: RegisterQuestion,
       meta: {
-        auth: false
+        auth: true
       }
     },
     {
@@ -72,7 +72,7 @@ const router = createRouter({
       name: 'questions',
       component: Questions,
       meta: {
-        auth: false
+        auth: true
       }
     },
     {
@@ -80,13 +80,16 @@ const router = createRouter({
       name: 'commentQuestion',
       component: CommentQuestion,
       meta: {
-        auth: false
+        auth: true
       }
     },
     {
       path: '/createTest',
       name: 'createTest',
-      component: CreateTest
+      component: CreateTest,
+      meta: {
+        auth: true
+      }
     }
   ]
 })
@@ -94,14 +97,15 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const auth = localStorage.getItem('token')
-
-  if (to.path !== '/login' && to.meta?.auth && !auth) {
+  const routerPublic = ['/login', '/signup', '/start'];
+  const contain = routerPublic.includes(to.path)
+  if (!contain && to.meta?.auth && !auth) {
     // Verifica se a rota de destino requer autenticação e se o usuário não está autenticado
     next('/login') // Redireciona para a rota de login
     return
   }
 
-  if (to.path !== '/login' && auth && authStore.isExpired()) {
+  if (!contain && auth && authStore.isExpired()) {
     // Verifica se o usuário está autenticado, mas o token expirou
     next('/login') // Redireciona para a rota de login
     return

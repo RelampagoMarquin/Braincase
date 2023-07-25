@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import decode from "jwt-decode"
 import router from '../router/index';
-import { apiAxios } from '@/utils/axios';
+import { apiAxios, updateAxiosInstance } from '@/utils/axios';
 import { useUserStore } from './userStore';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -16,10 +16,13 @@ export const useAuthStore = defineStore('auth', () => {
             email,
             password
         })
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         localStorage.setItem('token', JSON.stringify(response.data.data.token))
         token.value = response.data.data.token;
         localStorage.setItem('user', JSON.stringify(response.data.user))
         userid.value = response.data.user;
+        updateAxiosInstance();
         await userStore.getUserById(userid.value, token.value)
         return {token: token.value, userId: userid.value}
     }
@@ -32,15 +35,15 @@ export const useAuthStore = defineStore('auth', () => {
 
       function isExpired() {
         const token = localStorage.getItem("token");
-      
+
         if (!token) {
           return true; // Não há token presente, considerar como expirado
         }
       
         try {
           const decodedToken: any = decode(token);
-      
-          if (Date.now() >= decodedToken.exp * 1000) {
+
+          if (Date.now() >= decodedToken.exp * 1000) { 
             return true; // Token expirado
           }
       

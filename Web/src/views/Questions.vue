@@ -23,6 +23,16 @@ onBeforeMount(async () => {
    isLoading.value = false
 })
 
+function subjectSearch(){
+    if(selectSubject.value === '' || selectSubject.value == null){
+        questionsAux.value = []
+    }else{
+        questionsAux.value = questions.value.filter(question =>
+            question.tags.some(tag => tag.subjectName === selectSubject.value)
+        )
+    }
+}
+
 watch(selectedOption, async () => {
     // Emita o evento personalizado "update:questionList" sempre que o valor do questionList mudar
     isLoading.value = true;
@@ -46,19 +56,16 @@ watch(selectedOption, async () => {
 
 // faz a filtragem pela materia
 watch(selectSubject, () => {
-    if(selectSubject.value === '' || selectSubject.value == null){
-        questionsAux.value = []
-    }else{
-        questionsAux.value = questions.value.filter(question =>
-            question.tags.some(tag => tag.subjectName === selectSubject.value)
-        )
-    }
+    selectTags.value = [];
+    console.log(selectTags.value.length)
+    subjectSearch();
 })
 
-// faz a filtragem pela disciplina
+// faz a filtragem pelas tags
 watch(selectTags, () => {
     if(selectTags.value.length === 0){
         questionsAux.value = []
+        subjectSearch();
     }else{
         questionsAux.value = []
         selectTags.value.forEach(name => {
@@ -115,7 +122,7 @@ async function voltar() {
                 :dificult="question.dificult"
                 :isPrivate="question.isPrivate"
                 :subject-name="question.tags[0].subjectName"
-                :favorites="question.favorites[0]"
+                :favorite="question.favorites[0]"
                 >
                 </QuestionCard>
             </v-col>

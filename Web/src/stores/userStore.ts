@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiAxios, apiAxiosAuth } from '@/utils/axios'
 import type { User, UserCreate, UserUpdate } from '@/utils/types'
+import router from '@/router'
 
 export const useUserStore = defineStore('user', () => {
     // variables to be on front
@@ -23,6 +24,7 @@ export const useUserStore = defineStore('user', () => {
             registration: user.registration
         }).then(function () {
             alert('criado com sucesso')
+            router.push('/login')
         }).catch(function (error) {
             console.log(error.message);
         });
