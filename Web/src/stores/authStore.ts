@@ -1,8 +1,9 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { KJUR } from 'jsrsasign';
 import decode from "jwt-decode"
 import router from '../router/index';
-import { apiAxios } from '@/utils/axios';
+import { apiAxios, updateAxios } from '@/utils/axios';
 import { useUserStore } from './userStore';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -16,11 +17,14 @@ export const useAuthStore = defineStore('auth', () => {
             email,
             password
         })
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         localStorage.setItem('token', JSON.stringify(response.data.data.token))
         token.value = response.data.data.token;
         localStorage.setItem('user', JSON.stringify(response.data.user))
         userid.value = response.data.user;
-        await userStore.getUserById(userid.value, token.value)
+        updateAxios()
+        await userStore.getUserById(userid.value)
         return {token: token.value, userId: userid.value}
     }
 
@@ -32,15 +36,19 @@ export const useAuthStore = defineStore('auth', () => {
 
       function isExpired() {
         const token = localStorage.getItem("token");
-      
+
         if (!token) {
           return true; // Não há token presente, considerar como expirado
         }
-      
+        const key = import.meta.env.VITE_API_KEY
         try {
+          const isvalid = KJUR.jws.JWS.verifyJWT(token.trim().replace(/^"|"$/g, ''), key, {alg: ['HS256']});
+          if(!isvalid){
+            return true
+          }
           const decodedToken: any = decode(token);
-      
-          if (Date.now() >= decodedToken.exp * 1000) {
+
+          if (Date.now() >= decodedToken.exp * 1000) { 
             return true; // Token expirado
           }
       

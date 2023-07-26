@@ -71,6 +71,7 @@ async function registerquestion() {
 }
 
 watch(subject, async () => {
+  tagsTosend.value = [];
   if (subject.value != '') {
     const res = await tagsStore.getAllTagsBySubject(subject.value);
     const map = res.map(tag => tag.name)

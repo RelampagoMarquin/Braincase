@@ -1,16 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Institution } from '@/utils/types'
 
 export const useInstitutionStore = defineStore('institution', () => {
-    const token = localStorage.getItem("token")
     const institutions = ref<Institution[]>([])
     const institution = ref<Institution>()
-    let axiosAuth = apiAxios
-    if (token) {
-        axiosAuth = apiAxiosAuth(token)
-    }
 
     async function createInstitution(institution: Institution) {
         const response = await axiosAuth.post('/Institution', {

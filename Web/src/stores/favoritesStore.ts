@@ -1,16 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Favorites } from '@/utils/types'
 
 export const useFavoritesStore = defineStore('favorites', () => {
-    const token = localStorage.getItem("token")
     const favorites = ref<Favorites[]>([])
     const favorite = ref<Favorites>()
-    let axiosAuth = apiAxios
-    if (token) {
-        axiosAuth = apiAxiosAuth(token)
-    }
 
     async function createFavorites(favorites: Favorites) {
         const response = await axiosAuth.post('/Favorites', {

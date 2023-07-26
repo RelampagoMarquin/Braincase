@@ -1,16 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Test, CreateTest, Question } from '@/utils/types'
 
 export const useTestStore = defineStore('test', () => {
-  const token = localStorage.getItem('token')
   const tests = ref<Test[]>([])
   const test = ref<Test>()
-  let axiosAuth = apiAxios
-  if (token) {
-    axiosAuth = apiAxiosAuth(token)
-  }
 
   async function createTest(createTest: CreateTest) {
     try {

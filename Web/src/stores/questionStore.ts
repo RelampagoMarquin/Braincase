@@ -1,18 +1,13 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Question, CreateQuestion } from '@/utils/types'
 
 export const useQuestionStore = defineStore('question', () => {
 
-    const token = localStorage.getItem("token")
     const questions = ref<Question[]>([])
     const question = ref<Question>()
     const isLoading = ref(false)
-    let axiosAuth = apiAxios
-    if (token) {
-        axiosAuth = apiAxiosAuth(token)
-    }
 
     async function createQuestion(questionCreate: CreateQuestion) {
         try {

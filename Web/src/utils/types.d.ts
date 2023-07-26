@@ -80,7 +80,10 @@ export interface CreateQuestion {
 export interface Comment {
   id?: string;
   text: string;
+  userId?: string;
+  questionId?: string
 }
+
 
 export interface Favorites {
   questionId?: string

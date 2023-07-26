@@ -1,20 +1,15 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Answer, CreateAnswer } from '@/utils/types'
 export const useAnswerStore = defineStore('answer', () => {
-    const token = localStorage.getItem("token")
     const answers = ref<Answer[]>([])
     const answer = ref<Answer>()
-    let axiosAuth = apiAxios
-    if (token) {
-        axiosAuth = apiAxiosAuth(token)
-    }
 
     async function createAnswer(Answer: CreateAnswer) {
         const response = await axiosAuth.post('/Answer', {
             text: Answer.text,
-            Iscorrect: Answer.IsCorrect,
+            Iscorrect: Answer.isCorrect,
         },
             {
             }).then(function () {

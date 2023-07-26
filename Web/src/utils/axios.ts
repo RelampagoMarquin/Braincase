@@ -6,7 +6,12 @@ export const apiAxios = axios.create({
     'Content-Type': 'application/json',
   },
 });
-export function apiAxiosAuth(token:string){
+
+function apiAxiosAuth() {
+  const token = localStorage.getItem("token");
+  if(!token){
+    return apiAxios
+  }
   return axios.create({
     baseURL: 'https://localhost:7188/api',
     headers: {
@@ -16,3 +21,11 @@ export function apiAxiosAuth(token:string){
     },
   });
 }
+
+export let axiosAuth = apiAxiosAuth();
+
+// aqui atualizamos o token do axios para ser utilizado o token certo para cada function da store
+export function updateAxios(){
+    axiosAuth = apiAxiosAuth();
+}
+
