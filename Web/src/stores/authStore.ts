@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { KJUR } from 'jsrsasign';
 import decode from "jwt-decode"
 import router from '../router/index';
 import { apiAxios, updateAxios } from '@/utils/axios';
@@ -39,8 +40,12 @@ export const useAuthStore = defineStore('auth', () => {
         if (!token) {
           return true; // Não há token presente, considerar como expirado
         }
-      
+        const key = import.meta.env.VITE_API_KEY
         try {
+          const isvalid = KJUR.jws.JWS.verifyJWT(token.trim().replace(/^"|"$/g, ''), key, {alg: ['HS256']});
+          if(!isvalid){
+            return true
+          }
           const decodedToken: any = decode(token);
 
           if (Date.now() >= decodedToken.exp * 1000) { 
