@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue';
 import { useQuestionStore } from '../stores/questionStore';
 import { useCommentStore } from '@/stores/commentStore';
-import type { Question, CreateComment, Comment } from "@/utils/types";
+import type { Question, Comment } from "@/utils/types";
 import { useRouter } from "vue-router";
 
 // letras usadas nas alternativas
@@ -31,8 +31,8 @@ onBeforeMount(async () => {
 // adicionar comentário 
 const commentText = ref("")
 async function comentar() {
-  const comment: CreateComment = {
-    UserId: JSON.parse(localStorage.getItem("user")!),
+  const comment: Comment = {
+    userId: JSON.parse(localStorage.getItem("user")!),
     questionId: question.value?.id!,
     text: commentText.value,
   }

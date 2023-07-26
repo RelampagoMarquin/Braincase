@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFavoritesStore } from '@/stores/favoritesStore'
 import type { Favorites } from '@/utils/types'
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 
 const favoritesStore = useFavoritesStore()
@@ -13,7 +13,6 @@ interface Props {
   dificult: number
   isPrivate: boolean
   subjectName?: string
-  favorite?: Favorites
   addQuestion?: boolean
 }
 
@@ -28,24 +27,30 @@ const data = ref({
   dificult: props.dificult,
   isPrivate: props.isPrivate,
   subjectName: props.subjectName,
-  favorite: props.favorite,
   addQuestion: props.addQuestion
 })
 
 // Código que muda o botão estrela de acordo com ele ser favorito ou não
 const isFavorited = ref(false)
-if (props.favorite) {
-  isFavorited.value = true
-}
+const favorite = ref<Favorites>();
+
+onBeforeMount(async () => {
+  const favoriteAux = await favoritesStore.getFavoriteByQuestionId(props.id);
+  if (favoriteAux?.userId){
+    favorite.value = favoriteAux;
+    isFavorited.value = true;
+  }
+})
 
 const favoritite = async () => {
   const questionId = props.id
-  if (isFavorited.value) {
+  if (isFavorited.value && !favorite.value?.own) {
     await favoritesStore.deleteFavorite(questionId)
-  } else {
+    isFavorited.value = !isFavorited.value
+  } else if(!isFavorited.value) {
     await favoritesStore.createFavorites({ own: false, questionId: questionId })
+    isFavorited.value = !isFavorited.value
   }
-  isFavorited.value = !isFavorited.value
 }
 const starIcon = computed(() => {
   return isFavorited.value ? 'mdi mdi-star' : 'mdi mdi-star-outline'

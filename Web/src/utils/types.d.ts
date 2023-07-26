@@ -81,7 +81,8 @@ export interface Comment {
   id?: string;
   text: string;
   userId?: string;
-  questionId?: string
+  userName?: string;
+  questionId?: string;
 }
 
 
