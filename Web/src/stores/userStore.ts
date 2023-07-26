@@ -1,19 +1,13 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { apiAxios, axiosAuth } from '@/utils/axios'
 import type { User, UserCreate, UserUpdate } from '@/utils/types'
 import router from '@/router'
 
 export const useUserStore = defineStore('user', () => {
     // variables to be on front
-    let token = localStorage.getItem("token") as string
     const users = ref<User[]>([])
     const user = ref<User>()
-    let axiosAuth = apiAxios
-    if(token){
-        axiosAuth = apiAxiosAuth(token) 
-    }
-        
 
     async function createUser(user: UserCreate) {
         const response = await apiAxios.post('/Auth/register', {
@@ -31,11 +25,7 @@ export const useUserStore = defineStore('user', () => {
         return response
     }
 
-    async function getUserById(id: string, tokenaux?:string) {
-        if(tokenaux){
-            token = tokenaux
-            axiosAuth = apiAxiosAuth(token) 
-        }
+    async function getUserById(id: string) {
         try {
             const result = await axiosAuth.get(`/User/${id}`, {})
             user.value = result.data

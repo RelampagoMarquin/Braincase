@@ -1,17 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Tag } from '@/utils/types'
 
 export const useTagStore = defineStore('tag', () =>{
-    const token = localStorage.getItem("token")
     const tags = ref<Tag[]>([])
     const tag = ref<Tag>()
-    let axiosAuth = apiAxios
-    if (token) {
-        axiosAuth = apiAxiosAuth(token)
-    }
-
+    
     async function createTag(tag: Tag) {
         const response = await axiosAuth.post('/Tag', {
             name: tag.name,

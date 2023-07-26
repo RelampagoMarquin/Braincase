@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import decode from "jwt-decode"
 import router from '../router/index';
-import { apiAxios, updateAxiosInstance } from '@/utils/axios';
+import { apiAxios, updateAxios } from '@/utils/axios';
 import { useUserStore } from './userStore';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -22,8 +22,8 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = response.data.data.token;
         localStorage.setItem('user', JSON.stringify(response.data.user))
         userid.value = response.data.user;
-        updateAxiosInstance();
-        await userStore.getUserById(userid.value, token.value)
+        updateAxios()
+        await userStore.getUserById(userid.value)
         return {token: token.value, userId: userid.value}
     }
 

@@ -1,21 +1,16 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
-import type { Comment, CreateComment } from '@/utils/types'
+import { axiosAuth } from '@/utils/axios'
+import type { Comment } from '@/utils/types'
 
 export const useCommentStore = defineStore('comment', () => {
-    const token = localStorage.getItem("token")
     const comments = ref<Comment[]>([])
     const comment = ref<Comment>()
-    let axiosAuth = apiAxios
-    if (token) {
-        axiosAuth = apiAxiosAuth(token)
-    }
 
-    async function createComment(commentCreate: CreateComment) {
+    async function createComment(commentCreate: Comment) {
         try{
         const response = await axiosAuth.post('/Comment', {
-            userId: commentCreate.UserId.trim(),
+            userId: commentCreate.userId?.trim(),
             questionId: commentCreate.questionId,
             text: commentCreate.text,
         });

@@ -1,6 +1,6 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiAxios, apiAxiosAuth } from '@/utils/axios'
+import { axiosAuth } from '@/utils/axios'
 import type { Question, CreateQuestion } from '@/utils/types'
 
 export const useQuestionStore = defineStore('question', () => {
@@ -8,16 +8,6 @@ export const useQuestionStore = defineStore('question', () => {
     const questions = ref<Question[]>([])
     const question = ref<Question>()
     const isLoading = ref(false)
-    let axiosAuth = apiAxios
-    
-    // aqui atualizamos o token do axios para ser utilizado o token certo para cada function da store
-    function updateAxiosInstance(){
-        const token = ref(localStorage.getItem("token"))
-        if (token.value) {
-            axiosAuth = apiAxiosAuth(token.value)
-        }
-    }
-    updateAxiosInstance();
 
     async function createQuestion(questionCreate: CreateQuestion) {
         try {
@@ -96,7 +86,6 @@ export const useQuestionStore = defineStore('question', () => {
     }
 
     async function getAllQuestionByUserOwn() {
-        updateAxiosInstance();
         isLoading.value = true;
         const res = await axiosAuth.get('/Question/user', {
         });
