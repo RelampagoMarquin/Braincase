@@ -105,11 +105,13 @@ async function comentar() {
               <span> {{ answer.text }}</span>
             </v-row>
           </div>
-          <v-divider></v-divider>
-          <div class="ml-5 mb-5 mt-3">
-            <v-row class="mt-4">
-              <span><b>Justificativa: </b>{{ question?.justify }}</span>
-            </v-row>
+          <div v-if="question?.justify">
+            <v-divider></v-divider>
+            <div class="ml-5 mb-5 mt-3">
+              <v-row class="mt-4">
+                <span><b>Justificativa: </b>{{ question?.justify }}</span>
+              </v-row>
+            </div>
           </div>
         </div>
       </v-col>
