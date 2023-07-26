@@ -57,7 +57,6 @@ watch(selectedOption, async () => {
 // faz a filtragem pela materia
 watch(selectSubject, () => {
     selectTags.value = [];
-    console.log(selectTags.value.length)
     subjectSearch();
 })
 
@@ -111,10 +110,12 @@ async function voltar() {
           ></v-progress-circular>
         </v-col>
         <v-row class="cards-container">
+            {{ console.log(selectSubject) }}
             <v-col cols="12" sm="6" 
-            v-for="question in questionsAux.length > 0 ? questionsAux : questions"
+            v-for="question in (questionsAux.length > 0 || (selectSubject != '' && selectSubject != undefined)) ? questionsAux : questions"
             :key="question.id"
             >
+            
                 <QuestionCard
                 :id="question.id"
                 :text="question.text"
