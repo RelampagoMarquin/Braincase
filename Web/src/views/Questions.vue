@@ -160,7 +160,8 @@ watch(textForsearch, () => {
         </v-col>
         <v-row class="cards-container">
             <v-col cols="12" sm="6"
-                v-for="question in (textForsearch != '' ? questionsAux1 : (questionsAux.length > 0 ? questionsAux : questions))"
+                v-for="question in (textForsearch != '' ? questionsAux1 : 
+                    ((selectSubject || selectTags.length > 0) ? questionsAux : questions))"
                 :key="question.id">
 
                 <QuestionCard :id="question.id" :text="question.text" :type="question.type" :dificult="question.dificult"
