@@ -28,22 +28,14 @@ export const useFavoritesStore = defineStore('favorites', () => {
     }
 
     async function getFavoriteByQuestionId(questionid: string) {
-        const response = await axiosAuth.get(`/Favorites/${questionid}`, {
-        }).catch(function (error) {
-            if (error.response) {
-                if (error.response.message == 409) {
-                    alert('Favorito não encontrado')
-                } else {
-                    alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
+        try{
+            const response = await axiosAuth.get(`/Favorites/${questionid}`, {
+            })
+            favorite.value = response.data;
+            return favorite.value
+        }catch(error){
 
-        });
-        return response
+        }
     }
 
     async function updateFavorites(id: string) {

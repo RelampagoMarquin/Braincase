@@ -63,10 +63,6 @@ namespace Api.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var favorite = await _favoriteRepository.GetFavoritesById(userId, QuestionId);
-            if(favorite == null)
-            {
-                return NotFound("Favorito não encontrada");
-            }
             var response = _mapper.Map<ResponseFavoritesDTO>(favorite);
             return response;
         }
@@ -95,6 +91,10 @@ namespace Api.Controllers
             if(farovite == null)
             {
                 return NotFound("Favorito não encontrado");
+            }
+            if(farovite.Own == true)
+            {
+                return BadRequest("impossivel desvaforitar uma questão da qual você é dono");
             }
 
             _favoriteRepository.Delete(farovite);

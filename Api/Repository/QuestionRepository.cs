@@ -47,7 +47,6 @@ namespace Api.Repository
         {
             return await _context.Question.Where(x => x.IsPrivate == false)
                 .Include(x => x.Institution)
-                .Include(x => x.Favorites)
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
@@ -56,7 +55,7 @@ namespace Api.Repository
         async Task<IEnumerable<Question>> IQuestionRepository.GetMyQuestions(string id)
         {
             return await _context.Question.Include(x => x.Institution)
-                .Include(x => x.Favorites).Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true))
+                .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true))
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
@@ -65,7 +64,7 @@ namespace Api.Repository
         async Task<IEnumerable<Question>> IQuestionRepository.GetMyFavorites(string id)
         {
             return await _context.Question.Include(x => x.Institution)
-                .Include(x => x.Favorites).Where(x => x.Favorites.Any(favorite => favorite.UserId == id))
+                .Where(x => x.Favorites.Any(favorite => favorite.UserId == id))
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
