@@ -14,6 +14,7 @@ interface Props {
     radio: number;
     tags: string[];
     subject?: string;
+    textForsearch: string;
 }
 
 const props = defineProps<Props>()
@@ -24,7 +25,15 @@ const subjects = ref<Subject[]>();
 const selectTags = ref<string[]>([]);
 const tags = ref<string[]>([]);
 const questionList = ref(1)
+const textForsearch = ref('')
 
+// retorna valores para o componente pai
+const emit = defineEmits([
+    'update:radio', 
+    'update:tags', 
+    'update:subject', 
+    'update:textForsearch' 
+])
 
 onBeforeMount(async () => {
     subjects.value = await subjectStore.getAllSubject();
@@ -32,6 +41,10 @@ onBeforeMount(async () => {
 
 
 /* functions */
+function clear() {
+    subject.value = ''
+}
+
 watch(subject, async () => {
     selectTags.value = [];
     const subjectName = subjects.value?.find(sub => sub.id === subject.value);
@@ -47,16 +60,22 @@ watch(selectTags, async () => {
     emit('update:tags', selectTags.value)
 })
 
-function clear() {
-    subject.value = ''
-}
-// retorna valores para o componente pai
-const emit = defineEmits(['update:radio', 'update:tags', 'update:subject'])
+watch(textForsearch,async () => {
+    emit('update:textForsearch', textForsearch.value)
+})
 </script>
 
 <template>
     <v-form @submit.prevent>
         <v-card title="Filtrar questões por:">
+            <v-row>
+                <v-col cols="12">
+                    <v-textarea v-model="textForsearch" class="v-locale--is-ltr" label="Escreva o texto para busca" 
+                        variant="outlined" bg-color="white" rows="1" clearable row-height="15" />
+                </v-col>
+            </v-row>
+            
+                      
             <v-row>
                 <v-col cols="12" md="6">
                     <v-autocomplete label="Matéria" v-model="subject" :items="subjects" item-title="name" item-value="id"
@@ -75,9 +94,6 @@ const emit = defineEmits(['update:radio', 'update:tags', 'update:subject'])
                 <v-radio label="Apenas minhas" v-bind:value="3"></v-radio>
                 <v-radio label="Todas as questões" v-bind:value="4"></v-radio>
             </v-radio-group>
-            <v-btn class="filter-btn" block append-icon='mdi mdi-magnify'>
-                Filtrar
-            </v-btn>
         </v-card>
     </v-form>
 </template>
