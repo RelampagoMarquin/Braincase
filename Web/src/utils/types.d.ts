@@ -97,7 +97,8 @@ export interface Test {
   name: string;
   className: string;
   createAt: Date;
-  LastUse: Date;
+  lastUse: Date;
+  nQuestion: number;
   logoUrl?: string | null; //Vai poder enviar imagem?
 }
 

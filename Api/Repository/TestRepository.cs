@@ -21,12 +21,17 @@ namespace Api.Repository
 
         public async Task<IEnumerable<Test>> GetAllTests()
         {
-            return await _context.Test.ToListAsync();
+            return await _context.Test.OrderBy(x => x.LastUse).ToListAsync();
         }
 
         async Task<Test?> ITestRepository.GetTestById(Guid id)
         {
-            var test = await _context.Test.Include(x => x.Questions).FirstOrDefaultAsync(x => x.Id == id);
+            var test = await _context.Test
+                .Include(x => x.Questions)
+                // falta adicionar no dto e no mapeamento
+                .ThenInclude(x => x.Answers)
+                .OrderBy(x => x.LastUse)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (test is null)
             {
@@ -37,7 +42,9 @@ namespace Api.Repository
 
         public async Task<IEnumerable<Test>> GetAllTestsByUser(String userId)
         {
-            return await _context.Test.Where(x => x.UserId == userId).ToListAsync();
+            return await _context.Test.Where(x => x.UserId == userId)
+            .Include(x => x.Questions)
+            .OrderBy(x => x.LastUse).ToListAsync();
         }
 
         public async Task<Test> CreateTest(CreateTestDTO createTestDTO, string userid)

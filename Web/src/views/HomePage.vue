@@ -22,7 +22,7 @@ const cards = [
     name: 'Provas',
     path: 'logout',
     icon: 'mdi-note-text-outline',
-    route: '/provas'
+    route: '/tests'
   },
   {
     name: 'Criar Prova',

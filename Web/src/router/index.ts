@@ -10,6 +10,7 @@ import Questions from '../views/Questions.vue'
 import { useAuthStore } from '@/stores/authStore'
 import CommentQuestion from '../views/CommentQuestion.vue'
 import CreateTest from '../views/CreateTest.vue'
+import  Tests  from '../views/Tests.vue'
 //cria a instância dorouter com as rotas
 const router = createRouter({
   //Cria um histórico HTML5. Histórico mais comum para aplicativos de página única.
@@ -87,6 +88,14 @@ const router = createRouter({
       path: '/createTest',
       name: 'createTest',
       component: CreateTest,
+      meta: {
+        auth: true
+      }
+    },
+    {
+      path: '/tests',
+      name: 'tests',
+      component: Tests,
       meta: {
         auth: true
       }

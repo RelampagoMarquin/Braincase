@@ -68,7 +68,8 @@ namespace Api.Helpers
             CreateMap<CreateUserDTO, User>();
 
             // mapper de test
-            CreateMap<Test, ResponseTestDTO>();
+            CreateMap<Test, ResponseTestDTO>()
+                .ForMember(dest => dest.NQuestion, opt => opt.MapFrom(src => src.Questions.Count()));
             CreateMap<UpdateTestDTO, Test>()
                 .ForAllMembers(opts =>
                 {

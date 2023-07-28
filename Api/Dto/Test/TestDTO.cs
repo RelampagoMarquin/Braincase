@@ -44,6 +44,8 @@ namespace Api.Dto.Test
         public String? LogoUrl { get; set; }
 
         public String UserId { get; set; }
+
+        public Byte NQuestion { get; set; }
     }
 
     public class ResponseQuestionTestDTO: ResponseTestDTO
