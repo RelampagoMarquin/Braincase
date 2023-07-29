@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch, defineEmits as myDefineEmits } from 'vue';
 import type { Question } from "@/utils/types";
 import QuestionCard from '../components/QuestionCard.vue';
 import SeacherQuestion from '../components/SeacherQuestion.vue';
 import { useQuestionStore } from '../stores/questionStore';
+import { useTestStore } from '@/stores/testStore'
+
+interface Props {
+  testId?: string
+}
+
+const emit = defineEmits(['push-question', 'pop-question', 'close-dialog'])
 
 /* stores */
 const questionStore = useQuestionStore();
+
+const props = defineProps<Props>()
 
 /* variables */
 const isLoading = ref(true)
@@ -23,10 +32,17 @@ const questionsAux1 = ref<Question[]>([]);
 
 // pre load
 onBeforeMount(async () => {
-    // questions.value = await questionStore.getAllQUestionByFavorites();
     questions.value = await questionStore.getAllQUestionByFavorites();
     isLoading.value = false
 })
+
+const pushQuestion = (quest: any) => {
+    emit('push-question', quest)
+}
+
+const popQuestion = (quest: any) => {
+    emit('pop-question', quest)
+}
 
 // functions
 function subjectSearch() {
@@ -37,10 +53,6 @@ function subjectSearch() {
             question.tags.some(tag => tag.subjectName === selectSubject.value)
         )
     }
-}
-
-async function voltar() {
-    window.history.back();
 }
 
 // função faz o backup de tags subject
@@ -138,6 +150,9 @@ watch(textForsearch, () => {
 <template>
     <v-container>
         <v-row>
+            <v-toolbar v-if="props.testId" color="orange-accent-3" class="text-white" title="Adicionar Questão">
+              <v-btn variant="text" @click="$emit('close-dialog')">X</v-btn>
+            </v-toolbar>
             <v-col cols="12">
                 <!-- SEACHER -->
                 <SeacherQuestion 
@@ -152,7 +167,31 @@ watch(textForsearch, () => {
         <v-col cols="12" class="text-center mt-5 mb-5" v-if="isLoading">
             <v-progress-circular model-value="20" :size="70" :width="5" color="#F69541" indeterminate></v-progress-circular>
         </v-col>
-        <v-row class="cards-container">
+
+        <v-row class="cards-container" v-if="props.testId">
+            <v-col cols="12" sm="6" v-for="question in textForsearch != '' 
+                ? questionsAux1 
+                : selectSubject 
+                || selectTags.length > 0
+                ? questionsAux
+                : questions"
+                :key="question.id">
+                    <QuestionCard
+                        :id="question.id"
+                        :text="question.text"
+                        :type="question.type"
+                        :dificult="question.dificult"
+                        :isPrivate="question.isPrivate"
+                        :favorite="question.favorites[0]"
+                        :clickable="false"
+                        :addQuestion="true"
+                        @push="pushQuestion"
+                        @pop="popQuestion">
+                    </QuestionCard>
+            </v-col>
+        </v-row>
+
+        <v-row class="cards-container" v-else>
             <v-col cols="12" sm="6"
                 v-for="question in (textForsearch != '' ? questionsAux1 : 
                     ((selectSubject || selectTags.length > 0) ? questionsAux : questions))"
@@ -163,6 +202,7 @@ watch(textForsearch, () => {
                 </QuestionCard>
             </v-col>
         </v-row>
+
     </v-container>
 </template>
 

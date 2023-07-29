@@ -6,6 +6,7 @@ import type { Test, CreateTest, Question } from '@/utils/types'
 export const useTestStore = defineStore('test', () => {
   const tests = ref<Test[]>([])
   const test = ref<Test>()
+  const questions = ref<Question[]>([])
 
   async function createTest(createTest: CreateTest) {
     try {
@@ -90,6 +91,7 @@ export const useTestStore = defineStore('test', () => {
     updateTest,
     deleteTest,
     getAllTestByUser,
-    updateQuestionInTest
+    updateQuestionInTest,
+    questions
   }
 })

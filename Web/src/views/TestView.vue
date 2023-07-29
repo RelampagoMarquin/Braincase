@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTestStore } from '../stores/testStore'
-import type { Test } from '@/utils/types'
+import type { Question, Test } from '@/utils/types'
 import router from '@/router'
 import { onBeforeMount } from 'vue'
 import QuestionCardWithAnswers from '@/components/QuestionCardWithAnswers.vue'
+import QuestionsList from '@/components/QuestionsList.vue'
 
 interface Header {
   name: string
@@ -14,10 +15,36 @@ interface Header {
 const test = ref<Test>()
 const testid = String(router.currentRoute.value.params.testid);
 const testStore = useTestStore()
+const questions = ref<Question[]>([])
+const dialog = ref(false)
 
 onBeforeMount(async () => {
   test.value = await testStore.getTestById(testid)
+  questions.value = test.value?.questions as Question[]
+  testStore.questions = questions.value
+  console.log(testStore.questions);
 })
+
+const pushQuestion = (quest: any) => {
+  
+}
+
+const popQuestion = (quest: any) => {
+  
+}
+
+const addQuestions = async () => {
+    if(testid){
+        const response = await testStore.updateQuestionInTest(testid, questions.value);
+        if (response.status == 200){
+          router.push(`/test/${testid}`);
+        }
+    }
+}
+
+function closeDialog() {
+  dialog.value = false;
+}
 
 </script>
 
@@ -47,23 +74,17 @@ onBeforeMount(async () => {
           <v-row justify="end" class="ml-3 mr-5 mt-4 mb-4">
             <v-btn variant="text"> Total de questões: {{ test?.questions.length }} </v-btn>
             <v-spacer></v-spacer>
-            <v-dialog transition="dialog-bottom-transition" width="auto">
-              <template v-slot:activator="{ props }">
+            <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="auto">
+                <template v-slot:activator="{ props }">
                 <v-btn color="orange-accent-3" v-bind="props">
-                  <v-icon>mdi-plus</v-icon>
+                    <v-icon>mdi-plus</v-icon>
                 </v-btn>
-              </template>
-              <template v-slot:default="{ isActive }">
-                <v-card>
-                  <v-toolbar color="orange-accent-3" class="text-white" title="Adicionar Questão">
-                    <v-btn variant="text" @click="isActive.value = false">X</v-btn>
-                  </v-toolbar>
-                  <v-card-text>
-
-                  </v-card-text>
-                </v-card>
-              </template>
-            </v-dialog>
+                </template>
+                <template v-slot:default="{ dialog }">
+                  <!-- componente onde adicionamos questões -->
+                  <QuestionsList :testId="testid" @close-dialog="closeDialog" @push-question="pushQuestion" @pop-question="popQuestion" class="bg-white"></QuestionsList>
+                </template>
+              </v-dialog>
             <v-btn color="green-accent-3" class="ml-2" @click="">
               <v-icon>mdi-check</v-icon>
             </v-btn>
