@@ -16,10 +16,10 @@ const className = ref('')
       <v-col cols="12" md="7" class="pl-5 mx-auto">
         <v-form action="#" method="post" class="px-10">
           <v-text-field
-            label="Disciplina"
+            label="Turma"
             type="text"
             variant="solo"
-            placeholder="Ex: Matemática"
+            placeholder="Ex: 1º Ano A"
             v-model="className"
           />
           <v-text-field

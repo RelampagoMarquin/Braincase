@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useTestStore } from '../stores/testStore'
 import HeaderTest from '../components/test/HeaderTest.vue'
 import AddQuestion from '../components/test/AddQuestion.vue'
-import type { CreateTest } from '@/utils/types';
+import type { CreateTest } from '@/utils/types'
 
 interface Header {
   name: string
@@ -20,10 +20,12 @@ const addQuestions = ref(false)
 const testId = ref('')
 
 const createTest = async (data: Header) => {
+  if (data.name === '' || data.className === '') return alert('Preencha todos os campos')
+
   name.value = data.name
   className.value = data.className
 
-  const payload:CreateTest = {
+  const payload: CreateTest = {
     name: name.value,
     className: className.value,
     logoUrl: ''
