@@ -36,20 +36,13 @@ export const useTestStore = defineStore('test', () => {
   }
 
   async function getTestById(id: string) {
-    const response = await axiosAuth.get(`/Test/${id}`, {}).catch(function (error) {
-      if (error.response) {
-        if (error.response.message == 409) {
-          alert('Prova não encontrada')
-        } else {
-          alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-        }
-      } else if (error.request) {
-        console.log(error.request)
-      } else {
-        console.log('Error', error.message)
-      }
-    })
-    return response
+    try {
+      const response = await axiosAuth.get(`/Test/${id}`, {})
+      test.value = response.data
+    } catch (error) {
+      console.log(error)
+    }
+    return test.value
   }
 
   async function updateTest(id: string) {
