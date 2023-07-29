@@ -76,6 +76,7 @@ const data = ref({
   border-radius: 100%;
   border: #f69541 2px solid;
   display: flex;
+  flex: none;
   justify-content: center;
   align-items: center;
 }
