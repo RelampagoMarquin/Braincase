@@ -68,7 +68,8 @@ namespace Api.Controllers
                 LastUse = test.LastUse,
                 LogoUrl = test.LogoUrl,
                 Name = test.Name,
-                UserId = test.UserId
+                UserId = test.UserId,
+                NQuestion = Convert.ToByte(test.Questions.Count())
             };
             return response;
         }

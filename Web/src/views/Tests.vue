@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import type { Test } from "@/utils/types";
 import TestCard from '@/components/TestCard.vue';
 
@@ -9,6 +9,7 @@ import TestCard from '@/components/TestCard.vue';
 // import SeacherQuestion from '../components/SeacherQuestion.vue';
 
 import { useTestStore } from '../stores/testStore';
+import SearcherTest from '@/components/SearcherTest.vue';
 
 /* stores */
 const testStore = useTestStore();
@@ -16,6 +17,8 @@ const testStore = useTestStore();
 /* variables */
 const isLoading = ref(true)
 const tests = ref<Test[]>([]);
+const testsAux = ref<Test[]>([]);
+const textForsearch = ref('')
 
 // pre load
 onBeforeMount(async () => {
@@ -27,6 +30,24 @@ async function voltar() {
     window.history.back();
 }
 
+// faz a filtragem por texto da pergunta
+watch(textForsearch, () => {
+    isLoading.value = true
+    if(textForsearch.value === ''){
+        testsAux.value = [] 
+    }
+    else{
+        testsAux.value = tests.value.filter(tests =>
+            tests.name.toLowerCase()
+            .includes(textForsearch.value.toLowerCase())
+            || 
+            tests.className.toLowerCase()
+            .includes(textForsearch.value.toLowerCase())
+        )
+    }
+    isLoading.value = false
+})
+
 </script>
 
 <template>
@@ -36,13 +57,21 @@ async function voltar() {
                 <v-btn @click="voltar" class="btn-primary"> VOLTAR </v-btn>
             </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="12">
+                <!-- SEACHER -->
+                <SearcherTest
+                v-model:text-forsearch="textForsearch"
+                />
+            </v-col>
+        </v-row>
         <!-- Loading -->
         <v-col cols="12" class="text-center mt-5 mb-5" v-if="isLoading">
             <v-progress-circular model-value="20" :size="70" :width="5" color="#F69541" indeterminate></v-progress-circular>
         </v-col>
         <v-row>
             <v-col cols="12" sm="6" md="4"
-                v-for="test in tests" :key="test.id">
+                v-for="test in (textForsearch != '' ? testsAux : tests)" :key="test.id">
                 <TestCard 
                     :id="test.id"
                     :name="test.name"
