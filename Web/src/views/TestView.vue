@@ -5,6 +5,7 @@ import type { Question, Test } from '@/utils/types'
 import router from '@/router'
 import { onBeforeMount } from 'vue'
 import QuestionCardWithAnswers from '@/components/QuestionCardWithAnswers.vue'
+import GeneratePDF from '@/components/GeneratePDF.vue'
 import QuestionsList from '@/components/QuestionsList.vue'
 
 interface Header {
@@ -74,6 +75,7 @@ function closeDialog() {
           <v-row justify="end" class="ml-3 mr-5 mt-4 mb-4">
             <v-btn variant="text"> Total de questões: {{ test?.questions.length }} </v-btn>
             <v-spacer></v-spacer>
+            <GeneratePDF :test="test"/>
             <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="auto">
                 <template v-slot:activator="{ props }">
                 <v-btn color="orange-accent-3" v-bind="props">

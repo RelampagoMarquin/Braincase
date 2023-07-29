@@ -73,21 +73,18 @@ const data = ref({
 @media screen and (min-width: 320px) and (max-width: 425px) {
     .question-card {
         height: 275px;
-        max-height: 275px;
     }
 }
 
 @media screen and (min-width: 425px) and (max-width: 599px) {
     .question-card {
         height: 250px;
-        max-height: 250px;
     }
 }
 
 @media screen and (min-width: 600px) and (max-width: 834px) {
     .question-card {
         height: 300px;
-        max-height: 300px;
     }
 }
 
