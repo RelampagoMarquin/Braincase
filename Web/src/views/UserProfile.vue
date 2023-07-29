@@ -2,6 +2,7 @@
 import { useUserStore } from '@/stores/userStore'
 import type { User, UserUpdate } from '@/utils/types'
 import { ref, onBeforeMount } from 'vue'
+import BackButton from '../components/BackButton.vue'
 
 const userStore = useUserStore()
 const user = ref()
@@ -40,6 +41,11 @@ async function update() {
 <template>
   <div class="bg">
     <v-container>
+      <v-row class="justify-center">
+        <v-col class="my-1" cols="10">
+          <BackButton />
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col cols="12" md="12" lg="5">
           <div class="rounded-xl elevation-2 my-4 form-bg">

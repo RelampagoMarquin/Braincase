@@ -4,6 +4,7 @@ import type { Question } from "@/utils/types";
 import QuestionCard from '../components/QuestionCard.vue';
 import SeacherQuestion from '../components/SeacherQuestion.vue';
 import { useQuestionStore } from '../stores/questionStore';
+import BackButton from '../components/BackButton.vue'
 
 /* stores */
 const questionStore = useQuestionStore();
@@ -70,16 +71,13 @@ watch(selectTags, () => {
     }
 })
 
-async function voltar() {
-  window.history.back();
-}
 </script>
 
 <template>
     <v-container>
         <v-row>
             <v-col class="d-flex justify-start">
-                <v-btn @click="voltar" class="btn-primary"> VOLTAR </v-btn>
+                <BackButton />
             </v-col>
         </v-row>
         <!-- {{ selectSubject.length }} -->

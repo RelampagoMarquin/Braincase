@@ -4,6 +4,7 @@ import { useQuestionStore } from '../stores/questionStore';
 import { useCommentStore } from '@/stores/commentStore';
 import type { Question, CreateComment, Comment } from "@/utils/types";
 import { useRouter } from "vue-router";
+import BackButton from "../components/BackButton.vue"
 
 // letras usadas nas alternativas
 const letter = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -54,12 +55,7 @@ async function comentar() {
     <!-- parte superior com informações do criador da questão -->
     <v-row class="mt-4">
       <v-col>
-        <v-btn
-          class="form-bg rounded-xl white--text"
-          style="font-weight: bold"
-          @click="$router.back()"
-          >Voltar
-        </v-btn>
+        <BackButton />
       </v-col>
       <v-col class="flex flex-grow-0 justify-end">
         <h4 class="text-nowrap text-truncate">Criador: {{ question?.criador }}</h4>

@@ -60,12 +60,12 @@ const emit = defineEmits(['update:radio', 'update:tags', 'update:subject'])
             <v-row>
                 <v-col cols="12" md="6">
                     <v-autocomplete label="Matéria" v-model="subject" :items="subjects" item-title="name" item-value="id"
-                        variant="outlined" clearable @click:clear="clear" />
+                        variant="outlined" clearable @click:clear="clear" bg-color="white"/>
                 </v-col>
                 <v-col cols="12" md="6">
                     <v-autocomplete label="Assunto" persistent-hint v-model="selectTags"
                         hint="Os assuntos só aparecem após selecionar a matéria" :items="tags" item-title="name"
-                        item-value="name" variant="outlined" multiple chips clearable />
+                        item-value="name" variant="outlined" multiple chips clearable bg-color="white" />
                 </v-col>
             </v-row>
             <v-radio-group v-model="questionList" @input="$emit('update:radio', Number($event.target.value))" color="orange"
@@ -75,9 +75,6 @@ const emit = defineEmits(['update:radio', 'update:tags', 'update:subject'])
                 <v-radio label="Apenas minhas" v-bind:value="3"></v-radio>
                 <v-radio label="Todas as questões" v-bind:value="4"></v-radio>
             </v-radio-group>
-            <v-btn class="filter-btn" block append-icon='mdi mdi-magnify'>
-                Filtrar
-            </v-btn>
         </v-card>
     </v-form>
 </template>
@@ -85,6 +82,7 @@ const emit = defineEmits(['update:radio', 'update:tags', 'update:subject'])
 <style scoped>
 .v-card {
     padding: 0 1% 1.5%;
+    background-color: #f3f3f3;
 }
 
 .filter-btn {
