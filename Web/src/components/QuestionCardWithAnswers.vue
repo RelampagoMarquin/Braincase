@@ -52,9 +52,9 @@ const data = ref({
             </v-row>
           </div>
           <div class="ml-5 mb-5" v-if="question?.type == 2">
-            <v-row class="mt-4" v-for="(answer, index) in question?.answers" :key="answer.text">
-              <span class="answer" v-bind:class="{ 'correct-answer': answer.isCorrect }">{{ letter[index] }} </span>
-              <span> {{ answer.text }}</span>
+            <v-row class="mt-4 flex-nowrap" v-for="(answer, index) in question?.answers" :key="answer.text">
+                <span class="answer" v-bind:class="{ 'correct-answer': answer.isCorrect }">{{ letter[index] }} </span>
+                <span> {{ answer.text }}</span>
             </v-row>
           </div>
         </v-row>
@@ -65,27 +65,7 @@ const data = ref({
 .question-card {
     padding: 10px;
     background-color: #f3f3f3;
-    height: 220px;
-    max-height: 220px;
     box-sizing: border-box;
-}
-
-@media screen and (min-width: 320px) and (max-width: 425px) {
-    .question-card {
-        height: 275px;
-    }
-}
-
-@media screen and (min-width: 425px) and (max-width: 599px) {
-    .question-card {
-        height: 250px;
-    }
-}
-
-@media screen and (min-width: 600px) and (max-width: 834px) {
-    .question-card {
-        height: 300px;
-    }
 }
 
 .answer {

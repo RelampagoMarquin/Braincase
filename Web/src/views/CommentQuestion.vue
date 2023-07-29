@@ -100,7 +100,7 @@ async function comentar() {
             </v-row>
           </div>
           <div class="ml-5 mb-5 mt-3" v-if="question?.type == 2">
-            <v-row class="mt-4" v-for="(answer, index) in question?.answers" :key="answer.text">
+            <v-row class="mt-4 flex-nowrap" v-for="(answer, index) in question?.answers" :key="answer.text">
               <span class="answer" v-bind:class="{ 'correct-answer': answer.isCorrect }">{{ letter[index] }} </span>
               <span> {{ answer.text }}</span>
             </v-row>
