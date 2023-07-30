@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { jsPDF } from 'jspdf'
-import autoTable from 'jspdf-autotable'
 import type { Question, Test } from '@/utils/types';
 import { useUserStore } from '@/stores/userStore';
 // import ifPng from '../../public/if.png';
@@ -11,12 +10,13 @@ interface Props {
 }
 const letter = ['a)', 'b)', 'c)', 'd)', 'e)', 'f)'];
 const props = defineProps<Props>()
-const test = ref(props.test)
-const questions = ref(props.test?.questions as Question[])
-const user = ref(useUserStore().user)
 
 const generatePdf = async () => {
     const doc = new jsPDF()
+    const test = props.test as Test
+    const questions = test?.questions as Question[]
+    const user = useUserStore().user
+    console.log(test)
 
     // Add image
     const imageUrl = '/if.png'
@@ -40,7 +40,7 @@ const generatePdf = async () => {
         doc.line(200, 10, 200, 60)
         // Add text
         doc.text('Disciplina: Gerência e Configuração de Serviços para Internet', 55, 25, { maxWidth: 200 })
-        doc.text(`Professor: ${user.value?.name}    Turma: ${test.value?.className}`, 55, 35)
+        doc.text(`Professor: ${user?.name}    Turma: ${test?.className}`, 55, 35)
         doc.text('Aluno: ____________________________________________', 55, 45)
         doc.line(105, 70, 105, 294)
 
@@ -49,35 +49,36 @@ const generatePdf = async () => {
         const FONTSIZE = 12;
         let yinitial = 85
         let xinitial = 10
-        let xfinal = 95
+        let xfinal = 90
         // for de questões
-        for (let i = 0; questions.value?.length > i; i++) {
+        for (let i = 0; questions?.length > i; i++) {
             // Adicionar a pergunta
-            const questionText = `${i + 1})  ${questions.value?.[i]?.institutionName ? questions.value?.[i]?.institutionName + '-' : ''} ${questions.value?.[i]?.text}`;
-            const questionLines = doc.splitTextToSize(questionText, 95);
+            const questionText = `${i + 1})  ${questions?.[i]?.institutionName ? questions?.[i]?.institutionName + '-' : ''} ${questions?.[i]?.text}`;
+            const questionLines = doc.splitTextToSize(questionText, xfinal);
             doc.text(questionLines, xinitial, yinitial);
 
             // Calcular a altura do texto da pergunta
-            const questionHeight = questionLines.length * FONTSIZE;
+            const questionHeight = questionLines.length * 2;
 
             // Definir a posição inicial y para as respostas
-            yinitial += 5
+            yinitial += 5 + questionLines.length
             // função para incrementar y inital de acordo com o numero de linhas
             function yinitialPlus(height: number, lines: number) {
                 if (lines > 2) {
-                    yinitial += height + 0.2
+                    yinitial += height + 5
+                    console.log(yinitial)
                 } else {
                     yinitial += 7.2
                 }
             }
             yinitialPlus(questionHeight, questionLines.length)
             // Adicionar as respostas
-            const answers = questions.value[i].answers
+            const answers = questions[i].answers
             // for de answers
             console.log()
             for (let k = 0; k < answers.length; k++) {
                 let answerText = ''
-                if (questions.value[i].type === 1) {
+                if (questions[i].type === 1) {
                     const yinitialAux = yinitial - 25
                     
                     yinitial += 25

@@ -68,7 +68,8 @@ export const useTestStore = defineStore('test', () => {
     const response = await axiosAuth.put(`/Test/addquestions/${id}`, {
         questions
       })
-    return response
+      test.value = response.data
+    return { test: test.value, status: response.status}
   }
 
   async function deleteTest(id: string) {

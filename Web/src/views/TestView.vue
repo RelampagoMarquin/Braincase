@@ -41,7 +41,7 @@ const addQuestions = async () => {
     if(testid){
         const response = await testStore.updateQuestionInTest(testid, testStore.questions);
         if (response.status == 200){
-            router.push(`/test/${testid}`);
+          router.go(0);
         }
     }
 }
