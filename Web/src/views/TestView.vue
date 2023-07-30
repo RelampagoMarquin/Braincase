@@ -23,7 +23,6 @@ onBeforeMount(async () => {
   test.value = await testStore.getTestById(testid)
   questions.value = test.value?.questions as Question[]
   testStore.questions = questions.value
-  console.log(testStore.questions);
 })
 
 const pushQuestion = (quest: any) => {
