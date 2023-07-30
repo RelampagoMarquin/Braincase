@@ -2,12 +2,11 @@
 import { ref } from 'vue'
 import { useTestStore } from '../stores/testStore'
 import HeaderTest from '../components/test/HeaderTest.vue'
-import QuestionsList from '@/components/QuestionsList.vue'
 import QuestionCard from '../components/QuestionCard.vue'
-import AddQuestions from '../components/test/AddQuestion.vue'
 import type { CreateTest } from '@/utils/types'
 import type { Question } from "@/utils/types";
 import router from '@/router'
+import AddQuestionModal from '@/components/AddQuestionModal.vue'
 
 interface Header {
   name: string
@@ -51,7 +50,11 @@ const createTest = async (data: Header) => {
 }
 
 const pushQuestion = (quest: any) => {
-  currentQuestions.value.push(quest)
+  if(currentQuestions.value.includes(quest)){
+    alert("já tem a questão");
+  }else{
+    currentQuestions.value.push(quest)
+  }
 }
 
 const popQuestion = (quest: any) => {
@@ -111,17 +114,7 @@ function closeDialog() {
             <v-row justify="end" class="ml-3 mr-5 mt-4">
               <v-btn variant="text"> Total de questões: {{ currentQuestions.length }} </v-btn>
               <v-spacer></v-spacer>
-              <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="auto">
-                <template v-slot:activator="{ props }">
-                <v-btn color="orange-accent-3" v-bind="props">
-                    <v-icon>mdi-plus</v-icon>
-                </v-btn>
-                </template>
-                <template v-slot:default="{ dialog }">
-                  <!-- componente onde adicionamos questões -->
-                  <QuestionsList :testId="testId" @close-dialog="closeDialog" @push-question="pushQuestion" @pop-question="popQuestion" class="bg-white"></QuestionsList>
-                </template>
-              </v-dialog>
+              <AddQuestionModal :testId="testId" :dialog="dialog" @close-dialog="closeDialog" @push-question="pushQuestion" @pop-question="popQuestion" class="bg-white"></AddQuestionModal>
               <v-btn color="green-accent-3" @click="addQuestions">
                 <v-icon>mdi-check</v-icon>
               </v-btn>

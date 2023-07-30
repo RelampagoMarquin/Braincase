@@ -68,13 +68,29 @@ namespace Api.Repository
 
         public async Task<Test> AddQuestionToTest(AddQuestionTetstDTO addQuestionTetstDTO, Test test)
         {
+            var listaRetirar = new List<Question>();
+            foreach (var question in test.Questions){
+                if(addQuestionTetstDTO.Questions.Find(item => item.Id == question.Id) == null){
+                    listaRetirar.Add(question);
+                }
+            }
+
+            foreach (var question in listaRetirar){
+                test.Questions.Remove(question);
+            }
+
             foreach (var question in addQuestionTetstDTO.Questions)
             {
-                test.Questions.Add(question);
+                if (test.Questions.Find(item => item.Id == question.Id) == null)
+                {
+                    test.Questions.Add(question);
+                }
             }
+
+            _context.Update(test);
             await _context.SaveChangesAsync();
             return test;
-        }
 
+            }
     }
 }

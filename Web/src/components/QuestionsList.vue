@@ -4,7 +4,6 @@ import type { Question } from "@/utils/types";
 import QuestionCard from '../components/QuestionCard.vue';
 import SeacherQuestion from '../components/SeacherQuestion.vue';
 import { useQuestionStore } from '../stores/questionStore';
-import { useTestStore } from '@/stores/testStore'
 
 interface Props {
   testId?: string
@@ -177,6 +176,7 @@ watch(textForsearch, () => {
                 : questions"
                 :key="question.id">
                     <QuestionCard
+                        :question="question"
                         :id="question.id"
                         :text="question.text"
                         :type="question.type"
@@ -197,7 +197,7 @@ watch(textForsearch, () => {
                     ((selectSubject || selectTags.length > 0) ? questionsAux : questions))"
                 :key="question.id">
 
-                <QuestionCard :id="question.id" :text="question.text" :type="question.type" :dificult="question.dificult"
+                <QuestionCard :id="question.id" :question="question" :text="question.text" :type="question.type" :dificult="question.dificult"
                     :isPrivate="question.isPrivate" :subject-name="question.tags[0].subjectName">
                 </QuestionCard>
             </v-col>

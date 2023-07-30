@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useFavoritesStore } from '@/stores/favoritesStore'
-import type { Favorites } from '@/utils/types'
+import type { Favorites, Question } from '@/utils/types'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 
 const favoritesStore = useFavoritesStore()
 /* props definition */
 interface Props {
+  question: Question
   id: string
   text: string
   type: number
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const data = ref({
+  question: props.question,
   id: props.id,
   text: props.text,
   type: props.type,
@@ -112,21 +114,21 @@ function doNothing() {
           class="mdi mdi-minus-box"
           color="red"
           size="large"
-          @click="$emit('remove', data)"
+          @click="$emit('remove', data.question)"
         ></v-icon>
         <v-icon
           v-if="addQuestion"
           class="mdi mdi-plus-box"
           color="orange"
           size="large"
-          @click="$emit('push', data)"
+          @click="$emit('push', data.question)"
         ></v-icon>
         <v-icon
           v-if="addQuestion"
           class="mdi mdi-minus-box"
           color="orange"
           size="large"
-          @click="$emit('pop', data)"
+          @click="$emit('pop', data.question)"
         ></v-icon>
       </v-col>
     </v-row>

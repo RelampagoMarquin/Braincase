@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { useFavoritesStore } from '@/stores/favoritesStore'
-import type { Favorites, Question } from '@/utils/types'
-import { ref, computed, onBeforeMount } from 'vue'
+import type { Question } from '@/utils/types'
+import { ref} from 'vue'
 import { useRouter } from 'vue-router'
 
-const favoritesStore = useFavoritesStore()
 /* props definition */
 interface Props {
     question: Question
-    addQuestion?: boolean
     removeQuestion?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    addQuestion: true,
-    clickable: true
+    removeQuestion: true
 })
 
 // letras usadas nas alternativas
@@ -26,7 +23,6 @@ const data = ref({
     text: props.question.text,
     type: props.question.type,
     answres: props.question.answers,
-    addQuestion: props.addQuestion
 })
 </script>
 
@@ -38,10 +34,6 @@ const data = ref({
             </v-col>
             <v-col cols="2" class="card-star d-flex justify-end">
                 <v-icon v-if="removeQuestion" class="mdi mdi-minus-box" color="red" size="large"
-                    @click="$emit('remove', data)"></v-icon>
-                <v-icon v-if="addQuestion" class="mdi mdi-plus-box" color="orange" size="large"
-                    @click="$emit('push', data)"></v-icon>
-                <v-icon v-if="addQuestion" class="mdi mdi-minus-box" color="orange" size="large"
                     @click="$emit('pop', data)"></v-icon>
             </v-col>
         </v-row>

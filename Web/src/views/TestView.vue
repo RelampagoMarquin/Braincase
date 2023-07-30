@@ -6,7 +6,7 @@ import router from '@/router'
 import { onBeforeMount } from 'vue'
 import QuestionCardWithAnswers from '@/components/QuestionCardWithAnswers.vue'
 import GeneratePDF from '@/components/GeneratePDF.vue'
-import QuestionsList from '@/components/QuestionsList.vue'
+import AddQuestionModal from '@/components/AddQuestionModal.vue'
 
 interface Header {
   name: string
@@ -26,18 +26,22 @@ onBeforeMount(async () => {
 })
 
 const pushQuestion = (quest: any) => {
-  
+  if (testStore.questions.find(item => item.id === quest.id)){
+    alert("já tem a questão");
+  } else {
+    testStore.questions.push(quest)
+  }
 }
 
 const popQuestion = (quest: any) => {
-  
+  testStore.questions = testStore.questions.filter((q: any) => q.id !== quest.id)
 }
 
 const addQuestions = async () => {
     if(testid){
-        const response = await testStore.updateQuestionInTest(testid, questions.value);
+        const response = await testStore.updateQuestionInTest(testid, testStore.questions);
         if (response.status == 200){
-          router.push(`/test/${testid}`);
+            router.push(`/test/${testid}`);
         }
     }
 }
@@ -72,26 +76,16 @@ function closeDialog() {
           <v-divider></v-divider>
 
           <v-row justify="end" class="ml-3 mr-5 mt-4 mb-4">
-            <v-btn variant="text"> Total de questões: {{ test?.questions.length }} </v-btn>
+            <v-btn variant="text"> Total de questões: {{ testStore.questions.length }} </v-btn>
             <v-spacer></v-spacer>
             <GeneratePDF :test="test"/>
-            <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="auto">
-                <template v-slot:activator="{ props }">
-                <v-btn color="orange-accent-3" v-bind="props">
-                    <v-icon>mdi-plus</v-icon>
-                </v-btn>
-                </template>
-                <template v-slot:default="{ dialog }">
-                  <!-- componente onde adicionamos questões -->
-                  <QuestionsList :testId="testid" @close-dialog="closeDialog" @push-question="pushQuestion" @pop-question="popQuestion" class="bg-white"></QuestionsList>
-                </template>
-              </v-dialog>
-            <v-btn color="green-accent-3" class="ml-2" @click="">
+            <!-- componente modal -->
+            <AddQuestionModal :testId="testid" :dialog="dialog" @close-dialog="closeDialog" @push-question="pushQuestion" @pop="popQuestion" class="bg-white"></AddQuestionModal>
+            <v-btn color="green-accent-3" class="ml-2" @click="addQuestions">
               <v-icon>mdi-check</v-icon>
             </v-btn>
           </v-row>
-
-          <QuestionCardWithAnswers v-for="question in test?.questions" :key="question.id" :question="question" />
+          <QuestionCardWithAnswers v-for="question in testStore.questions" :key="question.id" :question="question" @pop="popQuestion"/>
           <!-- <AddQuestion :testId="testId" /> -->
         </div>
       </v-col>
