@@ -183,7 +183,6 @@ watch(textForsearch, () => {
                         :dificult="question.dificult"
                         :isPrivate="question.isPrivate"
                         :favorite="question.favorites[0]"
-                        :clickable="false"
                         :addQuestion="true"
                         @push="pushQuestion"
                         @pop="popQuestion">

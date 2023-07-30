@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 const favoritesStore = useFavoritesStore()
 /* props definition */
 interface Props {
-  question: Question
+  question?: Question
   id: string
   text: string
   type: number

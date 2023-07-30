@@ -22,7 +22,11 @@ const dialog = ref(false)
 onBeforeMount(async () => {
   test.value = await testStore.getTestById(testid)
   questions.value = test.value?.questions as Question[]
-  testStore.questions = questions.value
+  if(testStore.questions.length > 0){
+    questions.value = testStore.questions
+  }else {
+    testStore.questions = questions.value
+  }
 })
 
 const pushQuestion = (quest: any) => {
