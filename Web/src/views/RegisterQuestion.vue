@@ -153,7 +153,7 @@ async function deletar() {
                 hint="Coloque pelo menos uma tag"
                 />
               
-              <label for="">Instituição {{ institution }}  </label>
+              <label for="">Instituição  </label>
               
               <v-combobox v-model="institution" :items="institutions" item-title="name" item-value="name" 
                 variant="outlined" density="compact" chips clearable placeholder="ifrn" bg-color="white" />

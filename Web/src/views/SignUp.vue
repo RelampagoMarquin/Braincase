@@ -25,12 +25,13 @@ async function signup(){
 
 <template> 
   <v-row class="container">
+    
     <v-col cols="4" class="right-side hidden-sm-and-down"></v-col>
-    <v-img class="logo hidden-sm-and-down" aspect-ratio="16/9" cover src="/Logomarca.svg"></v-img>
-    <v-img  class="image-art hidden-sm-and-down" aspect-ratio="16/9" cover src="/image-art.svg" ></v-img>
+    
     <v-col cols="2" class="hidden-sm-and-down" >
       <div class="spacer wave hidden-sm-and-down"></div>
     </v-col>
+    <v-img  class="image-art hidden-sm-and-down" aspect-ratio="16/9" cover src="/logo-vertical.png" ></v-img>
 
     <v-col cols="lg-6 md-12" 
     >
@@ -101,15 +102,16 @@ async function signup(){
 <style scoped>
 .image-art  {
   position: absolute;
-  left: 50px;
-  top: 180px;
-  width: 30%;
+  width: 35%;
+  margin-left: 1%;
+  margin-top:4.5%;
+  height: 75vh;
 }
 .logo{
   position: absolute;
-  left: 180px;
-  top: 130px;
-  width: 12%;
+  left: 60px;
+  top: 100px;
+  width: 30%;
 
 }
 
