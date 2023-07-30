@@ -6,6 +6,7 @@ import type { CreateQuestion, Subject, Tag } from "@/utils/types";
 import { useQuestionStore } from "@/stores/questionStore";
 import type { CreateAnswer, Institution } from "@/utils/types";
 import { useInstitutionStore } from "@/stores/instituitionStore";
+import BackButton from '../components/BackButton.vue'
 
 // stores
 const questionStore = useQuestionStore();
@@ -50,10 +51,6 @@ onBeforeMount(async () => {
 });
 
 // functions
-
-async function voltar() {
-  window.history.back();
-}
 
 async function registerquestion() {
   const question: CreateQuestion = {
@@ -102,10 +99,9 @@ async function deletar() {
       <v-row :align="'center'" :justify="'center'">
         <h2 class="text-primary-custom text-center title">QUESTÕES</h2>
       </v-row>
-      <v-row class="mb-5">
-        <v-col cols="1"></v-col>
-        <v-col cols="10" class="ml-7">
-          <v-btn @click="voltar" class="btn-primary ml-6"> VOLTAR </v-btn>
+      <v-row class="mb-5 justify-center">
+        <v-col cols="9" >
+          <BackButton />
         </v-col>
       </v-row>
     </div>
