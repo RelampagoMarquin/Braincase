@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch, defineEmits as myDefineEmits } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import type { Question } from "@/utils/types";
 import QuestionCard from '../components/QuestionCard.vue';
 import SeacherQuestion from '../components/SeacherQuestion.vue';
