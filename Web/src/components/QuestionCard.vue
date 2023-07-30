@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useFavoritesStore } from '@/stores/favoritesStore'
-import type { Favorites } from '@/utils/types'
+import type { Favorites, Question } from '@/utils/types'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 
 const favoritesStore = useFavoritesStore()
 /* props definition */
 interface Props {
+  question?: Question
   id: string
   text: string
   type: number
@@ -14,13 +15,17 @@ interface Props {
   isPrivate: boolean
   subjectName?: string
   addQuestion?: boolean
+  removeQuestion?: boolean
+  clickable?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  addQuestion: false
+  addQuestion: false,
+  clickable: true
 })
 
 const data = ref({
+  question: props.question,
   id: props.id,
   text: props.text,
   type: props.type,
@@ -32,13 +37,13 @@ const data = ref({
 
 // Código que muda o botão estrela de acordo com ele ser favorito ou não
 const isFavorited = ref(false)
-const favorite = ref<Favorites>();
+const favorite = ref<Favorites>()
 
 onBeforeMount(async () => {
-  const favoriteAux = await favoritesStore.getFavoriteByQuestionId(props.id);
-  if (favoriteAux?.userId){
-    favorite.value = favoriteAux;
-    isFavorited.value = true;
+  const favoriteAux = await favoritesStore.getFavoriteByQuestionId(props.id)
+  if (favoriteAux?.userId) {
+    favorite.value = favoriteAux
+    isFavorited.value = true
   }
 })
 
@@ -47,7 +52,7 @@ const favoritite = async () => {
   if (isFavorited.value && !favorite.value?.own) {
     await favoritesStore.deleteFavorite(questionId)
     isFavorited.value = !isFavorited.value
-  } else if(!isFavorited.value) {
+  } else if (!isFavorited.value) {
     await favoritesStore.createFavorites({ own: false, questionId: questionId })
     isFavorited.value = !isFavorited.value
   }
@@ -71,12 +76,16 @@ const router = useRouter()
 function toComment(idquestion: string) {
   router.push(`/commentQuestion/${idquestion}`)
 }
+
+function doNothing() {
+  return
+}
 </script>
 
 <template>
   <v-card class="question-card d-flex flex-column">
     <v-row>
-      <v-col cols="10" class="card-text" @click="toComment(id)">
+      <v-col cols="10" class="card-text" @click="clickable ? toComment(id) : doNothing()">
         <div class="indicators d-flex align-center">
           <!-- Tipo da questão -->
           <span class="type" v-if="type == 2">Objetiva</span>
@@ -92,27 +101,34 @@ function toComment(idquestion: string) {
         </div>
         <p>{{ truncatedText }}</p>
       </v-col>
-      <v-col cols="2" class="card-star d-flex justify-center">
+      <v-col cols="2" class="card-star d-flex justify-end">
         <v-icon
           :class="starIcon"
           color="orange"
           size="large"
           @click="favoritite"
-          v-show="!addQuestion"
+          v-show="!addQuestion && !removeQuestion"
+        ></v-icon>
+        <v-icon
+          v-if="removeQuestion"
+          class="mdi mdi-minus-box"
+          color="red"
+          size="large"
+          @click="$emit('remove', data.question)"
         ></v-icon>
         <v-icon
           v-if="addQuestion"
           class="mdi mdi-plus-box"
           color="orange"
           size="large"
-          @click="$emit('push', data)"
+          @click="$emit('push', data.question)"
         ></v-icon>
         <v-icon
           v-if="addQuestion"
           class="mdi mdi-minus-box"
           color="orange"
           size="large"
-          @click="$emit('pop', data)"
+          @click="$emit('pop', data.question)"
         ></v-icon>
       </v-col>
     </v-row>

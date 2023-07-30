@@ -47,6 +47,7 @@ namespace Api.Repository
         {
             return await _context.Question.Where(x => x.IsPrivate == false)
                 .Include(x => x.Institution)
+                .Include(x => x.Answers)
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
@@ -57,6 +58,7 @@ namespace Api.Repository
             return await _context.Question.Include(x => x.Institution)
                 .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true))
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .Include(x => x.Answers)
                 .ToListAsync();
         }
 
@@ -65,6 +67,7 @@ namespace Api.Repository
         {
             return await _context.Question.Include(x => x.Institution)
                 .Where(x => x.Favorites.Any(favorite => favorite.UserId == id))
+                .Include(x => x.Answers)
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
                 .ToListAsync();
         }
@@ -75,6 +78,7 @@ namespace Api.Repository
             return await _context.Question.Include(x => x.Institution).Include(x => x.Favorites)
                 .Where(x => x.Favorites.Any(x => x.UserId == id && x.Own == true) || x.IsPrivate == false)
                 .Include(x => x.Tags).ThenInclude(tag => tag.Subject)
+                .Include(x => x.Answers)
                 .ToListAsync();
         }
 

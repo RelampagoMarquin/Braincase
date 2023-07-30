@@ -98,6 +98,7 @@ export interface Test {
   className: string;
   createAt: Date;
   lastUse: Date;
+  questions: Question[];
   nQuestion: number;
   logoUrl?: string | null; //Vai poder enviar imagem?
 }

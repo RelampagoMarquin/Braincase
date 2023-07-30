@@ -6,6 +6,7 @@ import type { Test, CreateTest, Question } from '@/utils/types'
 export const useTestStore = defineStore('test', () => {
   const tests = ref<Test[]>([])
   const test = ref<Test>()
+  const questions = ref<Question[]>([])
 
   async function createTest(createTest: CreateTest) {
     try {
@@ -36,20 +37,13 @@ export const useTestStore = defineStore('test', () => {
   }
 
   async function getTestById(id: string) {
-    const response = await axiosAuth.get(`/Test/${id}`, {}).catch(function (error) {
-      if (error.response) {
-        if (error.response.message == 409) {
-          alert('Prova não encontrada')
-        } else {
-          alert('Erro ao cadastrar' + error.response.data + error.response.headers)
-        }
-      } else if (error.request) {
-        console.log(error.request)
-      } else {
-        console.log('Error', error.message)
-      }
-    })
-    return response
+    try {
+      const response = await axiosAuth.get(`/Test/${id}`, {})
+      test.value = response.data
+    } catch (error) {
+      console.log(error)
+    }
+    return test.value
   }
 
   async function updateTest(id: string) {
@@ -74,7 +68,8 @@ export const useTestStore = defineStore('test', () => {
     const response = await axiosAuth.put(`/Test/addquestions/${id}`, {
         questions
       })
-    return response
+      test.value = response.data
+    return { test: test.value, status: response.status}
   }
 
   async function deleteTest(id: string) {
@@ -97,6 +92,7 @@ export const useTestStore = defineStore('test', () => {
     updateTest,
     deleteTest,
     getAllTestByUser,
-    updateQuestionInTest
+    updateQuestionInTest,
+    questions
   }
 })

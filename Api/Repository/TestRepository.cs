@@ -21,10 +21,7 @@ namespace Api.Repository
 
         public async Task<IEnumerable<Test>> GetAllTests()
         {
-            return await _context.Test
-            .Include(x => x.Questions)
-            .OrderBy(x => x.LastUse)
-            .ToListAsync();
+            return await _context.Test.OrderByDescending(x => x.LastUse).ToListAsync();
         }
 
         async Task<Test?> ITestRepository.GetTestById(Guid id)
@@ -32,7 +29,6 @@ namespace Api.Repository
             var test = await _context.Test
                 .Include(x => x.Questions)
                 .ThenInclude(x => x.Answers)
-                .OrderBy(x => x.LastUse)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (test is null)
@@ -46,7 +42,7 @@ namespace Api.Repository
         {
             return await _context.Test.Where(x => x.UserId == userId)
             .Include(x => x.Questions)
-            .OrderBy(x => x.LastUse).ToListAsync();
+            .OrderByDescending(x => x.LastUse).ToListAsync();
         }
 
         public async Task<Test> CreateTest(CreateTestDTO createTestDTO, string userid)
@@ -71,13 +67,29 @@ namespace Api.Repository
 
         public async Task<Test> AddQuestionToTest(AddQuestionTetstDTO addQuestionTetstDTO, Test test)
         {
+            var listaRetirar = new List<Question>();
+            foreach (var question in test.Questions){
+                if(addQuestionTetstDTO.Questions.Find(item => item.Id == question.Id) == null){
+                    listaRetirar.Add(question);
+                }
+            }
+
+            foreach (var question in listaRetirar){
+                test.Questions.Remove(question);
+            }
+
             foreach (var question in addQuestionTetstDTO.Questions)
             {
-                test.Questions.Add(question);
+                if (test.Questions.Find(item => item.Id == question.Id) == null)
+                {
+                    test.Questions.Add(question);
+                }
             }
+
+            _context.Update(test);
             await _context.SaveChangesAsync();
             return test;
-        }
 
+            }
     }
 }

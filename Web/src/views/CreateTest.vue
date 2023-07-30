@@ -2,28 +2,32 @@
 import { ref } from 'vue'
 import { useTestStore } from '../stores/testStore'
 import HeaderTest from '../components/test/HeaderTest.vue'
-import AddQuestion from '../components/test/AddQuestion.vue'
-import type { CreateTest } from '@/utils/types';
+import type { CreateTest } from '@/utils/types'
+import router from '@/router'
 
 interface Header {
   name: string
   className: string
 }
 
+// variaveis de prova
+const header = ref(true)
 const name = ref('')
 const className = ref('')
+// stores
 const testStore = useTestStore()
 
-const header = ref(true)
-const addQuestions = ref(false)
-
+// variaveis de addQuestion em prova
 const testId = ref('')
+const addQuestion = ref(false)
 
 const createTest = async (data: Header) => {
+  if (data.name === '' || data.className === '') return alert('Preencha todos os campos')
+
   name.value = data.name
   className.value = data.className
 
-  const payload:CreateTest = {
+  const payload: CreateTest = {
     name: name.value,
     className: className.value,
     logoUrl: ''
@@ -35,9 +39,7 @@ const createTest = async (data: Header) => {
 
   testId.value = response?.id as string
 
-  header.value = false
-
-  addQuestions.value = true
+  router.push(`/test/${testId.value}`)
 }
 </script>
 
@@ -57,7 +59,7 @@ const createTest = async (data: Header) => {
           class="form-bg rounded-xl white--text"
           style="font-weight: bold"
           v-show="!header"
-          @click=";(header = true), (addQuestions = false)"
+          @click=";(header = true), (addQuestion = false)"
           >Voltar</v-btn
         >
       </v-col>
@@ -67,10 +69,13 @@ const createTest = async (data: Header) => {
     <v-row justify="center">
       <v-col cols="12" md="12" lg="12">
         <div class="rounded-xl elevation-2 my-4 form-bg pa-5">
+
           <HeaderTest v-if="header" @next="createTest" />
-          <AddQuestion v-if="addQuestions" :testId="testId" /></div
-      ></v-col>
+
+        </div>
+      </v-col>
     </v-row>
+    
   </v-container>
 </template>
 
@@ -81,6 +86,10 @@ const createTest = async (data: Header) => {
 .bg {
   background-color: #9f9f9f;
   height: 100vh;
+}
+
+.bg-white {
+  background-color: #ffffff;
 }
 
 .img {
