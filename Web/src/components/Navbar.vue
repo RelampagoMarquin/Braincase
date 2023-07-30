@@ -28,10 +28,7 @@ function logout(){
 
 <template>
     <header>
-        <div class="nav-logo">
-            <!-- <img src="" alt="Logo do Braincase"> -->
-            <span class="logo-name">BrainCase</span>
-        </div>
+        <router-link to="/"><img  class="image-art " aspect-ratio="16/9" cover src="/logo-horizontal.png" /></router-link>
         <div>
             <v-col cols="12">
                 <v-row v-if="isLogged" class="login-area">
@@ -54,14 +51,16 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 8%;
+    padding: 8px 9%;
 }
 
-.logo-name {
-    font-weight: bold;
-    color: #ffffff;
+.image-art {
+  max-width: 50%;
 }
-
+a{
+    max-width: 40%;
+    
+}
 .login-btn {
     font-weight: bold;
     text-transform: capitalize;
