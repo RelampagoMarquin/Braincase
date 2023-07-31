@@ -51,6 +51,21 @@ watch(textForsearch, () => {
             <v-col class="my-1" cols="10">
                 <BackButton />
             </v-col>
+            <v-col>
+                <v-row>
+                    <v-col>
+                        <v-btn class=" back-btn rounded-xl white--text" style="font-weight: bold"
+                            @click="$router.push('/registerQuestion')">Criar Questão
+                        </v-btn>
+                    </v-col>
+                    <v-col>
+                        <v-btn class=" back-btn rounded-xl white--text" style="font-weight: bold"
+                            @click="$router.push('/createTest')">Criar Test
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+            </v-col>
         </v-row>
         <v-row>
             <v-col cols="12">
