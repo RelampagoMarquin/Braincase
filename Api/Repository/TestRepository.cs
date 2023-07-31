@@ -28,7 +28,6 @@ namespace Api.Repository
         {
             var test = await _context.Test
                 .Include(x => x.Questions)
-                // falta adicionar no dto e no mapeamento
                 .ThenInclude(x => x.Answers)
                 .FirstOrDefaultAsync(x => x.Id == id);
 

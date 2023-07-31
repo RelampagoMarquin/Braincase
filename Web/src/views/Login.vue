@@ -29,7 +29,7 @@ async function login() {
                 color="#F7A156"
                 label="E-mail"
                 variant="outlined"
-                class="mb-2 text-input"
+                class="mb-2 text-input v-locale--is-ltr"
               ></v-text-field>
               <v-text-field
                 v-model="password"
@@ -38,7 +38,7 @@ async function login() {
                 label="Senha"
                 type="password"
                 variant="outlined"
-                class="mb-2"
+                class="mb-2 v-locale--is-ltr"
               ></v-text-field>
               <v-btn class="btn-primary" @click="login()" block outlined rounded="sm">
                 Entrar
@@ -53,12 +53,18 @@ async function login() {
           </v-col>
         </v-row>
       </v-col>
+      
       <!-- mid wave div -->
+      
       <v-col cols="2">
         <div class="spacer wave"></div>
+        
       </v-col>
       <!-- right side div -->
-      <v-col cols="4" class="right-side"></v-col>
+      <v-img  class="image-art hidden-sm-and-down" aspect-ratio="16/9" cover src="/logo-vertical.png" ></v-img>
+      <v-col cols="4" class="right-side">
+        
+      </v-col>
     </v-row>
 </template>
 
@@ -114,5 +120,12 @@ div.text-input.v-field.v-field--appended {
 
 .mdi-close-circle {
   color: #F7A156 !important;
+}
+.image-art  {
+  position: absolute;
+  width: 30%;
+  margin-left: 66%;
+  margin-top:4%;
+  height: 81vh;
 }
 </style>

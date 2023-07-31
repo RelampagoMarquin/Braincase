@@ -2,6 +2,7 @@
 import { useUserStore } from '@/stores/userStore'
 import type { User, UserUpdate } from '@/utils/types'
 import { ref, onBeforeMount } from 'vue'
+import BackButton from '../components/BackButton.vue'
 
 const userStore = useUserStore()
 const user = ref()
@@ -40,10 +41,15 @@ async function update() {
 <template>
   <div class="bg">
     <v-container>
+      <v-row class="justify-center">
+        <v-col class="my-1" cols="10">
+          <BackButton />
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col cols="12" md="12" lg="5">
-          <div class="rounded-xl elevation-2 my-4 form-bg">
-            <h2 class="img py-4">LOGO BRAINCASE</h2>
+          <div class="rounded-xl elevation-2 my-2  form-bg ">
+            <v-img class="logo mb-2" aspect-ratio="16/9" cover src="/Logo_Nome.png"  ></v-img>
             <v-form action="#" method="post" class="px-10">
               <v-text-field
                 label="Nome"
@@ -106,16 +112,13 @@ async function update() {
 </template>
 
 <style scoped>
-.bg {
-  background-color: #9f9f9f;
-  height: 100vh;
-}
 
 .img {
   text-align: center;
 }
 
 .form-bg {
+  padding-top: 2%;
   background-color: #eeeeee;
 }
 
@@ -130,5 +133,9 @@ async function update() {
   background-color: #555555;
   font-weight: bold;
   text-transform: capitalize;
+}
+.logo{
+  margin: 0 auto;
+  width: 70%;
 }
 </style>

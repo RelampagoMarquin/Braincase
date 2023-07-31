@@ -79,12 +79,12 @@ watch(textForsearch,async () => {
             <v-row>
                 <v-col cols="12" md="6">
                     <v-autocomplete label="Matéria" v-model="subject" :items="subjects" item-title="name" item-value="id"
-                        variant="outlined" clearable @click:clear="clear" />
+                        variant="outlined" clearable @click:clear="clear" bg-color="white"/>
                 </v-col>
                 <v-col cols="12" md="6">
                     <v-autocomplete label="Assunto" persistent-hint v-model="selectTags"
                         hint="Os assuntos só aparecem após selecionar a matéria" :items="tags" item-title="name"
-                        item-value="name" variant="outlined" multiple chips clearable />
+                        item-value="name" variant="outlined" multiple chips clearable bg-color="white" />
                 </v-col>
             </v-row>
             <v-radio-group v-model="questionList" @input="$emit('update:radio', Number($event.target.value))" color="orange"
@@ -101,6 +101,7 @@ watch(textForsearch,async () => {
 <style scoped>
 .v-card {
     padding: 0 1% 1.5%;
+    background-color: #f3f3f3;
 }
 
 .filter-btn {

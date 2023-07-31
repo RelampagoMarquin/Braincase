@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import QuestionsList from '@/components/QuestionsList.vue';
+import BackButton from '../components/BackButton.vue'
 
 async function voltar() {
     window.history.back();
@@ -11,7 +12,7 @@ async function voltar() {
     <v-container>
         <v-row>
             <v-col class="d-flex justify-start">
-                <v-btn @click="voltar" class="btn-primary"> VOLTAR </v-btn>
+                <BackButton />
             </v-col>
         </v-row>
         <QuestionsList />
