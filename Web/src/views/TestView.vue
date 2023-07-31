@@ -20,9 +20,10 @@ const questions = ref<Question[]>([])
 const dialog = ref(false)
 
 onBeforeMount(async () => {
+  const testAux = await testStore.test
   test.value = await testStore.getTestById(testid)
   questions.value = test.value?.questions as Question[]
-  if(testStore.questions.length > 0){
+  if(testStore.questions.length > 0 && testAux?.id == testid){
     questions.value = testStore.questions
   }else {
     testStore.questions = questions.value

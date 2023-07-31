@@ -17,6 +17,9 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
     2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
 2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
 
+## important 
+create a .env file before run this look in .env.exemple to see the variables
+
 ## Customize configuration
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
@@ -50,3 +53,4 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+

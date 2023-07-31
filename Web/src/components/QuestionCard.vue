@@ -3,6 +3,7 @@ import { useFavoritesStore } from '@/stores/favoritesStore'
 import type { Favorites, Question } from '@/utils/types'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useTestStore } from '../stores/testStore'
 
 const favoritesStore = useFavoritesStore()
 /* props definition */
@@ -16,12 +17,10 @@ interface Props {
   subjectName?: string
   addQuestion?: boolean
   removeQuestion?: boolean
-  clickable?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   addQuestion: false,
-  clickable: true
 })
 
 const data = ref({
@@ -77,15 +76,21 @@ function toComment(idquestion: string) {
   router.push(`/commentQuestion/${idquestion}`)
 }
 
-function doNothing() {
-  return
+const exists = () => {
+  const testStore = useTestStore()
+  if(testStore.questions.find(item => item.id == props.id)){
+    return true;
+  } else{
+    return false
+  }
 }
+
 </script>
 
 <template>
-  <v-card class="question-card d-flex flex-column">
+  <v-card class="question-card d-flex flex-column" :class="{ 'destaque': exists() && addQuestion}">
     <v-row>
-      <v-col cols="10" class="card-text" @click="clickable ? toComment(id) : doNothing()">
+      <v-col cols="10" class="card-text" @click="toComment(id)">
         <div class="indicators d-flex align-center">
           <!-- Tipo da questão -->
           <span class="type" v-if="type == 2">Objetiva</span>
@@ -141,6 +146,10 @@ function doNothing() {
 </template>
 
 <style scoped>
+
+.destaque {
+  background-color: #ffd180 !important;
+}
 .question-card {
   padding: 10px;
   background-color: #f3f3f3;
