@@ -12,6 +12,7 @@ import CommentQuestion from '../views/CommentQuestion.vue'
 import CreateTest from '../views/CreateTest.vue'
 import  Tests  from '../views/Tests.vue'
 import TestView from '../views/TestView.vue'
+import  EditQuestion  from '../views/EditQuestion.vue'
 //cria a instância dorouter com as rotas
 const router = createRouter({
   //Cria um histórico HTML5. Histórico mais comum para aplicativos de página única.
@@ -105,6 +106,14 @@ const router = createRouter({
       path: '/test/:testid',
       name: 'test',
       component: TestView,
+      meta: {
+        auth: true
+      }
+    },
+    {
+      path: '/editQuestion/:idquestion',
+      name: 'editQuestion',
+      component: EditQuestion,
       meta: {
         auth: true
       }

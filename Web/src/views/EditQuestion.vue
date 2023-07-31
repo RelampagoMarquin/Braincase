@@ -2,11 +2,16 @@
 import { ref, onBeforeMount, watch, watchEffect } from "vue";
 import { useSubjectStore } from "@/stores/subjectStore";
 import { useTagStore } from "@/stores/tagStore";
-import type { CreateQuestion, Subject, Tag } from "@/utils/types";
+import type { CreateQuestion, Subject, Question, Tag } from "@/utils/types";
 import { useQuestionStore } from "@/stores/questionStore";
 import type { CreateAnswer, Institution } from "@/utils/types";
 import { useInstitutionStore } from "@/stores/instituitionStore";
 import BackButton from '../components/BackButton.vue'
+import { stringifyQuery, useRouter } from "vue-router";
+
+// pego o id da rota atual
+const router = useRouter();
+const QuestionId = String(router.currentRoute.value.params.idquestion);
 
 // stores
 const questionStore = useQuestionStore();
@@ -15,6 +20,9 @@ const instituitionStore = useInstitutionStore();
 const tagsStore = useTagStore();
 
 // variables
+const questionData = ref<Question>()
+const first = ref(true)
+
 const letter = ['a', 'b', 'c', 'd', 'e', 'f']
 const answers = ref<CreateAnswer[]>([
   { text: "", isCorrect: false },
@@ -31,28 +39,44 @@ const difficults = [
   { id: 3, name: "Dificil" },
 ];
 const institutions = ref<string[]>([]);
-const questionType = ref(1);
-const difficulty = ref(1);
+const questionType = ref();
+const difficulty = ref();
 const tagsTosend = ref<string[]>([]); //PASSAR COMO parametro o subject
 const institution = ref(); //string
 const questiontext = ref("");
 const justification = ref("");
 const subject = ref(); //subject id:materia
-const privacy = ref<boolean>(true); //true
+const privacy = ref<boolean>(); //true
 const answer = ref(""); // para ser enviada caso seja discursiva
 const tags = ref<string[]>([]);
 const subjects = ref<Subject[]>();
+const tagsAux = ref<Tag[]>([])
 
 onBeforeMount(async () => {
   subjects.value = await subjectStore.getAllSubject();
   const resInstitutions = await instituitionStore.getAllInstitution();
   const mapInstitutions = resInstitutions.map(institution => institution.name)
   institutions.value = mapInstitutions
+  questionData.value = await questionStore.getQuestionById(QuestionId);
+  //preencher campos com as informações da questão
+  questiontext.value = questionData.value?.text;
+  difficulty.value = questionData.value?.dificult;
+  questionType.value = questionData.value?.type;
+  privacy.value = questionData.value?.isPrivate;
+  institution.value = questionData.value?.institutionName;
+  justification.value = questionData.value?.justify;
+  subject.value = questionData.value?.tags[0].subjectId;
+  tagsAux.value = questionData.value?.tags;
+  if(questionData.value?.type == 1){
+    answer.value = questionData.value?.answers[0].text
+  } else {
+    answers.value = questionData.value?.answers
+  }
 });
 
 // functions
 
-async function registerquestion() {
+async function updatequestion() {
   const question: CreateQuestion = {
     text: questiontext.value,
     type: questionType.value,
@@ -64,15 +88,21 @@ async function registerquestion() {
     tags: tagsTosend.value,
     subjectId: subject.value,
   };
-  await questionStore.createQuestion(question);
+  await questionStore.updateQuestion( QuestionId, question);
 }
 
 watch(subject, async () => {
-  tagsTosend.value = [];
+  if(!first.value){
+    tagsTosend.value = [];
+  } else {
+    const map = tagsAux.value.map(tag => tag.name)
+    tagsTosend.value = map
+  }
   if (subject.value != '') {
     const res = await tagsStore.getAllTagsBySubject(subject.value);
     const map = res.map(tag => tag.name)
     tags.value = map
+    first.value = false;
   }
 });
 
@@ -97,7 +127,7 @@ async function deletar() {
   <v-container>
     <div class="mt-5 mb-5">
       <v-row :align="'center'" :justify="'center'">
-        <h2 class="text-primary-custom text-center title">QUESTÕES</h2>
+        <h2 class="text-primary-custom text-center title">EDITAR QUESTÃO</h2>
       </v-row>
       <v-row class="mb-5 justify-center">
         <v-col cols="9" >
@@ -112,7 +142,7 @@ async function deletar() {
           <v-row class="ml-3 mr-3" variant="outlined" :justify="'center'">
             <v-col cols="12" variant="outlined">
               <h3 for="" class="text-primary-custom text-center title">
-                Texto da Questão<scan class="obrigatorio">*</scan>:
+                Texto da Questão<span class="obrigatorio">*</span>:
               </h3>
               <v-textarea class="v-locale--is-ltr mt-1" v-model="questiontext" label="Digite sua questão aqui"
                 variant="outlined" density="compact" bg-color="white">
@@ -121,29 +151,29 @@ async function deletar() {
           </v-row>
           <v-row class="container ml-5">
             <v-col cols="6">
-              <label for="">Tipo da Questão<scan class="obrigatorio">*</scan></label>
+              <label for="">Tipo da Questão<span class="obrigatorio">*</span></label>
               <v-select v-model="questionType" class="mt-2 v-locale--is-ltr" :items="types" item-title="name"
                 item-value="id" label="Escolha o tipo" variant="outlined" density="compact" bg-color="white">
               </v-select>
 
-              <label for="">Dificuldade<scan class="obrigatorio">*</scan></label>
+              <label for="">Dificuldade<span class="obrigatorio">*</span></label>
               <v-select v-model="difficulty" class="mt-1 v-locale--is-ltr" :items="difficults" item-title="name"
                 item-value="id" label="Escolha a dificuldade" variant="outlined" density="compact" bg-color="white">
               </v-select>
 
-              <label for="">Privacidade<scan class="obrigatorio">*</scan>:</label>
+              <label for="">Privacidade<span class="obrigatorio">*</span>:</label>
               <v-radio-group inline v-model="privacy">
                 <v-radio label="Privada" v-bind:value="true"></v-radio>
                 <v-radio label="Publica" v-bind:value="false"></v-radio>
               </v-radio-group>
 
-              <label for="">Disciplina<scan class="obrigatorio">*</scan></label>
+              <label for="">Disciplina<span class="obrigatorio">*</span></label>
               <v-autocomplete v-model="subject" :items="subjects" item-title="name" item-value="id" variant="outlined"
                 density="compact" clearable placeholder="Matematica" autocomplete bg-color="white" persistent-hint
                 hint="As tag só aparecem após selecionar a materia"
                 />
 
-              <label for="">Tags<scan class="obrigatorio">*</scan></label>
+              <label for="">Tags<span class="obrigatorio">*</span></label>
               <v-combobox v-model="tagsTosend" :items="tags" item-title="name" tem-value="name" variant="outlined"
                 density="compact" clearable placeholder="Função" multiple chips bg-color="white" persistent-hint
                 hint="Coloque pelo menos uma tag"
@@ -156,7 +186,7 @@ async function deletar() {
             </v-col>
             <v-col cols="6">
               <div v-if="questionType === 1">
-                <label>Resposta<scan class="obrigatorio">*</scan>:</label>
+                <label>Resposta<span class="obrigatorio">*</span>:</label>
                 <v-textarea v-model="answer" class="v-locale--is-ltr mt-2 mr-5" variant="outlined" density="compact" bg-color="white"
                   label="Digite sua resposta" />
               </div>
@@ -200,8 +230,8 @@ async function deletar() {
             </v-col>
           </v-row>
           <v-row class="mb-5" :align="'center'" :justify="'center'">
-            <v-btn class="btn-primary mb-5" @click="registerquestion()">
-              Cadastrar questão
+            <v-btn class="btn-primary mb-5" @click="updatequestion()">
+              Alterar questão
             </v-btn>
           </v-row>
         </v-form>
