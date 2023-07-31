@@ -104,23 +104,21 @@ export const useQuestionStore = defineStore('question', () => {
         return questions.value
     }
 
-    async function updateQuestion(id: string) {
+    async function updateQuestion(id: string, questionUpdate: CreateQuestion) {
         const response = await axiosAuth.put(`/Question/${id}`, {
+            text: questionUpdate.text,
+            type: questionUpdate.type,
+            dificult: questionUpdate.dificult,
+            isPrivate: questionUpdate.isPrivate,
+            justify: questionUpdate.justify,
+            answers: questionUpdate.answers,
+            InstitutionName: questionUpdate.InstitutionName,
+            tags: questionUpdate.tags,
+            subjectId: questionUpdate.subjectId,
         }).catch(function (error) {
-            if (error.response) {
-                // Request made and server responded
-                if (error.response.message == 409) {
-                    alert('Pergunta já cadastrado')
-                } else {
-                    alert('Erro ao atualizar' + error.response.data + error.response.headers)
-                }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-
+            console.log('Error', error.message);
         });
+        alert('Questão atualizada com sucesso')
         return response
     }
 

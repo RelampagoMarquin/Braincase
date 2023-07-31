@@ -2,7 +2,8 @@
 import { onBeforeMount, ref } from 'vue';
 import { useQuestionStore } from '../stores/questionStore';
 import { useCommentStore } from '@/stores/commentStore';
-import type { Question, Comment } from "@/utils/types";
+import { useUserStore } from '@/stores/userStore';
+import type { Question, Comment, User } from "@/utils/types";
 import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue"
 
@@ -16,6 +17,8 @@ const QuestionId = String(router.currentRoute.value.params.idquestion);
 /* question stores */
 const questionStore = useQuestionStore();
 const question = ref<Question>()
+const userStore = useUserStore();
+const userLogged = ref<User>();
 
 /* question comments */
 const commentStore = useCommentStore();
@@ -27,7 +30,8 @@ onBeforeMount(async () => {
   if (question.value?.id){
     comments.value = await commentStore.GetCommentByQuestionId(question.value?.id);
   }
-})
+  isOwnerValor.value = await isOwner();
+  })
 
 // adicionar comentário 
 const commentText = ref("")
@@ -47,7 +51,22 @@ async function comentar() {
     }
   }
 }
+//editar questão
+function toEdit(idquestion: string) {
+  router.push(`/editQuestion/${idquestion}`)
+}
 
+const isOwnerValor = ref();
+//verifica se o dono da questão é quem está logado atráves do email(pode editar a questão)
+async function isOwner(){
+  userLogged.value = await userStore.getUserById(JSON.parse(localStorage.getItem("user")));
+  if(question.value?.email == userLogged.value?.email){
+    return true;
+  } 
+  else {
+    return false;
+  }
+}
 </script>
 
 <template>
@@ -72,8 +91,9 @@ async function comentar() {
         <div class="rounded-xl elevation-2 my-4 form-bg pa-5">
           <!-- matéria e tags -->
           <v-row class="text-center">
-            <v-col cols="12"> 
-              <h4 class="img py-4">{{ question?.tags[0].subjectName }} | 
+            <v-col cols="12" class="d-flex flex-column">
+              <v-btn v-if="isOwnerValor" class="align-self-start edit-btn rounded-xl" @click="toEdit(QuestionId)">Editar</v-btn>
+              <h4 class="img py-4 align-self-center">{{ question?.tags[0].subjectName }} | 
                 <span class="tag"  v-for="tag in question?.tags"> {{ tag.name }}</span>
               </h4>
             </v-col>
@@ -196,6 +216,12 @@ async function comentar() {
 
 .correct-answer {
   background-color: #f69541 !important;
+}
+
+.edit-btn {
+  background-color: #f69541;
+  color: #ffffff;
+  font-weight: 700;
 }
 
 </style>

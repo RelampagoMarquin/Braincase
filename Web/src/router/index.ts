@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/authStore'
 import CommentQuestion from '../views/CommentQuestion.vue'
 import CreateTest from '../views/CreateTest.vue'
 import  Tests  from '../views/Tests.vue'
+import  EditQuestion  from '../views/EditQuestion.vue'
 //cria a instância dorouter com as rotas
 const router = createRouter({
   //Cria um histórico HTML5. Histórico mais comum para aplicativos de página única.
@@ -96,6 +97,14 @@ const router = createRouter({
       path: '/tests',
       name: 'tests',
       component: Tests,
+      meta: {
+        auth: true
+      }
+    },
+    {
+      path: '/editQuestion/:idquestion',
+      name: 'editQuestion',
+      component: EditQuestion,
       meta: {
         auth: true
       }
