@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const apiAxios = axios.create({
-  baseURL: 'https://localhost:7188/api',
+  baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,7 +13,7 @@ function apiAxiosAuth() {
     return apiAxios
   }
   return axios.create({
-    baseURL: 'https://localhost:7188/api',
+    baseURL: import.meta.env.VITE_BASE_URL,
     headers: {
       'Content-Type': 'application/json',
       'Accept': '*/*',
