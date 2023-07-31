@@ -35,6 +35,7 @@ export interface Tag {
   id?: string
   name: string
   subjectName?: string
+  subjectid?: string
 }
 
 export interface Answer {

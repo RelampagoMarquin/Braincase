@@ -15,7 +15,7 @@ onMounted(async () => {
   if(!user.value && userId.value){
     user.value = await userStore.getUserById(userId.value.trim().replace(/^"|"$/g, ''))
   }
-  isLogged.value = user.value
+  isLogged.value = user.value ? true : false
 })
 
 const authStore = useAuthStore()

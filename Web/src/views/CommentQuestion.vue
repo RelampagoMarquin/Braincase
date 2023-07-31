@@ -5,7 +5,7 @@ import { useCommentStore } from '@/stores/commentStore';
 import { useUserStore } from '@/stores/userStore';
 import type { Question, Comment, User } from "@/utils/types";
 import { useRouter } from "vue-router";
-import BackButton from "../components/BackButton.vue"
+import BackButton from "@/components/BackButton.vue"
 
 // letras usadas nas alternativas
 const letter = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -59,7 +59,7 @@ function toEdit(idquestion: string) {
 const isOwnerValor = ref();
 //verifica se o dono da questão é quem está logado atráves do email(pode editar a questão)
 async function isOwner(){
-  userLogged.value = await userStore.getUserById(JSON.parse(localStorage.getItem("user")));
+  userLogged.value = await userStore.getUserById(JSON.parse(localStorage.getItem("user")!));
   if(question.value?.email == userLogged.value?.email){
     return true;
   } 

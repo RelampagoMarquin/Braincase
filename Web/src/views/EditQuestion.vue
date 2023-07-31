@@ -6,7 +6,7 @@ import type { CreateQuestion, Subject, Question, Tag } from "@/utils/types";
 import { useQuestionStore } from "@/stores/questionStore";
 import type { CreateAnswer, Institution } from "@/utils/types";
 import { useInstitutionStore } from "@/stores/instituitionStore";
-import BackButton from '../components/BackButton.vue'
+import BackButton from '@/components/BackButton.vue'
 import { stringifyQuery, useRouter } from "vue-router";
 
 // pego o id da rota atual
@@ -44,7 +44,7 @@ const difficulty = ref();
 const tagsTosend = ref<string[]>([]); //PASSAR COMO parametro o subject
 const institution = ref(); //string
 const questiontext = ref("");
-const justification = ref("");
+const justification = ref<string | null>();
 const subject = ref(); //subject id:materia
 const privacy = ref<boolean>(); //true
 const answer = ref(""); // para ser enviada caso seja discursiva
@@ -58,20 +58,23 @@ onBeforeMount(async () => {
   const mapInstitutions = resInstitutions.map(institution => institution.name)
   institutions.value = mapInstitutions
   questionData.value = await questionStore.getQuestionById(QuestionId);
-  //preencher campos com as informações da questão
-  questiontext.value = questionData.value?.text;
-  difficulty.value = questionData.value?.dificult;
-  questionType.value = questionData.value?.type;
-  privacy.value = questionData.value?.isPrivate;
-  institution.value = questionData.value?.institutionName;
-  justification.value = questionData.value?.justify;
-  subject.value = questionData.value?.tags[0].subjectId;
-  tagsAux.value = questionData.value?.tags;
-  if(questionData.value?.type == 1){
-    answer.value = questionData.value?.answers[0].text
-  } else {
-    answers.value = questionData.value?.answers
+  if (questionData.value?.text) {
+    //preencher campos com as informações da questão
+    questiontext.value = questionData.value.text;
+    difficulty.value = questionData.value.dificult;
+    questionType.value = questionData.value.type;
+    privacy.value = questionData.value.isPrivate;
+    institution.value = questionData.value.institutionName;
+    justification.value = questionData.value.justify;
+    subject.value = questionData.value?.tags[0].subjectid;
+    tagsAux.value = questionData.value.tags;
+    if (questionData.value?.type == 1) {
+      answer.value = questionData.value?.answers[0].text
+    } else {
+      answers.value = questionData.value?.answers
+    }
   }
+
 });
 
 // functions
@@ -81,18 +84,18 @@ async function updatequestion() {
     text: questiontext.value,
     type: questionType.value,
     dificult: difficulty.value,
-    isPrivate: privacy.value,
-    justify: justification.value,
+    isPrivate: privacy.value as boolean,
+    justify: justification.value ?? '',
     answers: questionType.value == 1 ? [{ text: answer.value, isCorrect: true }] : answers.value,
     InstitutionName: institution.value,
     tags: tagsTosend.value,
     subjectId: subject.value,
   };
-  await questionStore.updateQuestion( QuestionId, question);
+  await questionStore.updateQuestion(QuestionId, question);
 }
 
 watch(subject, async () => {
-  if(!first.value){
+  if (!first.value) {
     tagsTosend.value = [];
   } else {
     const map = tagsAux.value.map(tag => tag.name)
@@ -130,7 +133,7 @@ async function deletar() {
         <h2 class="text-primary-custom text-center title">EDITAR QUESTÃO</h2>
       </v-row>
       <v-row class="mb-5 justify-center">
-        <v-col cols="9" >
+        <v-col cols="9">
           <BackButton />
         </v-col>
       </v-row>
@@ -170,27 +173,25 @@ async function deletar() {
               <label for="">Disciplina<span class="obrigatorio">*</span></label>
               <v-autocomplete v-model="subject" :items="subjects" item-title="name" item-value="id" variant="outlined"
                 density="compact" clearable placeholder="Matematica" autocomplete bg-color="white" persistent-hint
-                hint="As tag só aparecem após selecionar a materia"
-                />
+                hint="As tag só aparecem após selecionar a materia" />
 
               <label for="">Tags<span class="obrigatorio">*</span></label>
               <v-combobox v-model="tagsTosend" :items="tags" item-title="name" tem-value="name" variant="outlined"
                 density="compact" clearable placeholder="Função" multiple chips bg-color="white" persistent-hint
-                hint="Coloque pelo menos uma tag"
-                />
-              
+                hint="Coloque pelo menos uma tag" />
+
               <label for="">Instituição</label>
-              
-              <v-combobox v-model="institution" :items="institutions" item-title="name" item-value="name" 
+
+              <v-combobox v-model="institution" :items="institutions" item-title="name" item-value="name"
                 variant="outlined" density="compact" chips clearable placeholder="ifrn" bg-color="white" />
             </v-col>
             <v-col cols="6">
               <div v-if="questionType === 1">
                 <label>Resposta<span class="obrigatorio">*</span>:</label>
-                <v-textarea v-model="answer" class="v-locale--is-ltr mt-2 mr-5" variant="outlined" density="compact" bg-color="white"
-                  label="Digite sua resposta" />
+                <v-textarea v-model="answer" class="v-locale--is-ltr mt-2 mr-5" variant="outlined" density="compact"
+                  bg-color="white" label="Digite sua resposta" />
               </div>
-              
+
 
               <div class="mr-5" v-if="questionType !== 1">
                 <label for="">Alternativas:</label>
