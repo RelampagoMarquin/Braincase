@@ -68,7 +68,8 @@ namespace Api.Helpers
             CreateMap<CreateUserDTO, User>();
 
             // mapper de test
-            CreateMap<Test, ResponseTestDTO>();
+            CreateMap<Test, ResponseTestDTO>()
+                .ForMember(dest => dest.NQuestion, opt => opt.MapFrom(src => src.Questions.Count()));
             CreateMap<UpdateTestDTO, Test>()
                 .ForAllMembers(opts =>
                 {
@@ -81,13 +82,18 @@ namespace Api.Helpers
                     });
                 });
             CreateMap<CreateTestDTO, Test>();
+            /* CreateMap<ResponseQuestionTestDTO, Test>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId.ToString()))
+            .ForMember(dest => dest.User, opt => opt.Ignore());*/
 
             // mapper de question
             CreateMap<Question, ResponseQuestionDTO>()
                 .ForMember(dest => dest.InstitutionName, opt =>
-                {
-                    opt.MapFrom(src => src.Institution != null ? src.Institution.Name : null);
-                });
+                    {
+                        opt.MapFrom(src => src.Institution != null ? src.Institution.Name : null);
+                    })
+                .ForMember(dest => dest.Criador, opt => opt.MapFrom(src => src.Favorites.Any(f => f.Own == true) ? src.Favorites.First(f => f.Own == true).User.Name : null))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Favorites.Any(f => f.Own == true) ? src.Favorites.First(f => f.Own == true).User.Email : null));
             CreateMap<UpdateQuestionDTO, Question>()
                 .ForAllMembers(opts =>
                 {

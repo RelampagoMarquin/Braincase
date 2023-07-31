@@ -19,6 +19,19 @@ namespace Api.Data{
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Tag>()
+                .HasIndex(t => new { t.Name, t.SubjectId })
+                .IsUnique();
+
+            modelBuilder.Entity<Subject>()
+                .HasIndex(s => s.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<Institution>()
+                .HasIndex(i => i.Name)
+                .IsUnique();
+
         }
 
         public DbSet<User> User { get; set; }

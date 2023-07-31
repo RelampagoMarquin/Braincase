@@ -20,6 +20,9 @@ namespace Api.Models
         public byte Dificult { get; set; } = 2;
         // 1 para fácil, 2 para medio e 3 pra difícil 
 
+        [MaxLength(int.MaxValue)]
+        public String? Justify { get; set; }
+
         [Required]
         public bool IsPrivate { get; set; } = true;
         // rela��o n n
@@ -35,7 +38,7 @@ namespace Api.Models
         public ICollection<Answer> Answers { get; } = new List<Answer>();
 
         // relacao 1 para n
-        public ICollection<Comment> Comment { get; } = new List<Comment>();
+        public ICollection<Comment> Comments { get; } = new List<Comment>();
 
         // relacao n para n
         public List<Test> Tests { get; } = new();

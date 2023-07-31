@@ -71,10 +71,18 @@ namespace Api.Repositorys
             // Remova caracteres especiais do nome
             var validCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_+@");
             var sanitizedName = new string(name.Where(c => validCharacters.Contains(c)).ToArray());
+            var random = new Random();
+            var randomChars = new char[5];
 
+            for (int i = 0; i < randomChars.Length; i++)
+            {
+                randomChars[i] = (char)random.Next(97, 123); // Gera um caractere aleatório minúsculo (97 a 122 na tabela ASCII)
+            }
+
+            var finalName = sanitizedName + new string(randomChars);
             User user = new()
             {
-                UserName = sanitizedName,
+                UserName = finalName,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Email = createUserDTO.Email,
                 Name = createUserDTO.Name,

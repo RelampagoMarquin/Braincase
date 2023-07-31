@@ -57,6 +57,20 @@ namespace Api.Controllers
           return response;
         }
 
+        // GET: api/Comment/question/5
+        [HttpGet("question/{id}")]
+        public async Task<ActionResult<IEnumerable<ResponseCommentDTO>>> GetCommentByQuestionId(Guid id)
+        {
+          var comments = await _commentRepository.GetCommentByQuestionId(id);
+          var responseComments = new List<ResponseCommentDTO>();
+          foreach (var comment in comments)
+          {
+            var response = _mapper.Map<ResponseCommentDTO>(comment);
+            responseComments.Add(response);
+          } 
+          return responseComments;
+        }
+
         // PUT: api/Comment/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

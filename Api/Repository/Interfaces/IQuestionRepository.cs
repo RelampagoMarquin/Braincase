@@ -17,5 +17,9 @@ namespace Api.Repository.Interfaces
 
         // este get pega todas as questões publicas e soma com as privadas do usuário
         Task<IEnumerable<Question>> GetAllUserQuestion(string id);
+
+        Task<Question> CreateQuestion(CreateQuestionDTO createQuestionDTO, string userid);
+
+        Task<Question> UpdateQuestion(UpdateQuestionDTO updateQuestionDTO, Question question);
     }
 }

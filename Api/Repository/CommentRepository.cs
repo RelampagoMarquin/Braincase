@@ -33,6 +33,13 @@ namespace Api.Repository
                 return null;
             }
             return comment;
+        }
+
+        public async Task<IEnumerable<Comment>> GetCommentByQuestionId(Guid id)
+        {
+            var comment = await _context.Comment.Include(x =>x.User).Where(x => x.QuestionId == id).ToListAsync();
+
+            return comment;
         } 
     }
 }

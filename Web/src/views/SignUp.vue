@@ -1,32 +1,37 @@
-
 <script setup lang="ts">
-
+import { useUserStore } from '../stores/userStore';
 import { ref } from 'vue'
+import type { UserCreate } from '@/utils/types'
 
+const userStore = useUserStore()
 const email = ref('')
 const name = ref('')
 const registration = ref('')
 const password = ref('')
-const checkPassword = ref('')
+const confirmedPassword = ref('')
 
-// function signup() {
-  
-//   const data = {
-//     nome: name.value,
-//     email: email.value,
-//     senha: password.value,
-//   };
-// }
+async function signup(){
+  const user:UserCreate = {
+    name: name.value,
+    email: email.value,
+    registration: registration.value,
+    password: password.value,
+    confirmedPassword: confirmedPassword.value
+  }
+  await userStore.createUser(user)
+} 
+
 </script>
 
 <template> 
   <v-row class="container">
+    
     <v-col cols="4" class="right-side hidden-sm-and-down"></v-col>
-    <v-img class="logo hidden-sm-and-down" aspect-ratio="16/9" cover src="/Logomarca.svg"></v-img>
-    <v-img  class="image-art hidden-sm-and-down" aspect-ratio="16/9" cover src="/image-art.svg" ></v-img>
+    
     <v-col cols="2" class="hidden-sm-and-down" >
       <div class="spacer wave hidden-sm-and-down"></div>
     </v-col>
+    <v-img  class="image-art hidden-sm-and-down" aspect-ratio="16/9" cover src="/logo-vertical.png" ></v-img>
 
     <v-col cols="lg-6 md-12" 
     >
@@ -72,7 +77,7 @@ const checkPassword = ref('')
             ></v-text-field>
 
             <v-text-field
-              v-model="checkPassword"
+              v-model="confirmedPassword"
               type="password"
               clearable
               required
@@ -85,7 +90,7 @@ const checkPassword = ref('')
           </v-form>
           <p class="text-center mt-4 login-text">
             Já possui um cadastro?
-            <router-link to="/" class="login-link"> Fazer Login </router-link>
+            <router-link to="/login" class="login-link"> Fazer Login </router-link>
           </p>
         </v-col>
       </v-row>
@@ -97,15 +102,16 @@ const checkPassword = ref('')
 <style scoped>
 .image-art  {
   position: absolute;
-  left: 50px;
-  top: 180px;
-  width: 30%;
+  width: 35%;
+  margin-left: 1%;
+  margin-top:4.5%;
+  height: 75vh;
 }
 .logo{
   position: absolute;
-  left: 180px;
-  top: 130px;
-  width: 12%;
+  left: 60px;
+  top: 100px;
+  width: 30%;
 
 }
 

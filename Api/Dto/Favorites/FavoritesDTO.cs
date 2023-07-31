@@ -4,7 +4,7 @@ namespace Api.Dto.Favorites
     {
         public bool Own { get; set; }
 
-        public String UserId { get; set; }
+        public String? UserId { get; set; }
 
         public Guid? QuestionId { get; set; } 
     }
@@ -16,5 +16,11 @@ namespace Api.Dto.Favorites
         public String UserId { get; set; }
 
         public Guid QuestionId { get; set; } 
+    }
+
+    public class ResponseFavoritesForQuestionDTO
+    {
+        public bool Own { get; set; }
+
     }
 }

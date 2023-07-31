@@ -1,19 +1,17 @@
-<!-- Parte Lógica: Script -->
 <script setup lang="ts">
-// import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../stores/authStore";
 import { ref } from "vue";
-// const authStore = useAuthStore();
-
+const authStore = useAuthStore();
 const email = ref("")
 const password = ref("");
+import router from '../router/index';
 
-// function login() {
-//   const data = {
-//     password: senha.value,
-//     email: email.value,
-//   };
-//   authStore.login(data);
-// }
+async function login() {
+  const response = await authStore.login(email.value, password.value);
+  if(response.userId){
+    router.push('/')
+  }
+}
 </script>
 
 <!-- Parte de Estrutura: Template, o "html" -->
@@ -31,7 +29,7 @@ const password = ref("");
                 color="#F7A156"
                 label="E-mail"
                 variant="outlined"
-                class="mb-2 text-input"
+                class="mb-2 text-input v-locale--is-ltr"
               ></v-text-field>
               <v-text-field
                 v-model="password"
@@ -40,9 +38,9 @@ const password = ref("");
                 label="Senha"
                 type="password"
                 variant="outlined"
-                class="mb-2"
+                class="mb-2 v-locale--is-ltr"
               ></v-text-field>
-              <v-btn class="btn-primary" block outlined rounded="sm">
+              <v-btn class="btn-primary" @click="login()" block outlined rounded="sm">
                 Entrar
               </v-btn>
             </v-form>
@@ -55,12 +53,18 @@ const password = ref("");
           </v-col>
         </v-row>
       </v-col>
+      
       <!-- mid wave div -->
+      
       <v-col cols="2">
         <div class="spacer wave"></div>
+        
       </v-col>
       <!-- right side div -->
-      <v-col cols="4" class="right-side"></v-col>
+      <v-img  class="image-art hidden-sm-and-down" aspect-ratio="16/9" cover src="/logo-vertical.png" ></v-img>
+      <v-col cols="4" class="right-side">
+        
+      </v-col>
     </v-row>
 </template>
 
@@ -104,7 +108,8 @@ div.text-input.v-field.v-field--appended {
   color: #F7A156;
 }
 
-.signup-text, .signup-link {
+.signup-text,
+.signup-link {
   color: #F7A156;
 }
 
@@ -115,5 +120,12 @@ div.text-input.v-field.v-field--appended {
 
 .mdi-close-circle {
   color: #F7A156 !important;
+}
+.image-art  {
+  position: absolute;
+  width: 30%;
+  margin-left: 66%;
+  margin-top:4%;
+  height: 81vh;
 }
 </style>

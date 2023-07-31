@@ -33,6 +33,10 @@ namespace Api.Repository
             }
             return tag;
         }
-        
+
+        public async Task<IEnumerable<Tag>> GetTagBySubjectId(Guid subjectId)
+        {
+            return await _context.Tag.Where(x => x.SubjectId == subjectId).ToListAsync();
+        }
     }
 }

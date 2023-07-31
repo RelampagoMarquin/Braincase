@@ -11,5 +11,7 @@ namespace Api.Repository.Interfaces
         Task<IEnumerable<Tag>> GetAllTags();
 
         Task<Tag?> GetTagById(Guid id);
+
+        Task<IEnumerable<Tag>> GetTagBySubjectId(Guid subjectId);
     }
 }

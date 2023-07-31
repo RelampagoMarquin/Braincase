@@ -13,8 +13,21 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 using AutoMapper;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Cors
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 
 //AddIdentity
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -55,7 +68,8 @@ builder.Services.AddDbContext<APIDbContext>(options => options.UseMySql(
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Repositorys
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -121,6 +135,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseCors();
 //Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();

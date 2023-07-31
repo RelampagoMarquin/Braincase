@@ -28,10 +28,6 @@ namespace Api.Migrations
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Justify")
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("longtext");
-
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("char(36)");
 
@@ -105,6 +101,9 @@ namespace Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Institution");
                 });
 
@@ -122,6 +121,10 @@ namespace Api.Migrations
 
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Justify")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -151,6 +154,9 @@ namespace Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Subject");
                 });
 
@@ -171,6 +177,9 @@ namespace Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
+
+                    b.HasIndex("Name", "SubjectId")
+                        .IsUnique();
 
                     b.ToTable("Tag");
                 });
