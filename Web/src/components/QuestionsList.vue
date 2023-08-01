@@ -40,6 +40,7 @@ const pushQuestion = (quest: any) => {
 }
 
 const popQuestion = (quest: any) => {
+    console.log("oi")
     emit('pop-question', quest)
 }
 

@@ -34,7 +34,7 @@ const data = ref({
             </v-col>
             <v-col cols="2" class="card-star d-flex justify-end">
                 <v-icon v-if="removeQuestion" class="mdi mdi-minus-box" color="red" size="large"
-                    @click="$emit('pop', data)"></v-icon>
+                    @click="$emit('pop-question', data)"></v-icon>
             </v-col>
         </v-row>
         <v-row class="ml-4 mr-2" align="end">

@@ -37,7 +37,7 @@ function closeDialog() {
         </template>
         <template v-slot:default="{  }">
             <!-- componente onde adicionamos questões -->
-            <QuestionsList :testId="testId" @close-dialog="closeDialog" @push-question="pushQuestion" @pop="popQuestion" class="bg-white" style="overflow-y: scroll;"></QuestionsList>
+            <QuestionsList :testId="testId" @close-dialog="closeDialog" @push-question="pushQuestion" @pop-question="popQuestion" class="bg-white" style="overflow-y: scroll;"></QuestionsList>
         </template>
     </v-dialog>
 </template>
