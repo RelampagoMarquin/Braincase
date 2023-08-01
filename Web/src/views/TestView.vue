@@ -85,12 +85,12 @@ function closeDialog() {
             <v-spacer></v-spacer>
             <GeneratePDF :test="test"/>
             <!-- componente modal -->
-            <AddQuestionModal :testId="testid" :dialog="dialog" @close-dialog="closeDialog" @push-question="pushQuestion" @pop="popQuestion" class="bg-white"></AddQuestionModal>
+            <AddQuestionModal :testId="testid" :dialog="dialog" @close-dialog="closeDialog" @push-question="pushQuestion" @pop-question="popQuestion" class="bg-white"></AddQuestionModal>
             <v-btn color="green-accent-3" class="ml-2" @click="addQuestions">
               <v-icon>mdi-check</v-icon>
             </v-btn>
           </v-row>
-          <QuestionCardWithAnswers v-for="question in testStore.questions" :key="question.id" :question="question" @pop="popQuestion"/>
+          <QuestionCardWithAnswers v-for="question in testStore.questions" :key="question.id" :question="question" @pop-question="popQuestion"/>
           <!-- <AddQuestion :testId="testId" /> -->
         </div>
       </v-col>
