@@ -18,7 +18,7 @@ const generatePdf = async () => {
     const user = useUserStore().user
 
     // Add image
-    const imageUrl = '/if.png'
+    const imageUrl = '/lg.jpg'
     const response = await fetch(imageUrl)
     const blob = await response.blob()
     const reader = new FileReader()
@@ -87,6 +87,7 @@ const generatePdf = async () => {
             const questionHeight = qSize.h + 5;
 
             // função para incrementar y inital de acordo com o numero de linhas
+            // eslint-disable-next-line no-inner-declarations
             function yinitialPlus(height: number) {
                 yinitial += height
             }

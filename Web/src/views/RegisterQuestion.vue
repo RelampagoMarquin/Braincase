@@ -33,13 +33,13 @@ const difficults = [
 const institutions = ref<string[]>([]);
 const questionType = ref(1);
 const difficulty = ref(1);
-const tagsTosend = ref<string[]>([]); //PASSAR COMO parametro o subject
-const institution = ref(); //string
+const tagsTosend = ref<string[]>([]);
+const institution = ref<string>("");
 const questiontext = ref("");
 const justification = ref("");
-const subject = ref(); //subject id:materia
-const privacy = ref<boolean>(true); //true
-const answer = ref(""); // para ser enviada caso seja discursiva
+const subject = ref<string>("");
+const privacy = ref<boolean>(true);
+const answer = ref<string>(""); // para ser enviada caso seja discursiva
 const tags = ref<string[]>([]);
 const subjects = ref<Subject[]>();
 
@@ -53,6 +53,10 @@ onBeforeMount(async () => {
 // functions
 
 async function registerquestion() {
+  if(tagsTosend.value.length == 0){
+    alert('Adicione pelo menos uma tag')
+    return
+  }
   const question: CreateQuestion = {
     text: questiontext.value,
     type: questionType.value,
@@ -100,14 +104,14 @@ async function deletar() {
         <h2 class="text-primary-custom text-center title">QUESTÕES</h2>
       </v-row>
       <v-row class="mb-5 justify-center">
-        <v-col cols="9" >
+        <v-col cols="12" md="9">
           <BackButton />
         </v-col>
       </v-row>
     </div>
 
     <v-row :justify="'center'">
-      <v-col cols="9">
+      <v-col cols="12" md="9">
         <v-form class="v-locale--is-ltr" :justify="'center'">
           <v-row class="ml-3 mr-3" variant="outlined" :justify="'center'">
             <v-col cols="12" variant="outlined">
@@ -119,8 +123,8 @@ async function deletar() {
               </v-textarea>
             </v-col>
           </v-row>
-          <v-row class="container ml-5">
-            <v-col cols="6">
+          <v-row class="container ml-5" justify="center">
+            <v-col cols="12" md="6">
               <label for="">Tipo da Questão<scan class="obrigatorio">*</scan></label>
               <v-select v-model="questionType" class="mt-2 v-locale--is-ltr" :items="types" item-title="name"
                 item-value="id" label="Escolha o tipo" variant="outlined" density="compact" bg-color="white">
@@ -140,13 +144,13 @@ async function deletar() {
               <label for="">Disciplina<scan class="obrigatorio">*</scan></label>
               <v-autocomplete v-model="subject" :items="subjects" item-title="name" item-value="id" variant="outlined"
                 density="compact" clearable placeholder="Matematica" autocomplete bg-color="white" persistent-hint
-                hint="As tag só aparecem após selecionar a materia"
+                hint="As tags aparecerão após selecionar a matéria"
                 />
 
               <label for="">Tags<scan class="obrigatorio">*</scan></label>
               <v-combobox v-model="tagsTosend" :items="tags" item-title="name" tem-value="name" variant="outlined"
                 density="compact" clearable placeholder="Função" multiple chips bg-color="white" persistent-hint
-                hint="Coloque pelo menos uma tag"
+                hint="Digite pelo menos uma tag"
                 />
               
               <label for="">Instituição</label>
@@ -154,7 +158,7 @@ async function deletar() {
               <v-combobox v-model="institution" :items="institutions" item-title="name" item-value="name" 
                 variant="outlined" density="compact" chips clearable placeholder="ifrn" bg-color="white" />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12" md="6">
               <div v-if="questionType === 1">
                 <label>Resposta<scan class="obrigatorio">*</scan>:</label>
                 <v-textarea v-model="answer" class="v-locale--is-ltr mt-2 mr-5" variant="outlined" density="compact" bg-color="white"
@@ -167,12 +171,12 @@ async function deletar() {
                 <!-- v-for this could be a component or not -->
                 <div class="ml-2 mt-1" v-for="(item, index) in answers">
                   <v-row>
-                    <v-col cols="1">
+                    <v-col cols="2">
                       <v-checkbox v-model="item.isCorrect">
                         <p>{{ letter[index] }})</p>
                       </v-checkbox>
                     </v-col>
-                    <v-col cols="11">
+                    <v-col cols="10">
                       <v-textarea class="v-locale--is-ltr ml-2" v-model="item.text"
                         label="Escreva o texto para a alternativa*" variant="outlined" bg-color="white" rows="1"
                         row-height="15">
@@ -217,5 +221,27 @@ async function deletar() {
 
 .obrigatorio {
   color: #ff4444;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .mr-5 {
+    margin-right: 0 !important;
+  }
+  .ml-5 {
+    margin-left: 0 !important;
+  }
+  .ml-3 {
+    margin-left: 0 !important;
+  }
+  .mr-3 {
+    margin-right: 0 !important;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
 }
 </style>

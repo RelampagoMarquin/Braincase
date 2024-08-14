@@ -66,8 +66,18 @@ onBeforeMount(async () => {
     privacy.value = questionData.value.isPrivate;
     institution.value = questionData.value.institutionName;
     justification.value = questionData.value.justify;
-    subject.value = questionData.value?.tags[0].subjectid;
+    subject.value = questionData.value?.tags[0].subjectId;
     tagsAux.value = questionData.value.tags;
+  
+    // Atualizar o campo disciplina e tags após a definição do subject
+    if (subject.value) {
+      const subjectItem = subjects.value.find(sub => sub.id === subject.value);
+      if (subjectItem) {
+        subject.value = subjectItem.id; // Atribui o ID correto para o v-autocomplete
+        tags.value = await tagsStore.getAllTagsBySubject(subjectItem.id);
+      }
+    }
+
     if (questionData.value?.type == 1) {
       answer.value = questionData.value?.answers[0].text
     } else {
@@ -94,15 +104,15 @@ async function updatequestion() {
   await questionStore.updateQuestion(QuestionId, question);
 }
 
-watch(subject, async () => {
+watch(subject, async (newSubjectId) => {
   if (!first.value) {
     tagsTosend.value = [];
   } else {
     const map = tagsAux.value.map(tag => tag.name)
     tagsTosend.value = map
   }
-  if (subject.value != '') {
-    const res = await tagsStore.getAllTagsBySubject(subject.value);
+  if (newSubjectId) {
+    const res = await tagsStore.getAllTagsBySubject(newSubjectId);
     const map = res.map(tag => tag.name)
     tags.value = map
     first.value = false;
@@ -113,14 +123,14 @@ async function adicionar() {
   if (6 > answers.value.length) {
     answers.value.push({ text: '', isCorrect: false })
   } else {
-    alert("O máximo de alternativas é 6");
+    alert("O máximo é de até seis alternativas");
   }
 }
 async function deletar() {
   if (answers.value.length > 2) {
     answers.value.pop()
   } else {
-    alert("O minimo de alternativas é 2");
+    alert("Precisa ter no mínimo duas alternativas");
   }
 }
 
@@ -133,14 +143,14 @@ async function deletar() {
         <h2 class="text-primary-custom text-center title">EDITAR QUESTÃO</h2>
       </v-row>
       <v-row class="mb-5 justify-center">
-        <v-col cols="9">
+        <v-col cols="12" md="9">
           <BackButton />
         </v-col>
       </v-row>
     </div>
 
     <v-row :justify="'center'">
-      <v-col cols="9">
+      <v-col cols="12" md="6">
         <v-form class="v-locale--is-ltr" :justify="'center'">
           <v-row class="ml-3 mr-3" variant="outlined" :justify="'center'">
             <v-col cols="12" variant="outlined">
@@ -173,19 +183,19 @@ async function deletar() {
               <label for="">Disciplina<span class="obrigatorio">*</span></label>
               <v-autocomplete v-model="subject" :items="subjects" item-title="name" item-value="id" variant="outlined"
                 density="compact" clearable placeholder="Matematica" autocomplete bg-color="white" persistent-hint
-                hint="As tag só aparecem após selecionar a materia" />
+                hint="As tags aparecerão após selecionar a matéria" />
 
               <label for="">Tags<span class="obrigatorio">*</span></label>
               <v-combobox v-model="tagsTosend" :items="tags" item-title="name" tem-value="name" variant="outlined"
                 density="compact" clearable placeholder="Função" multiple chips bg-color="white" persistent-hint
-                hint="Coloque pelo menos uma tag" />
+                hint="Digite pelo menos uma tag" />
 
               <label for="">Instituição</label>
 
               <v-combobox v-model="institution" :items="institutions" item-title="name" item-value="name"
                 variant="outlined" density="compact" chips clearable placeholder="ifrn" bg-color="white" />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12" md="6">
               <div v-if="questionType === 1">
                 <label>Resposta<span class="obrigatorio">*</span>:</label>
                 <v-textarea v-model="answer" class="v-locale--is-ltr mt-2 mr-5" variant="outlined" density="compact"
@@ -198,12 +208,12 @@ async function deletar() {
                 <!-- v-for this could be a component or not -->
                 <div class="ml-2 mt-1" v-for="(item, index) in answers">
                   <v-row>
-                    <v-col cols="1">
+                    <v-col cols="2">
                       <v-checkbox v-model="item.isCorrect">
                         <p>{{ letter[index] }})</p>
                       </v-checkbox>
                     </v-col>
-                    <v-col cols="11">
+                    <v-col cols="10">
                       <v-textarea class="v-locale--is-ltr ml-2" v-model="item.text"
                         label="Escreva o texto para a alternativa*" variant="outlined" bg-color="white" rows="1"
                         row-height="15">
@@ -240,6 +250,7 @@ async function deletar() {
     </v-row>
   </v-container>
 </template>
+
 <style scoped>
 .v-form {
   background-color: #eeeeee !important;
@@ -248,5 +259,27 @@ async function deletar() {
 
 .obrigatorio {
   color: #ff4444;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .mr-5 {
+    margin-right: 0 !important;
+  }
+  .ml-5 {
+    margin-left: 0 !important;
+  }
+  .ml-3 {
+    margin-left: 0 !important;
+  }
+  .mr-3 {
+    margin-right: 0 !important;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
 }
 </style>
